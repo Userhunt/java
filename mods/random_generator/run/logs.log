@@ -1,0 +1,47 @@
+2023-06-18 18:55:32.711 [main] WARN  SETUP - writter replaced
+2023-06-18 18:55:32.718 [main] INFO   - [PrintWrapper{install:26}]: test replace from net.home.main.MainFrame.<clinit>(MainFrame.java:35)
+2023-06-18 18:55:32.833 [main] INFO   - [MainFrame{load:116}]: [net.home.random_generator.GenScreen@2415fc55]
+2023-06-18 18:55:52.681 [AWT-EventQueue-0] WARN   - iron sword
+2023-06-18 18:55:52.684 [AWT-EventQueue-0] DEBUG  - run
+2023-06-18 18:55:52.685 [AWT-EventQueue-0] INFO   -  lvl: 4.0
+2023-06-18 18:55:52.686 [AWT-EventQueue-0] INFO   -  count: [2,2]
+2023-06-18 18:55:52.686 [AWT-EventQueue-0] INFO   -  weight: [0,10]
+2023-06-18 18:55:52.686 [AWT-EventQueue-0] INFO   -  list: [attribute/damage, attribute/speed, attribute/armor, attribute/movement_speed, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.687 [AWT-EventQueue-0] DEBUG  - lvl
+2023-06-18 18:55:52.687 [AWT-EventQueue-0] INFO   -  list: [attribute/damage, attribute/speed, attribute/armor, attribute/movement_speed, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.688 [AWT-EventQueue-0] DEBUG  - required
+2023-06-18 18:55:52.688 [AWT-EventQueue-0] INFO   -  list: [attribute/armor, attribute/movement_speed, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.689 [AWT-EventQueue-0] INFO   -  pool: [attribute/damage, attribute/speed]
+2023-06-18 18:55:52.690 [AWT-EventQueue-0] DEBUG  - chance
+2023-06-18 18:55:52.690 [AWT-EventQueue-0] INFO   -  list: [attribute/armor, attribute/movement_speed, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.690 [AWT-EventQueue-0] INFO   -  pool: [attribute/damage, attribute/speed, attribute/max_health]
+2023-06-18 18:55:52.703 [AWT-EventQueue-0] INFO   -  chances: {attribute/max_health=Chance[value=19.08976525653071, range=28.0]}
+2023-06-18 18:55:52.704 [AWT-EventQueue-0] DEBUG  - chance
+2023-06-18 18:55:52.704 [AWT-EventQueue-0] INFO   -  list: [attribute/armor, attribute/movement_speed, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.704 [AWT-EventQueue-0] INFO   -  pool: [attribute/damage, attribute/speed, attribute/max_health, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.704 [AWT-EventQueue-0] INFO   -  chances: {attribute/max_health=Chance[value=19.08976525653071, range=28.0], attribute/max_health=Chance[value=5.882114053562237, range=28.0], attribute/max_health=Chance[value=11.70879748070507, range=28.0]}
+2023-06-18 18:55:52.705 [AWT-EventQueue-0] DEBUG  - chance
+2023-06-18 18:55:52.705 [AWT-EventQueue-0] INFO   -  list: [attribute/armor, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.705 [AWT-EventQueue-0] INFO   -  pool: [attribute/damage, attribute/speed, attribute/max_health, attribute/max_health, attribute/max_health, attribute/movement_speed]
+2023-06-18 18:55:52.706 [AWT-EventQueue-0] INFO   -  chances: {attribute/max_health=Chance[value=19.08976525653071, range=28.0], attribute/max_health=Chance[value=5.882114053562237, range=28.0], attribute/max_health=Chance[value=11.70879748070507, range=28.0], attribute/movement_speed=Chance[value=13.608589639218794, range=20.0]}
+2023-06-18 18:55:52.706 [AWT-EventQueue-0] DEBUG  - chance
+2023-06-18 18:55:52.706 [AWT-EventQueue-0] INFO   -  list: [attribute/armor, attribute/max_health, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.706 [AWT-EventQueue-0] INFO   -  pool: [attribute/damage, attribute/speed, attribute/max_health, attribute/max_health, attribute/max_health, attribute/movement_speed, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.707 [AWT-EventQueue-0] INFO   -  chances: {attribute/max_health=Chance[value=19.08976525653071, range=28.0], attribute/max_health=Chance[value=5.882114053562237, range=28.0], attribute/max_health=Chance[value=11.70879748070507, range=28.0], attribute/movement_speed=Chance[value=13.608589639218794, range=20.0], attribute/max_health=Chance[value=25.843498505740882, range=28.0], attribute/max_health=Chance[value=11.320793336351931, range=28.0]}
+2023-06-18 18:55:52.707 [AWT-EventQueue-0] DEBUG  - chance
+2023-06-18 18:55:52.707 [AWT-EventQueue-0] INFO   -  list: [attribute/armor, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.708 [AWT-EventQueue-0] INFO   -  pool: [attribute/damage, attribute/speed, attribute/max_health, attribute/max_health, attribute/max_health, attribute/movement_speed, attribute/max_health, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.708 [AWT-EventQueue-0] INFO   -  chances: {attribute/max_health=Chance[value=19.08976525653071, range=28.0], attribute/max_health=Chance[value=5.882114053562237, range=28.0], attribute/max_health=Chance[value=11.70879748070507, range=28.0], attribute/movement_speed=Chance[value=13.608589639218794, range=20.0], attribute/max_health=Chance[value=25.843498505740882, range=28.0], attribute/max_health=Chance[value=11.320793336351931, range=28.0], attribute/max_health=Chance[value=11.00323142884304, range=28.0]}
+2023-06-18 18:55:52.708 [AWT-EventQueue-0] DEBUG  - chance
+2023-06-18 18:55:52.708 [AWT-EventQueue-0] INFO   -  list: [attribute/armor, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.709 [AWT-EventQueue-0] INFO   -  pool: [attribute/damage, attribute/speed, attribute/max_health, attribute/max_health, attribute/max_health, attribute/movement_speed, attribute/max_health, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.709 [AWT-EventQueue-0] INFO   -  chances: {attribute/max_health=Chance[value=19.08976525653071, range=28.0], attribute/max_health=Chance[value=5.882114053562237, range=28.0], attribute/max_health=Chance[value=11.70879748070507, range=28.0], attribute/movement_speed=Chance[value=13.608589639218794, range=20.0], attribute/max_health=Chance[value=25.843498505740882, range=28.0], attribute/max_health=Chance[value=11.320793336351931, range=28.0], attribute/max_health=Chance[value=11.00323142884304, range=28.0]}
+2023-06-18 18:55:52.711 [AWT-EventQueue-0] INFO   - [RandomGenerator$RandomGeneratorExt{count:212}]: 7
+2023-06-18 18:55:52.712 [AWT-EventQueue-0] INFO   - [RandomGenerator$RandomGeneratorExt{count:212}]: 6
+2023-06-18 18:55:52.712 [AWT-EventQueue-0] INFO   - [RandomGenerator$RandomGeneratorExt{count:212}]: 5
+2023-06-18 18:55:52.712 [AWT-EventQueue-0] INFO   - [RandomGenerator$RandomGeneratorExt{count:212}]: 4
+2023-06-18 18:55:52.713 [AWT-EventQueue-0] INFO   - [RandomGenerator$RandomGeneratorExt{count:212}]: 3
+2023-06-18 18:55:52.713 [AWT-EventQueue-0] ERROR  - count
+2023-06-18 18:55:52.713 [AWT-EventQueue-0] INFO   -  list: [attribute/armor, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/max_health, attribute/movement_speed, attribute/max_health]
+2023-06-18 18:55:52.713 [AWT-EventQueue-0] INFO   -  pool: [attribute/damage, attribute/speed, attribute/max_health, attribute/max_health]
+2023-06-18 18:55:52.714 [AWT-EventQueue-0] INFO   -  chances: {attribute/max_health=Chance[value=5.882114053562237, range=28.0], attribute/max_health=Chance[value=11.00323142884304, range=28.0]}

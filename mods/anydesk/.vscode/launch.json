@@ -1,0 +1,16 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "java",
+			"name": "Run",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.home.anydesk.AnyDesk",
+			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"args": "key=AnyDesk"
+		}
+	]
+}

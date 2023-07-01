@@ -1,0 +1,4 @@
+2023-06-07 15:47:55.913 [main] WARN  SETUP - writter replaced
+2023-06-07 15:47:55.919 [main] INFO   - [PrintWrapper{install:26}]: test replace from net.home.main.MainFrame.<clinit>(MainFrame.java:35)
+2023-06-07 15:47:56.015 [main] INFO   - init net.home.anydesk.AnyDesk
+2023-06-07 15:47:56.185 [main] INFO   - [MainFrame{load:116}]: [net.home.anydesk.AnyDesk@352c1b98]

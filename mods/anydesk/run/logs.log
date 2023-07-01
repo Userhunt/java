@@ -1,0 +1,3 @@
+2023-05-31 19:03:27.124 [main] WARN  SETUP - writter replaced
+2023-05-31 19:03:27.126 [main] INFO   - [PrintWrapper{install:26}]: test replace from net.home.main.MainFrame.<clinit>(MainFrame.java:36)
+2023-05-31 19:03:32.615 [pool-3-thread-1] INFO   - [AnyDesk$1{runExt:30}]: 0.025265286

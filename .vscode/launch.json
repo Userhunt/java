@@ -1,0 +1,37 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "java",
+			"name": "Run",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.home.main.MainFrame",
+			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\""
+		},
+		{
+			"type": "java",
+			"name": "Oba",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.home.main.MainFrame",
+			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"args": "key=OBA x=1675 print=true class=butcher_bleed display=['map','path','reward','base','run','step'] save=['screen'] preset=['box']"
+		},
+		{
+			"type": "java",
+			"name": "AnyDesk",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.home.main.MainFrame",
+			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"args": "key=AnyDesk"
+		}
+	]
+}

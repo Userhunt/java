@@ -1,0 +1,38 @@
+plugins {
+	id 'java-library'
+	id 'eclipse'
+	id 'application'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+	embed
+	compile.extendsFrom(embed)
+}
+
+dependencies {
+	api files(fileTree(dir: 'libs', include: ['*.jar']))
+}
+
+processResources {}
+
+tasks.register('move', Copy) {
+	group = 'custom'
+
+	delete '/../../run' + project.name + '.jar'
+
+	from layout.buildDirectory.file('libs/' + project.name + '.jar')
+	into "/../../run/mods"
+}
+
+jar {
+	manifest { 
+		attributes 	"Main-Class": project.mainClass
+	}
+}

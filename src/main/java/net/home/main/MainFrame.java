@@ -1,0 +1,126 @@
+package net.home.main;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.google.common.reflect.ClassPath;
+
+import net.w3e.base.ReflectionUtils;
+import net.w3e.base.api.window.FrameWin;
+import net.w3e.base.api.window.Inputs;
+
+public class MainFrame {
+
+	public static final Logger LOGGER = LogManager.getLogger("");
+
+	private static final FrameWin FRAME = new FrameWin("Base") {
+		@Override
+		public void open(JFrame frameWin) {
+			this.setLocation(frameWin.getLocation());
+		}
+	};
+
+	static {
+		net.w3e.base.PrintWrapper.install();
+		FRAME.setResizable(false);
+	}
+
+	private static final List<FrameObject> FRAMES = new ArrayList<>();
+
+	public static void register(FrameObject frame) {
+		if (frame != null) {
+			FRAMES.add(frame);
+		}
+	}
+
+	public static void main(String[] args) throws IOException {
+		run(args);
+	}
+
+	public static void run(String[] args) {
+		run(args, false);
+	}
+
+	private static void run(String[] args, boolean clear) {
+		if (clear) {
+			FRAMES.clear();
+		}
+		load();
+		init();
+
+		int x = 5;
+		int y = 5;
+		for (FrameObject frame : FRAMES) {
+			JButton button = new JButton(frame.getName());
+			button.addActionListener(FrameWin.onClick(() -> {
+				frame.run(FRAME, Collections.emptyList());
+			}));
+
+			button.setBounds(x, y, 150, 26);
+			y += 30;
+			
+			FRAME.add(button);
+		}
+
+		FRAME.setSize(300, y + 36);
+
+		FRAME.setVisible(true);
+
+		MainArgs.main(args, FRAME, FRAMES);
+	}
+
+	@SuppressWarnings("deprecation")
+	private static void load() {
+		try {
+			ClassPath classPath = ClassPath.from(MainFrame.class.getClassLoader());
+			List<String> classes = classPath.getAllClasses().stream().map(Object::toString).toList();
+			for (File file : new File("mods").listFiles()) {
+				if (file.getName().endsWith(".jar")) {
+					ZipFile zipFile = new ZipFile(file.toString());
+					ZipEntry entry = zipFile.getEntry("META-INF/MANIFEST.MF");
+					String[] array = new String(zipFile.getInputStream(entry).readAllBytes()).split("\n");
+					for (String string : array) {
+						if (string.startsWith("Main-Class: ")) {
+							string = string.substring(13, string.length() - 2);
+							LOGGER.info("init " + string);
+							if (classes.contains(string)) {
+								try {
+									Class<?> clazz = Class.forName(string);
+									if (ReflectionUtils.instaceOf(clazz, FrameObject.class)) {
+										FRAMES.add((FrameObject)clazz.newInstance());
+									}
+								} catch (Exception e) {;
+									e.printStackTrace();
+								}
+							}
+							break;
+						}
+					}
+					zipFile.close();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.out.println(FRAMES);
+	}
+
+	private static void init() {
+
+	}
+
+	public static final void sleep(int i) {
+		Inputs.sleep(i);
+	}
+}

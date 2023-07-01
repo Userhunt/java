@@ -1,0 +1,82 @@
+plugins {
+	id 'java-library'
+	id 'eclipse'
+	id 'application'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+	embed
+	compile.extendsFrom(embed)
+}
+
+dependencies {
+	implementation files(fileTree(dir: 'libs', include: ['*.jar']))
+	implementation files(fileTree(dir: 'run/mods', include: ['*.jar']))
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.16.0'
+	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.16.0'
+	implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.13.0'
+	implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.12'
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.10.1'
+	implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
+	implementation group: 'org.jsoup', name: 'jsoup', version:'1.15.4'
+	implementation group: 'org.jetbrains', name: 'annotations', version:'24.0.0'
+	//api group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
+}
+
+processResources {}
+
+tasks.register('fatJar', Jar) {
+	classifier = 'uber'
+	group = 'custom'
+
+	manifest.from jar.manifest
+	dependsOn configurations.runtimeClasspath
+
+	from {
+		duplicatesStrategy 'exclude'
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	} {
+		exclude "java/*"
+		exclude "javax/*"
+		exclude "META-INF/*.SF"
+		exclude "META-INF/*.DSA"
+		exclude "META-INF/*.RSA"
+	}
+	with jar
+}
+
+tasks.register('move', Copy) {
+	group = 'custom'
+
+	delete 'run/' + project.name + '-uber.jar'
+
+	from layout.buildDirectory.file('libs/' + project.name + '-uber.jar')
+	into "run"
+}
+
+tasks.register('done', Jar) {
+	group = 'custom'
+
+	//delete 'build/libs/' + project.name + '-uber.jar'
+
+	dependsOn 'fatJar'
+
+	finalizedBy 'move'
+}
+
+jar {
+	manifest { 
+		attributes 	"Main-Class": 'net.home.main.MainFrame'
+	}  
+
+	from {
+		//configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}

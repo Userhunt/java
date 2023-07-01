@@ -1,0 +1,1 @@
+start C:/Java/jdk-17.0.5/bin/javaw.exe -classpath mods/* -jar java-uber.jar args key=AnyDesk
