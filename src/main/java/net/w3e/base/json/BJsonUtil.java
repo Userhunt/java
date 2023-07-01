@@ -346,7 +346,7 @@ public class BJsonUtil extends GsonHelper {
 	}
 
 	public static final <T, V, R, F> String toString(Map<T, V> map, Function<Entry<T, V>, WTuple2<R, F>> function) {
-		Map<R, F> m = new HashMap<>();
+		Map<R, F> m = new LinkedHashMap<>();
 		for (Entry<T, V> entry : map.entrySet()) {
 			WTuple2<R, F> tuple = function.apply(entry);
 			m.put(tuple.a, tuple.b);
@@ -1242,7 +1242,6 @@ public class BJsonUtil extends GsonHelper {
 		return array;
 	}
 
-	@SuppressWarnings("deprecation")
 	public static final int[] toArray(int[] base, BJsonHelper helper, JsonObject jsonObject, String key, JsonDeserializationContext context) {
 		return toArray(base, helper.readList(jsonObject, key, new Integer[0], context, false));
 	}

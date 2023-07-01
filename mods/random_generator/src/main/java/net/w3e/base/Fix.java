@@ -6,9 +6,7 @@ import java.math.RoundingMode;
 public class Fix {
 
 	/*
-	BMatUtil.round -> Math.round
-	min()
-	max()
+
 	 */
 
 	public static double round(double value, int places) {

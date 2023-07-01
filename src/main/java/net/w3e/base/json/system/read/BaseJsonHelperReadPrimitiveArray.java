@@ -7,7 +7,6 @@ import net.w3e.base.json.BJsonHelper;
 import net.w3e.base.json.BJsonUtil;
 import net.w3e.base.json.system.BaseJsonHelper;
 
-@SuppressWarnings("deprecation")
 public interface BaseJsonHelperReadPrimitiveArray extends BaseJsonHelper {
 
 	static double[] readDoubleArrayUnsetSize(JsonObject j, String name, int length) {

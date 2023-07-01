@@ -42,7 +42,7 @@ public interface IProperty {
 	 * @return
 	 */
 	default double[] valueRange(double lvl, boolean nerfLvl, DoubleSupplier nextDouble) {
-		return this.valueRange().valueStepWithSpread(lvl, this.nerflvl(nerfLvl), nextDouble);
+		return this.valueRange().valueStepData(lvl, this.nerflvl(nerfLvl), nextDouble);
 	}
 
 	default double nerflvl(boolean nerfLvl) {

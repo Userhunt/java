@@ -6,7 +6,6 @@ import org.apache.logging.log4j.Logger;
 import net.w3e.base.json.BJsonHelper;
 import net.w3e.base.json.BJsonUtil;
 
-@SuppressWarnings("deprecation")
 public class ApiJsonHelper extends BJsonUtil implements BJsonHelper {
 
 	private final Logger logger;

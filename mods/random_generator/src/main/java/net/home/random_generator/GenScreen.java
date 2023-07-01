@@ -23,7 +23,7 @@ public class GenScreen extends FrameObject {
 		addButton("Iron Sword", this::ironSword, y, fw);
 		addButton("Golden Sword", this::goldenSword, y, fw);
 
-		fw.setSize(300, y.get() + 36);
+		fw.setSize(350, y.get() + 36);
 	}
 
 	private void woodenSword() {
@@ -55,5 +55,9 @@ public class GenScreen extends FrameObject {
 	public final String fastKey() {
 		return "rand_gen";
 	}
-	
+
+	@Override
+	public int[] version() {
+		return new int[]{1,0,0};
+	}
 }

@@ -12,10 +12,6 @@ import com.google.gson.JsonSerializer;
 
 import net.w3e.base.message.MessageUtil;
 
-/**
- * 12.04.23
- */
-@SuppressWarnings("deprecation")
 public abstract class W3EJsonSerializer<T> implements JsonDeserializer<T>, JsonSerializer<T> {
 
 	@Override

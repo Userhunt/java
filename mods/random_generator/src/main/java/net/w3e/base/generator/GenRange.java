@@ -100,9 +100,10 @@ public record GenRange(double min, double max, double... args) {
 		return clamp(value, this.min, this.max);
 	}
 
-	public final double[] valueStepWithSpread(double lvl, double minLvl, DoubleSupplier nextDouble) {
+	public final double[] valueStepData(double lvl, double minLvl, DoubleSupplier nextDouble) {
 		double[] result = new double[2];
 		result[0] = this.valueStep(lvl, minLvl);
+
 		double spread = this.arg(2, -1);
 		double spreadLvl = this.arg(3, -1);
 		if (spread > 0 || spreadLvl != 0) {
@@ -114,6 +115,7 @@ public record GenRange(double min, double max, double... args) {
 				result[1] = delta;
 			}
 		}
+
 		return result;
 	}
 

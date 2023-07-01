@@ -61,16 +61,17 @@ public class BMatUtil {
 	}
 
 	/* ======================== ROUND ======================== */
+	//(int)(v >= 0 ? (v + .5) : (v - .5))
 	public static final int round(float v) {
-		return (int)(v >= 0 ? (v + .5) : (v - .5));
+		return Math.round(v);
 	}
 
 	public static final int round(double v) {
-		return (int)(v >= 0 ? (v + .5) : (v - .5));
+		return (int)roundLong(v);
 	}
 
 	public static final long roundLong(double v) {
-		return (long)(v >= 0 ? (v + .5) : (v - .5));
+		return Math.round(v);
 	}
 
 	/* ======================== AVERAGE ======================== */
@@ -132,5 +133,47 @@ public class BMatUtil {
 
 	public static double clamp(double value, double min, double max) {
 		return value < min ? min : Math.min(value, max);
+	}
+
+	/* ======================== minMax ======================== */
+
+	public static final byte min(byte a, byte b) {
+		return (byte)Math.min(a, b);
+	}
+
+	public static final byte max(byte a, byte b) {
+		return (byte)Math.max(a, b);
+	}
+
+	public static final int min(int a, int b) {
+		return Math.min(a, b);
+	}
+
+	public static final int max(int a, int b) {
+		return Math.max(a, b);
+	}
+
+	public static final long min(long a, long b) {
+		return Math.min(a, b);
+	}
+
+	public static final long max(long a, long b) {
+		return Math.max(a, b);
+	}
+
+	public static final float min(float a, float b) {
+		return Math.min(a, b);
+	}
+
+	public static final float max(float a, float b) {
+		return Math.max(a, b);
+	}
+
+	public static final double min(double a, double b) {
+		return Math.min(a, b);
+	}
+
+	public static final double max(double a, double b) {
+		return Math.max(a, b);
 	}
 }

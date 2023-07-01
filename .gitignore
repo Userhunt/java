@@ -5,6 +5,6 @@
 **/mods/*.jar
 backup/
 run/java-uber.jar
-run/logs.log
 
 .classpath
+*.log

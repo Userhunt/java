@@ -14,6 +14,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 import net.home.main.MainFrame;
 import net.w3e.base.collection.IdentityLinkedHashMap;
 import net.w3e.base.generator.collection.RandomCollection;
+import net.w3e.base.json.BJsonUtil;
 
 public class RandomGenerator {
 
@@ -75,6 +76,7 @@ public class RandomGenerator {
 		private final void value(RandomGeneratorExt ext) {
 			title("value");
 			info(ext.values);
+			info(BJsonUtil.toString(ext.values));
 		}
 
 		private final void error(Object object) {

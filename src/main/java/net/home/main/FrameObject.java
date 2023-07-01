@@ -47,14 +47,14 @@ public abstract class FrameObject {
 	}
 
 	public boolean displayVersion() {
-		return false;
+		return true;
 	}
 
 	private final String versionString() {
-		if (displayVersion()) {
+		if (!displayVersion()) {
 			return "";
 		} else {
-			return MainFrame.version(MainFrame.version()) + "#" + MainFrame.version(this.version());
+			return " " + MainFrame.version(MainFrame.version()) + "#" + MainFrame.version(this.version());
 		}
 	}
 
