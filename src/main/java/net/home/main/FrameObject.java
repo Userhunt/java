@@ -11,7 +11,7 @@ public abstract class FrameObject {
 	
 	protected final FrameWin run(FrameWin parent, List<String> args) {
 		parent.setVisible(false);
-		FrameWin fw = new FrameWin(getName(), parent, true) {
+		FrameWin fw = new FrameWin(getName() + versionString(), parent, true) {
 			@Override
 			protected void onCloseIns() {
 				FrameObject.this.onClose();
@@ -45,4 +45,18 @@ public abstract class FrameObject {
 	public String fastKey() {
 		return getName();
 	}
+
+	public boolean displayVersion() {
+		return false;
+	}
+
+	private final String versionString() {
+		if (displayVersion()) {
+			return "";
+		} else {
+			return MainFrame.version(MainFrame.version()) + "#" + MainFrame.version(this.version());
+		}
+	}
+
+	public abstract int[] version();
 }

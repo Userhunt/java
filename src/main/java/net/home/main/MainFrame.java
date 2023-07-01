@@ -3,8 +3,10 @@ package net.home.main;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -24,7 +26,23 @@ public class MainFrame {
 
 	public static final Logger LOGGER = LogManager.getLogger("");
 
-	private static final FrameWin FRAME = new FrameWin("Base") {
+	public static final int[] version() {
+		return new int[]{1,0,0};
+	}
+
+	public static final String version(int[] version) {
+		OfInt iterator = Arrays.stream(version).iterator();
+		StringBuilder builder = new StringBuilder();
+		while(iterator.hasNext()) {
+			builder.append(iterator.nextInt());
+			if (iterator.hasNext()) {
+				builder.append(".");
+			}
+		}
+		return builder.toString();
+	}
+
+	private static final FrameWin FRAME = new FrameWin("Base " + version(version())) {
 		@Override
 		public void open(JFrame frameWin) {
 			this.setLocation(frameWin.getLocation());
@@ -83,8 +101,7 @@ public class MainFrame {
 	@SuppressWarnings("deprecation")
 	private static void load() {
 		try {
-			ClassPath classPath = ClassPath.from(MainFrame.class.getClassLoader());
-			List<String> classes = classPath.getAllClasses().stream().map(Object::toString).toList();
+			List<String> classes = ClassPath.from(MainFrame.class.getClassLoader()).getAllClasses().stream().map(Object::toString).toList();
 			for (File file : new File("mods").listFiles()) {
 				if (file.getName().endsWith(".jar")) {
 					ZipFile zipFile = new ZipFile(file.toString());
@@ -113,7 +130,6 @@ public class MainFrame {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println(FRAMES);
 	}
 
 	private static void init() {
