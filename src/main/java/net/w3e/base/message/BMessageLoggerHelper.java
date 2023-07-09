@@ -2,11 +2,8 @@ package net.w3e.base.message;
 
 import org.apache.logging.log4j.Logger;
 
-import net.w3e.base.json.BJsonUtil;
+import net.w3e.base.BStringUtil;
 
-/**
- * 12.04.23
- */
 public class BMessageLoggerHelper {
 
 	protected final BMessageLogger logger;
@@ -20,7 +17,7 @@ public class BMessageLoggerHelper {
 	}
 
 	public final void info(Object object) {
-		MessageUtil.info(logger.create(), BJsonUtil.toString(object));
+		MessageUtil.info(logger.create(), BStringUtil.toString(object));
 	}
 
 	public final void warn(String string) {
@@ -28,7 +25,7 @@ public class BMessageLoggerHelper {
 	}
 
 	public final void warn(Object object) {
-		MessageUtil.warn(logger.create(), BJsonUtil.toString(object));
+		MessageUtil.warn(logger.create(), BStringUtil.toString(object));
 	}
 
 	public final void debug(String string) {
@@ -36,7 +33,7 @@ public class BMessageLoggerHelper {
 	}
 
 	public final void debug(Object object) {
-		MessageUtil.debug(logger.create(), BJsonUtil.toString(object));
+		MessageUtil.debug(logger.create(), BStringUtil.toString(object));
 	}
 
 	public final void error(String string) {
@@ -44,7 +41,7 @@ public class BMessageLoggerHelper {
 	}
 
 	public final void error(Object object) {
-		MessageUtil.error(logger.create(), BJsonUtil.toString(object));
+		MessageUtil.error(logger.create(), BStringUtil.toString(object));
 	}
 }
 

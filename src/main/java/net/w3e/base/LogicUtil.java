@@ -62,4 +62,8 @@ public class LogicUtil {
 			return null;
 		}
 	}
+
+	public static final boolean valueOrDefault(Boolean value, boolean def) {
+		return value != null ? value : def;
+	}
 }

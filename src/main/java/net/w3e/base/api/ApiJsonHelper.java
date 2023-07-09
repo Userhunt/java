@@ -11,7 +11,11 @@ public class ApiJsonHelper extends BJsonUtil implements BJsonHelper {
 	private final Logger logger;
 
 	public ApiJsonHelper(String logger) {
-		this.logger = LogManager.getLogger(logger);
+		this(LogManager.getLogger(logger));
+	}
+
+	public ApiJsonHelper(Logger logger) {
+		this.logger = logger;
 	}
 
 	@Override

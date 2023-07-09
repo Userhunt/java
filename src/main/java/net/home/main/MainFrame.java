@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.PrimitiveIterator.OfInt;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -16,15 +17,17 @@ import javax.swing.JFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.google.common.reflect.ClassPath;
-
 import net.w3e.base.ReflectionUtils;
+import net.w3e.base.api.ApiJsonHelper;
 import net.w3e.base.api.window.FrameWin;
 import net.w3e.base.api.window.Inputs;
+import net.w3e.base.jar.JarUtil;
 
 public class MainFrame {
 
+	public static final Random RANDOM = new Random();
 	public static final Logger LOGGER = LogManager.getLogger("");
+	public static final ApiJsonHelper JSON_HELPER = new ApiJsonHelper(LOGGER);
 
 	public static final int[] version() {
 		return new int[]{1,0,0};
@@ -87,11 +90,11 @@ public class MainFrame {
 
 			button.setBounds(x, y, 150, 26);
 			y += 30;
-			
+
 			FRAME.add(button);
 		}
 
-		FRAME.setSize(300, y + 36);
+		FRAME.setSize(300, y + 41);
 
 		FRAME.setVisible(true);
 
@@ -100,18 +103,17 @@ public class MainFrame {
 
 	@SuppressWarnings("deprecation")
 	private static void load() {
-		try {
-			List<String> classes = ClassPath.from(MainFrame.class.getClassLoader()).getAllClasses().stream().map(Object::toString).toList();
-			for (File file : new File("mods").listFiles()) {
-				if (file.getName().endsWith(".jar")) {
-					ZipFile zipFile = new ZipFile(file.toString());
-					ZipEntry entry = zipFile.getEntry("META-INF/MANIFEST.MF");
-					String[] array = new String(zipFile.getInputStream(entry).readAllBytes()).split("\n");
-					for (String string : array) {
-						if (string.startsWith("Main-Class: ")) {
-							string = string.substring(13, string.length() - 2);
-							LOGGER.info("init " + string);
-							if (classes.contains(string)) {
+		if (!JarUtil.isDebug()) {
+			try {
+				for (File file : new File("mods").listFiles()) {
+					if (file.getName().endsWith(".jar")) {
+						ZipFile zipFile = new ZipFile(file.toString());
+						ZipEntry entry = zipFile.getEntry("META-INF/MANIFEST.MF");
+						String[] array = new String(zipFile.getInputStream(entry).readAllBytes()).split("\n");
+						for (String string : array) {
+							if (string.startsWith("Main-Class: ")) {
+								string = string.substring(13, string.length() - 2);
+								LOGGER.info("init " + string);
 								try {
 									Class<?> clazz = Class.forName(string);
 									if (ReflectionUtils.instaceOf(clazz, FrameObject.class)) {
@@ -120,20 +122,20 @@ public class MainFrame {
 								} catch (Exception e) {;
 									e.printStackTrace();
 								}
+								break;
 							}
-							break;
 						}
+						zipFile.close();
 					}
-					zipFile.close();
 				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
 	private static void init() {
-
+		register(new TestScreen());
 	}
 
 	public static final void sleep(int i) {

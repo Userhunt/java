@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.StackLocatorUtil;
 
-import net.w3e.base.json.BJsonUtil;
+import net.w3e.base.BStringUtil;
 
 /**
  * 12.04.23
@@ -78,7 +78,7 @@ public class MessageUtil {
 	}
 
 	public static void error(BMessageLogger logger, Object... object) {
-		logger.error(BJsonUtil.toString(object));
+		logger.error(BStringUtil.toString(object));
 	}
 
 	public static void warn(BMessageLogger logger, String string) {

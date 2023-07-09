@@ -15,6 +15,15 @@ public class IdentityLinkedHashMap<K, T> extends AbstractMap<K,T> {
 	private static final Equivalence<Object> equivalence = Equivalence.identity();
 	private final IdentityLinkedHashSet set = new IdentityLinkedHashSet();
 
+	public IdentityLinkedHashMap() {}
+
+	public IdentityLinkedHashMap(Map<? extends K, ? extends T> m) {
+		putAll(m);
+		for (Entry<? extends K, ? extends T> entry : m.entrySet()) {
+			this.put(entry.getKey(), entry.getValue());
+		}
+	}
+
 	@Override
 	public Set<Entry<K, T>> entrySet() {
 		return set;
@@ -22,7 +31,7 @@ public class IdentityLinkedHashMap<K, T> extends AbstractMap<K,T> {
 
 	@Override
 	public T put(K k, T t) {
-		return set.innerMap.put( equivalence.wrap(k), t);
+		return set.innerMap.put(equivalence.wrap(k), t);
 	}
 
 	@Override
@@ -38,6 +47,11 @@ public class IdentityLinkedHashMap<K, T> extends AbstractMap<K,T> {
 	@Override
 	public T get(Object arg0) {
 		return set.innerMap.get(equivalence.wrap(arg0));
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return new IdentityLinkedHashMap<>(this);
 	}
 
 	public class MyEntry implements Entry<K, T> {

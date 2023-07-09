@@ -1,17 +1,18 @@
 package net.w3e.base.collection;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.UnaryOperator;
 
 import org.apache.logging.log4j.util.TriConsumer;
 
-/**
- * 12.04.23
- */
 public class ArraySet<E> extends ArrayList<E> implements Set<E> {
 
 	public ArraySet(int initialCapacity) {
@@ -26,7 +27,11 @@ public class ArraySet<E> extends ArrayList<E> implements Set<E> {
 		super(c);
 	}
 
-	private final boolean test(E e) {
+	protected final void place(E e) {
+		super.add(e);
+	}
+
+	protected final boolean test(E e) {
 		return e == null || contains(e);
 	}
 
@@ -39,7 +44,7 @@ public class ArraySet<E> extends ArrayList<E> implements Set<E> {
 	}
 
 	@Override
-	public void add(int index, E element) {
+	public final void add(int index, E element) {
 		if (test(element)) {
 			return;
 		}
@@ -47,7 +52,7 @@ public class ArraySet<E> extends ArrayList<E> implements Set<E> {
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends E> c) {
+	public final boolean addAll(Collection<? extends E> c) {
 		List<E> collect = new ArraySet<>();
 		for (E e : c) {
 			if (test(e)) {
@@ -59,7 +64,7 @@ public class ArraySet<E> extends ArrayList<E> implements Set<E> {
 	}
 
 	@Override
-	public boolean addAll(int index, Collection<? extends E> c) {
+	public final boolean addAll(int index, Collection<? extends E> c) {
 		List<E> collect = new ArraySet<>();
 		for (E e : c) {
 			if (test(e)) {
@@ -71,7 +76,7 @@ public class ArraySet<E> extends ArrayList<E> implements Set<E> {
 	}
 
 	@Override
-	public E set(int index, E element) {
+	public final E set(int index, E element) {
 		if (test(element)) {
 			return null;
 		}
@@ -79,14 +84,14 @@ public class ArraySet<E> extends ArrayList<E> implements Set<E> {
 	}
 
 	@Override
-	public void replaceAll(UnaryOperator<E> operator) {
+	public final void replaceAll(UnaryOperator<E> operator) {
 		List<E> list = new ArrayList<>(this);
 		list.replaceAll(operator);
 		clear();
 		addAll(list);
 	}
 
-	public void forEach(BiConsumer<Integer, E> action) {
+	public final void forEach(BiConsumer<Integer, E> action) {
 		ArraySet<E> copy = new ArraySet<>(this);
 		int size = copy.size();
 		for (int i = 0; i < size; i++) {
@@ -94,7 +99,7 @@ public class ArraySet<E> extends ArrayList<E> implements Set<E> {
 		}
 	}
 
-	public void forEach(TriConsumer<ArraySet<E>, Integer, E> action) {
+	public final void forEach(TriConsumer<ArraySet<E>, Integer, E> action) {
 		ArraySet<E> copy = new ArraySet<>(this);
 		int size = copy.size();
 		for (int i = 0; i < size; i++) {
@@ -129,9 +134,32 @@ public class ArraySet<E> extends ArrayList<E> implements Set<E> {
 	}
 
 	@Override
-	@Deprecated
-	public List<E> subList(int fromIndex, int toIndex) {
-		return super.subList(fromIndex, toIndex);
+	public final List<E> subList(int fromIndex, int toIndex) {
+		throw new UnsupportedOperationException();
+	}
+
+	public final void shuffle() {
+		shuffle(new Random());
+	}
+
+	public final void shuffle(Random random) {
+		List<E> list = new ArrayList<>(this);
+		Collections.shuffle(list, random);
+		this.clear();
+		for (E e : list) {
+			this.place(e);
+		}
+	}
+
+	@Override
+	@SuppressWarnings({"unchecked", "rawtypes"})
+	public final void sort(Comparator<? super E> c) {
+		Object[] a = this.toArray();
+		Arrays.sort(a, (Comparator) c);
+		this.clear();
+		for (Object object : a) {
+			this.place((E)object);
+		}
 	}
 
 	public static class ArraySetStrict<E> extends ArraySet<E> {

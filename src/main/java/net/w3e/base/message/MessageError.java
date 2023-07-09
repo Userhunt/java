@@ -3,11 +3,8 @@ package net.w3e.base.message;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.StackLocatorUtil;
 
-import net.w3e.base.json.BJsonUtil;
+import net.w3e.base.BStringUtil;
 
-/**
- * 12.04.23
- */
 public class MessageError {
 
 	private final String text;
@@ -44,7 +41,7 @@ public class MessageError {
 		Object[] realArg = new Object[arg.length];
 		int i = 0;
 		for (Object object : arg) {
-			realArg[i] = BJsonUtil.toString(object);
+			realArg[i] = BStringUtil.toString(object);
 			i++;
 		}
 		return String.format(text, arg);

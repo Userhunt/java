@@ -38,6 +38,7 @@ import org.apache.logging.log4j.util.StackLocatorUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import net.w3e.base.BStringUtil;
 import net.w3e.base.PrintWrapper;
 import net.w3e.base.ReflectionUtils;
 import net.w3e.base.api.GsonHelper;
@@ -65,8 +66,13 @@ public class BJsonUtil extends GsonHelper {
 	}
 
 	public static final BMessageLoggerHelper MSG_UTIL() {
-		return MSG_UTIL();
+		return DEFAULT_MSG;
 	}
+
+	public static final Logger LOGGER() {
+		return DEFAULT_LOGGER;
+	}
+
 
 	private static final List<Object> subMessages = new ArrayList<>();
 
@@ -232,195 +238,84 @@ public class BJsonUtil extends GsonHelper {
 
 	/*========================================= toString ======================================*/
 
-	private static final Map<Class<?>, Function<Object, String>> TO_STRING = new LinkedHashMap<>();
-
-	@SuppressWarnings("unchecked")
+	@Deprecated
 	public static final <T> boolean registerToString(Class<T> cl, Function<T, String> function) {
-		if (TO_STRING.containsKey(cl)) {
-			return false;
-		} else {
-			TO_STRING.put(cl, (Function<Object, String>)function);
-			return true;
-		}
+		return BStringUtil.registerToString(cl, function);
 	}
 
-	static {
-		registerToString(String.class, (obj) -> obj);
-	}
-
-	private static boolean customString;
-
+	@Deprecated
 	public static final String applyCustomString(@NotNull Object object) {
-		if (customString) {
-			Function<Object, String> function = TO_STRING.get(object.getClass());
-			if (function != null) {
-				return function.apply(object);
-			}
-		}
-		return null;
+		return BStringUtil.applyCustomString(object);
 	}
 
+	@Deprecated
 	public static final String toString(Object object, boolean custom) {
-		customString = custom;
-		String string = toString(object);
-		customString = false;
-		return string;
+		return BStringUtil.toString(object, custom);
 	}
 
+	@Deprecated
 	public static String toString(Object object) {
-		if (object == null) {
-			return "null";
-		}
-		if (customString) {
-			Function<Object, String> function = TO_STRING.get(object.getClass());
-			if (function != null) {
-				return function.apply(object);
-			}
-		}
-		if (object instanceof Collection) {
-			return toString((Collection<?>)object);
-		}
-		if (object instanceof Object[]) {
-			return toString((Object[])object);
-		}
-		if (object.getClass().isArray()) {
-			if (object instanceof boolean[]) {
-				return toString((boolean[])object);
-			}
-			if (object instanceof byte[]) {
-				return toString((byte[])object);
-			}
-			if (object instanceof short[]) {
-				return toString((short[])object);
-			}
-			if (object instanceof int[]) {
-				return toString((int[])object);
-			}
-			if (object instanceof long[]) {
-				return toString((long[])object);
-			}
-			if (object instanceof float[]) {
-				return toString((float[])object);
-			}
-			if (object instanceof double[]) {
-				return toString((double[])object);
-			}
-		}
-		if (object instanceof Map) {
-			return toString((Map<?, ?>)object);
-		}
-
-		return object.toString();
+		return BStringUtil.toString(object);
 	}
 
+	@Deprecated
 	public static final <T> String toString(Collection<T> collection) {
-		return toString(collection, BJsonUtil::toString);
+		return BStringUtil.toString(collection);
 	}
 
+	@Deprecated
 	public static final <T> String toString(Collection<T> collection, Function<T, String> function) {
-		if (collection == null) {
-			return null;
-		}
-		Iterator<T> iterator = collection.iterator();
-		String str = "[";
-		while (iterator.hasNext()) {
-			try {
-				String next = function.apply(iterator.next());
-				if (next == null) {
-					str += "null";
-				} else {
-					str += next;
-				}
-				if (iterator.hasNext()) {
-					str += ",";
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return str + "]";
+		return BStringUtil.toString(collection, function);
 	}
 
+	@Deprecated
 	public static final <T, V> String toString(Map<T, V> map) {
-		return toString(map, (e) -> new WTuple2<>(e.getKey(), e.getValue()));
+		return BStringUtil.toString(map);
 	}
 
+	@Deprecated
 	public static final <T, V, R, F> String toString(Map<T, V> map, Function<Entry<T, V>, WTuple2<R, F>> function) {
-		Map<R, F> m = new LinkedHashMap<>();
-		for (Entry<T, V> entry : map.entrySet()) {
-			WTuple2<R, F> tuple = function.apply(entry);
-			m.put(tuple.a, tuple.b);
-		}
-		String str = "{";
-		Iterator<Entry<R, F>> iterator = m.entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<R, F> next = iterator.next();
-			str += toString(next.getKey()) + ":" + toString(next.getValue());
-			if (iterator.hasNext()) {
-				str += ",";
-			}
-		}
-		return str + "}";
+		return BStringUtil.toString(map, function);
 	}
 
+	@Deprecated
 	public static final String toString(Object[] objects) {
-		String str = "[";
-		Iterator<Object> iterator = Arrays.asList(objects).iterator();
-		while (iterator.hasNext()) {
-			str += toString(iterator.next());
-			if (iterator.hasNext()) {
-				str += ",";
-			}
-		}
-		return str + "]";
+		return BStringUtil.toString(objects);
 	}
 
+	@Deprecated
 	public static final String toString(boolean[] objects) {
-		List<Boolean> output = new ArrayList<Boolean>();
-		for (boolean value : objects) {
-			output.add(value);
-		}
-
-		return toString(output);
+		return BStringUtil.toString(objects);
 	}
 
+	@Deprecated
 	public static final String toString(byte[] objects) {
-		List<Byte> output = new ArrayList<Byte>();
-		for (byte value : objects) {
-			output.add(value);
-		}
-
-		return toString(output);
+		return BStringUtil.toString(objects);
 	}
 
+	@Deprecated
 	public static final String toString(short[] objects) {
-		List<Short> output = new ArrayList<Short>();
-		for (short value : objects) {
-			output.add(value);
-		}
-
-		return toString(output);
+		return BStringUtil.toString(objects);
 	}
 
+	@Deprecated
 	public static final String toString(int[] objects) {
-		return toString(Arrays.stream(objects).boxed().collect(Collectors.toList()));
+		return BStringUtil.toString(objects);
 	}
 
+	@Deprecated
 	public static final String toString(long[] objects) {
-		return toString(Arrays.stream(objects).boxed().collect(Collectors.toList()));
+		return BStringUtil.toString(objects);
 	}
 
+	@Deprecated
 	public static final String toString(float[] objects) {
-		List<Float> output = new ArrayList<Float>();
-		for (float value : objects) {
-			output.add(value);
-		}
-
-		return toString(output);
+		return BStringUtil.toString(objects);
 	}
 
+	@Deprecated
 	public static final String toString(double[] objects) {
-		return toString(Arrays.stream(objects).boxed().collect(Collectors.toList()));
+		return BStringUtil.toString(objects);
 	}
 
 	/*========================================= Converter ======================================*/

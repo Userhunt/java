@@ -57,7 +57,7 @@ public class FileUtil {
 	public static void writeString(File file, String string) {
 		FileWriter writter = null;
 		try {
-			file.getParentFile().mkdirs();
+			new File(file.getAbsolutePath()).getParentFile().mkdirs();
 			writter = new FileWriter(file);
 			writter.write(string);
 		} catch (IOException e) {
@@ -182,7 +182,7 @@ public class FileUtil {
 				return true;
 			}
 		}
-				return false;
+		return false;
 	}
 
 	public static File readAndCopyFromJarFile(Logger logger, String folder, String path) {
