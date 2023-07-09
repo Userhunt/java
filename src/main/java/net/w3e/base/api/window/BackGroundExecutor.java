@@ -20,7 +20,7 @@ public class BackGroundExecutor extends FrameWin {
 	private final boolean interrupt;
 	private final Execute run;
 	private final WaitTimer timer;
-	
+
 	public BackGroundExecutor(String frameTitle, @NotNull FrameWin parent, boolean interrupt, @NotNull Execute run) {
 		super(frameTitle, parent, false);
 		parent.setVisible(false);
@@ -107,5 +107,5 @@ public class BackGroundExecutor extends FrameWin {
 	public static interface Execute {
 		int run(int old);
 	}
-	
+
 }

@@ -2,9 +2,6 @@ package net.w3e.base.collection.cache;
 
 import net.w3e.base.collection.ArraySet;
 
-/**
- * 15.04.23
- */
 public abstract class CacheKeys<T> extends AbstractCacheKeys<T, CacheKeys<T>> {
 
 	private final ArraySet<T> keys = new ArraySet<>();

@@ -69,12 +69,7 @@ public abstract class PointType {
 
 	protected PointType() {
 		if (load()) {
-			List<Path> list = JarUtil.getJarFolder("oba/" + getName());
-			for (Path path : list) {
-				String key = path.toString();
-				BufferedImage img = ImageUtil.read(JarUtil.getResourceAsStream(path.toString()));
-				images.put(key, img);
-			}
+			this.load(getName(), this.images);
 		}
 	}
 
@@ -95,8 +90,7 @@ public abstract class PointType {
 		List<Path> list = JarUtil.getJarFolder("oba/" + name);
 		for (Path path : list) {
 			String key = path.toString();
-			BufferedImage img = ImageUtil.read(JarUtil.getResourceAsStream(path.toString()));
-			images.put(key, img);
+			images.put(key, ImageUtil.read(JarUtil.getResourceAsStream(key)));
 		}
 	}
 
@@ -396,14 +390,14 @@ public abstract class PointType {
 			updateAround(point, -1, 0);
 			updateAround(point, 1, 0);
 		}
-	
+
 		private void updateAround(Point point, int dX, int dY) {
 			Point other = PointMap.get(point.x + dX, point.y + dY);
 			if (other.getType() != PointType.UNKNOWN && !other.getType().playerCanMove() && other.test(this)) {
 				other.set(EMPTY);
 			}
 		}
-	
+
 		@Override
 		public boolean canMove() {
 			return false;
@@ -543,7 +537,7 @@ public abstract class PointType {
 			return true;
 		}
 	}
-	
+
 	public static class PointBlacksmithType extends PointInterractiveType {
 		@Override
 		public double getReward(int x, int y) {

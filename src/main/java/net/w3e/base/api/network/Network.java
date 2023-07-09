@@ -54,7 +54,7 @@ public class Network {
 		NetworkSender oldSender = SENDER;
 		try {
 			InetSocketAddress socket = new InetSocketAddress(adress, PORT);
-			
+
 			RESIVER = new NetworkResiver(socket);
 			SENDER = new NetworkSender(socket);
 
@@ -70,7 +70,6 @@ public class Network {
 			e.printStackTrace();
 		}
 	}
-	
 
 	public static void init() {
 		set("0.0.0.0");
@@ -85,7 +84,7 @@ public class Network {
 		try {
 			long dl = System.currentTimeMillis() + 500;
 			LockSupport.parkUntil(dl);
-	
+
 			Thread t = new Thread() {
 				@Override
 				public void run() {
@@ -95,7 +94,7 @@ public class Network {
 							SENDER.send(new Packet());
 							SENDER.send(new Packet());
 							SENDER.send(new Packet());
-	
+
 							LockSupport.parkUntil(dl);
 						}
 					} catch (Exception e) {
@@ -140,7 +139,7 @@ public class Network {
 						try {
 							if (key.isAcceptable()) {
 								SocketChannel client = channel.accept();
-	
+
 								client.configureBlocking(false);
 								client.register(selector, SelectionKey.OP_READ);
 								Socket socket = client.socket();
@@ -159,7 +158,7 @@ public class Network {
 
 								String string = new String(buf.array());
 								string = string.substring(0, string.lastIndexOf("}") + 1);
-								
+
 								JsonReader jsonReader = new JsonReader(new StringReader(string));
 								jsonReader.setLenient(true);
 								List<PacketHandler> list = new ArrayList<>();
@@ -335,7 +334,7 @@ public class Network {
 		ByteBuffer bb = ByteBuffer.wrap("Tick".getBytes());
 		sc.write(bb);
 	}
-	
+
 	private static void testNetC() throws Exception {
 		Thread t = new Thread() {
 			@Override

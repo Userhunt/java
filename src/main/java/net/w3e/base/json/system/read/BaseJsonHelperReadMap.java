@@ -12,7 +12,7 @@ import net.w3e.base.json.BJsonUtil;
 import net.w3e.base.json.system.BaseJsonHelper;
 
 public interface BaseJsonHelperReadMap extends BaseJsonHelper {
-	
+
 	default <T, V, R extends Map<T, V>> R readMap(R map, JsonObject j, String key, Function<String, T> keyFunction, Function<JsonElement, V> valueFunction) {
 		return this.readMap(map, j, key, keyFunction, valueFunction, true);
 	}

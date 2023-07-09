@@ -61,12 +61,11 @@ public class WaitTimer extends Timer {
 			this.sleep += i;
 		}
 	}
-	
+
 	public final boolean isStop() {
 		return this.task == null || this.task.isStop();
 	}
 
-	
 
 
 	public final void stop() {

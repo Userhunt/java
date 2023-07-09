@@ -71,7 +71,6 @@ public class RandomCollection<E> {
 			if (value != remove) {
 				add(weight, remove);
 			}
-			
 		}
 
 		return true;

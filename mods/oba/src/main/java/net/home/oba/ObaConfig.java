@@ -45,7 +45,7 @@ public class ObaConfig {
 		}
 	})
 	.build();
-	
+
 	public static void main(List<String> args, OneBitAdventure frame) {
 		MainArgs.main(ARGS, args, frame);
 	}
@@ -77,7 +77,7 @@ public class ObaConfig {
 	static {
 		setPlayer(Player.unset);
 	}
-	
+
 	public static void setPlayer(String player) {
 		Player pl;
 		try {
@@ -119,7 +119,7 @@ public class ObaConfig {
 	}
 
 	private static byte DISPLAY = 0;
-	
+
 	public static void setDisplay(Display display, boolean mode) {
 		DISPLAY = PackUtil.set(DISPLAY, display.i, mode);
 	}
@@ -142,7 +142,7 @@ public class ObaConfig {
 	}
 
 	private static byte SAVE = 0;
-	
+
 	public static void setSave(Save save, boolean mode) {
 		SAVE = PackUtil.set(SAVE, save.i, mode);
 	}

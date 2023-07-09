@@ -17,7 +17,7 @@ public class KeyboardNetwork extends Packet {
 	public static void register(Consumer<KeyboardNetwork> function) {
 		register(0, function);
 	}
-	
+
 	public static void register(int i, Consumer<KeyboardNetwork> function) {
 		HANDLERS.put(i, function);
 	}

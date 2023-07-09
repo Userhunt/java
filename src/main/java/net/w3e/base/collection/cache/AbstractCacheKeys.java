@@ -8,9 +8,6 @@ import net.w3e.base.collection.ArraySet;
 import net.w3e.base.json.BJsonUtil;
 import net.w3e.base.message.MessageUtil;
 
-/**
- * 15.04.23
- */
 public abstract class AbstractCacheKeys<T, V> {
 
 	protected static boolean log = true;

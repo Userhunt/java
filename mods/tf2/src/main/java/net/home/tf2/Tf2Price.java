@@ -28,7 +28,7 @@ public record Tf2Price(Tf2RegistryObject reg, float weapon, float kit, float pro
 	public int compareTo(Tf2Price o) {
 		return (int)((o.profit - this.profit) * 100 + 0.5f);
 	}
-	
+
 	public static Tf2Price get(HttpClient client, Tf2RegistryObject reg) {
 		URI uri = null;
 		try {

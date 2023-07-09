@@ -25,7 +25,7 @@ public class ObaStep {
 			NUMBERS.put(i, ImageUtil.read(JarUtil.getResourceAsStream("oba/numbers/" + i + ".png")));
 		}
 	}
-	
+
 	private int timer;
 	private BufferedImage image;
 	private int value = 0;

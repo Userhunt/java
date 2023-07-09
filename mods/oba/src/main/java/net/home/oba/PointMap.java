@@ -241,7 +241,7 @@ public class PointMap {
 		for (int i = 0; i < 16; i++) {
 			builders.add(new StringBuilder());
 		}
-		
+
 		printReward(1, builders);
 		for (StringBuilder builder : builders) {
 			builder.append(" || ");
@@ -296,7 +296,7 @@ public class PointMap {
 					}
 				}
 			}
-			
+
 			builder.append(" ");
 		});
 	}
@@ -350,7 +350,7 @@ public class PointMap {
 				OneBitAdventure.MSG_UTIL.warn("loop, cant find step");
 				break;
 			}
-		}		
+		}
 	}
 
 	private static void fillRewardUp(boolean second) {

@@ -6,7 +6,7 @@ import java.util.List;
 import it.unimi.dsi.fastutil.ints.Int2ObjectAVLTreeMap;
 
 public class StopEvent {
-	
+
 	private static final Int2ObjectAVLTreeMap<List<Runnable>> LIST = new Int2ObjectAVLTreeMap<>();
 
 	public static void register(Runnable run) {
