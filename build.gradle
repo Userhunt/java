@@ -18,7 +18,6 @@ configurations {
 
 dependencies {
 	implementation files(fileTree(dir: 'libs', include: ['*.jar']))
-	implementation files(fileTree(dir: 'run/mods', include: ['*.jar']))
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.16.0'
 	implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.16.0'
 	implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.13.0'
@@ -27,17 +26,15 @@ dependencies {
 	implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
 	implementation group: 'org.jsoup', name: 'jsoup', version:'1.15.4'
 	implementation group: 'org.jetbrains', name: 'annotations', version:'24.0.0'
-	//api group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 }
 
 processResources {}
 
-tasks.register('fatJar', Jar) {
+tasks.register('uber', Jar) {
 	classifier = 'uber'
 	group = 'custom'
 
 	manifest.from jar.manifest
-	dependsOn configurations.runtimeClasspath
 
 	from {
 		duplicatesStrategy 'exclude'
@@ -52,22 +49,47 @@ tasks.register('fatJar', Jar) {
 	with jar
 }
 
+tasks.register('sources', Jar) {
+	classifier = 'sources'
+	group = 'custom'
+
+	manifest.from jar.manifest
+	from sourceSets.main.allSource
+
+	with jar
+}
+
+def key = "";
+
 tasks.register('move', Copy) {
 	group = 'custom'
 
-	delete 'run/' + project.name + '-uber.jar'
+	delete 'run/' + project.name + '-' + key + '.jar'
 
-	from layout.buildDirectory.file('libs/' + project.name + '-uber.jar')
+	from layout.buildDirectory.file('libs/' + project.name + '-' + key + '.jar')
 	into "run"
 }
 
-tasks.register('done', Jar) {
+tasks.register('doneUber', Jar) {
 	group = 'custom'
 
-	//delete 'build/libs/' + project.name + '-uber.jar'
+	key = 'uber'
 
-	dependsOn 'fatJar'
+	finalizedBy 'doneRun'
+}
 
+tasks.register('doneSources', Jar) {
+	group = 'custom'
+
+	key = 'sources'
+
+	finalizedBy 'doneRun'
+}
+
+tasks.register('doneRun', Jar) {
+	group = 'custom'
+
+	dependsOn key
 	finalizedBy 'move'
 }
 
@@ -77,6 +99,10 @@ jar {
 	}  
 
 	from {
-		//configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+		duplicatesStrategy 'exclude'
 	}
+}
+
+java {
+    withSourcesJar()
 }
