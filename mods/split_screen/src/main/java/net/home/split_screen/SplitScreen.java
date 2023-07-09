@@ -26,5 +26,9 @@ public class SplitScreen extends FrameObject {
 	public final String fastKey() {
 		return "split_screen";
 	}
-	
+
+	@Override
+	public int[] version() {
+		return new int[]{1,0,0};
+	}
 }

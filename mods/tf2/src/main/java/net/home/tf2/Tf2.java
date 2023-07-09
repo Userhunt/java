@@ -113,7 +113,7 @@ public class Tf2 extends FrameObject {
 			}
 		}
 	}
-	
+
 	private final void initButtons(FrameWin fw) {
 		fw.setSize(fw.getWidth(), GROUPS.size() / 2 * 20);
 
@@ -263,7 +263,7 @@ public class Tf2 extends FrameObject {
 				Map<String, List<Tf2RegistryObject>> map = Tf2.this.fillMap();
 
 				List<Tf2Price> prices = new ArraySet.ArraySetStrict<>();
-		
+
 				Tf2Price price = null;
 				for (List<Tf2RegistryObject> values : map.values()) {
 					for (Tf2RegistryObject value : values) {
@@ -280,14 +280,14 @@ public class Tf2 extends FrameObject {
 				if (price == null) {
 					System.out.println("not all");
 				}
-		
+
 				Document document = getDocument();
 				Element table = document.getElementsByTag("table").get(0);
 				String value = String.format(format, parse(prices, 10));
 				value = value.substring(0, 14) + " class=\"typedTable\"" + value.substring(14);
-		
+
 				table.html(value);
-		
+
 				saveDocument(document);
 			}
 		};
@@ -357,5 +357,10 @@ public class Tf2 extends FrameObject {
 	@Override
 	public String getName() {
 		return "TF2";
+	}
+
+	@Override
+	public int[] version() {
+		return new int[]{1,0,0};
 	}
 }

@@ -42,4 +42,9 @@ public class AnyDesk extends FrameObject {
 	public String getName() {
 		return "AnyDesk";
 	}
+
+	@Override
+	public int[] version() {
+		return new int[]{1,0,0};
+	}
 }

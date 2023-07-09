@@ -277,7 +277,7 @@ public class OneBitAdventure extends FrameObject {
 				return false;
 			}
 		}
-	
+
 		@Override
 		public int compareTo(Point o) {
 			return BMatUtil.round(o.reward * 100) - BMatUtil.round(this.reward * 100);
@@ -292,5 +292,10 @@ public class OneBitAdventure extends FrameObject {
 	@Override
 	public String fastKey() {
 		return "OBA";
+	}
+
+	@Override
+	public int[] version() {
+		return new int[]{1,0,0};
 	}
 }
