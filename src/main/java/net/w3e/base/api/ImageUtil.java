@@ -1,6 +1,9 @@
 package net.w3e.base.api;
 
+import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -15,6 +18,15 @@ import javax.imageio.ImageIO;
 import net.w3e.base.math.BMatUtil;
 
 public class ImageUtil {
+
+	public static BufferedImage capture(Rectangle rectangle) {
+		try {
+			return new Robot().createScreenCapture(rectangle);
+		} catch (AWTException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
 	public static BufferedImage scale(BufferedImage image, double scale) {
 		int w = BMatUtil.round(image.getWidth() * scale);

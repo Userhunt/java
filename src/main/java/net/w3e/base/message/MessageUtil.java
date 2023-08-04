@@ -6,9 +6,6 @@ import org.apache.logging.log4j.util.StackLocatorUtil;
 
 import net.w3e.base.BStringUtil;
 
-/**
- * 12.04.23
- */
 public class MessageUtil {
 
 	public static final Logger LOGGER = LogManager.getFormatterLogger("w3e/UnsetLogger");
@@ -92,6 +89,5 @@ public class MessageUtil {
 	public static void debug(BMessageLogger logger, String string) {
 		logger.debug(string);
 	}
-
 }
 

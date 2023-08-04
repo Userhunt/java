@@ -157,7 +157,7 @@ public class PointMap {
 							ObaMove.w();
 							if (PLAYER.y == 8 && step.getType().playerCanMove() && !(step.getType() instanceof PointType.PointEntityType)) {
 								LAST_WASD = 1;
-								ObaMove.sleep(5000);
+								ObaMove.sleep(1000);
 							}
 						}
 					} else {
@@ -469,7 +469,7 @@ public class PointMap {
 		});
 	}
 
-	private static void iterate(IterateMap function) {
+	public static void iterate(IterateMap function) {
 		iterate(false, function);
 	}
 
@@ -504,7 +504,7 @@ public class PointMap {
 	}
 
 	@FunctionalInterface
-	private static interface IterateMap {
+	public static interface IterateMap {
 		void iterate(int x, int y, Point point);
 	}
 

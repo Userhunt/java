@@ -100,6 +100,14 @@ public class ObaDisplay extends AbstractFrameWin {
 		if (ObaConfig.getSave(Save.screen)) {
 			ImageUtil.save(capture, "oba/screen");
 		}
+
+		if (ObaConfig.getSave(Save.error)) {
+			PointMap.iterate((x, y, point) -> {
+				if (point.getType() instanceof PointType.PointUnsetType) {
+					point.save();
+				}
+			});
+		}
 	}
 
 	public void log(String str) {

@@ -2,9 +2,6 @@ package net.w3e.base.tuple;
 
 import java.util.Objects;
 
-/**
- * 12.04.23
- */
 public class WTuple1<T> {
 
 	private T t;

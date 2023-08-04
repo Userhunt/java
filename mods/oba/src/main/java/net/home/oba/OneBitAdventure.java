@@ -1,7 +1,6 @@
 package net.home.oba;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.Container;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -16,11 +15,11 @@ import net.home.main.FrameObject;
 import net.home.main.MainFrame;
 import net.home.oba.ObaConfig.Display;
 import net.w3e.base.api.ImageUtil;
-import net.w3e.base.api.window.JNAWindow;
 import net.w3e.base.api.window.FrameWin;
 import net.w3e.base.api.window.Inputs;
 import net.w3e.base.math.BMatUtil;
 import net.w3e.base.message.BMessageLoggerHelper;
+import net.w3e.base.tuple.number.WIntTuple;
 
 public class OneBitAdventure extends FrameObject {
 
@@ -36,60 +35,60 @@ public class OneBitAdventure extends FrameObject {
 
 	private final ObaStep step = new ObaStep();
 
-	private boolean run;
-
 	private ObaDisplay display;
-	private FrameWin fw;
 	private final JButton displayButton;
+	private final JCheckBox run;
 	private final JCheckBox printStep;
 
 	public OneBitAdventure() {
-		this.displayButton = new JButton("Display");
-		this.displayButton.setBounds(5, 5, 150, 26);
-		this.displayButton.addActionListener(FrameWin.onClick(() -> {
+		WIntTuple y = new WIntTuple(5);
+		this.displayButton = this.addButton("Display", btn -> {
 			if (this.display != null) {
 				this.display.close();
 			}
 			this.display = new ObaDisplay(this);
 			this.display.setVisible(true);
+			Container fw = btn.getParent();
 			java.awt.Point location = fw.getLocation();
 			this.display.setLocation(location.x, location.y + fw.getHeight());
-		}));
+		}, y, null);
 
-		this.printStep = new JCheckBox("Print step");
-		this.printStep.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ObaConfig.setDisplay(Display.step, printStep.isSelected());
-			}
-		});
+		this.run = this.addCheckBox("Run", box -> {
+			ObaConfig.setRun(box.isSelected());
+		}, height, y, null);
 
-		this.printStep.setBounds(5, 36, 150, 26);
+		this.printStep = this.addCheckBox("Print step", box -> {
+			ObaConfig.setDisplay(Display.step, box.isSelected());
+		}, height, y, null);
+		this.run.setSelected(true);
 	}
 
 	protected void init(FrameWin fw, List<String> args) {
-		this.fw = fw;
-		this.run = true;
 		ObaMove.init();
-		fw.setSize(300, 49 + 67);
+		fw.setSize(300, 41 + dY() * 3);
 
 		fw.add(this.displayButton);
 		fw.add(this.printStep);
+		fw.add(this.run);
+
+		ObaConfig.main(args, this);
+
+		this.printStep.setSelected(ObaConfig.getDisplay(ObaConfig.Display.step));
+		this.run.setSelected(ObaConfig.getRun());
 
 		fw.tick(100, this::tick);
-		ObaConfig.main(args, this);
 
 		this.printStep.setSelected(ObaConfig.getDisplay(Display.step));
 	}
 
 	private void tick() {
-		if (!run) {
+		if (!run.isSelected()) {
 			return;
 		}
 
 		PointMap.reset();
 
-		BufferedImage capture = JNAWindow.capture(AREA);
+		BufferedImage capture = ImageUtil.capture(AREA);
 
 		if (capture.getRGB(0, 0) == -15659747) {
 			Inputs.click(840, 308);
@@ -105,11 +104,11 @@ public class OneBitAdventure extends FrameObject {
 			capture = ImageUtil.toRGBA(capture);
 
 			sleep(40);
-			BufferedImage field2 = ImageUtil.scale(JNAWindow.capture(FIELD), 1d/3d);
+			BufferedImage field2 = ImageUtil.scale(ImageUtil.capture(FIELD), 1d/3d);
 			sleep(40);
-			BufferedImage field3 = ImageUtil.scale(JNAWindow.capture(FIELD), 1d/3d);
+			BufferedImage field3 = ImageUtil.scale(ImageUtil.capture(FIELD), 1d/3d);
 			sleep(40);
-			BufferedImage field4 = ImageUtil.scale(JNAWindow.capture(FIELD), 1d/3d);
+			BufferedImage field4 = ImageUtil.scale(ImageUtil.capture(FIELD), 1d/3d);
 
 			PointMap.fill(
 				createMap(capture), 

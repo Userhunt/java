@@ -9,6 +9,9 @@ import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntListIterator;
 import net.w3e.base.api.window.FrameWin;
 import net.w3e.base.tuple.number.WIntTuple;
 
@@ -44,45 +47,47 @@ public abstract class FrameObject {
 		return this.height + 5;
 	}
 
-	protected final JButton addButton(String text, Consumer<JButton> onClick, WIntTuple y, FrameWin fw) {
+	protected final JButton addButton(String text, Consumer<JButton> onClick, YPos y, FrameWin fw) {
 		return this.addButton(text, onClick, 5, y, fw);
 	}
 
-	protected final JButton addButton(String text, Consumer<JButton> onClick, int x, WIntTuple y, FrameWin fw) {
+	protected final JButton addButton(String text, Consumer<JButton> onClick, int x, YPos y, FrameWin fw) {
 		return this.addCmonent(new JButton(text), onClick, x, y, fw);
 	}
 
 	protected static final ActionListener EMPTY_CLICK = FrameWin.onClick(() -> {});
 
-	protected final JCheckBox addCheckBox(String text, WIntTuple y, FrameWin fw) {
+	protected final JCheckBox addCheckBox(String text, YPos y, FrameWin fw) {
 		return this.addCheckBox(text, 5, y, fw);
 	}
 
-	protected final JCheckBox addCheckBox(String text, int x, WIntTuple y, FrameWin fw) {
+	protected final JCheckBox addCheckBox(String text, int x, YPos y, FrameWin fw) {
 		return this.addCmonent(new JCheckBox(text), x, y, fw);
 	}
 
-	protected final JCheckBox addCheckBox(String text, Consumer<JCheckBox> onClick, WIntTuple y, FrameWin fw) {
+	protected final JCheckBox addCheckBox(String text, Consumer<JCheckBox> onClick, YPos y, FrameWin fw) {
 		return this.addCheckBox(text, onClick, 5, y, fw);
 	}
 
-	protected final JCheckBox addCheckBox(String text, Consumer<JCheckBox> onClick, int x, WIntTuple y, FrameWin fw) {
+	protected final JCheckBox addCheckBox(String text, Consumer<JCheckBox> onClick, int x, YPos y, FrameWin fw) {
 		return this.addCmonent(new JCheckBox(text), onClick, x, y, fw);
 	}
 
-	protected final <T extends Component> T addCmonent(T component, int x, WIntTuple y, FrameWin fw) {
+	protected final <T extends Component> T addCmonent(T component, int x, YPos y, FrameWin fw) {
 		component.setBounds(x, y.get(), this.width, this.height);
 		y.add(dY());
-		fw.add(component);
+		if (fw != null) {
+			fw.add(component);
+		}
 		return component;
 	}
 
-	protected final <T extends AbstractButton> T addCmonent(T component, Consumer<T> onClick, int x, WIntTuple y, FrameWin fw) {
+	protected final <T extends AbstractButton> T addCmonent(T component, Consumer<T> onClick, int x, YPos y, FrameWin fw) {
 		component.addActionListener(FrameWin.onClick(component, onClick));
 		return this.addCmonent(component, x, y, fw);
 	}
 
-	protected class YPos extends WIntTuple {
+	public class YPos extends WIntTuple {
 
 		public YPos() {
 			this(5);
@@ -103,7 +108,7 @@ public abstract class FrameObject {
 		}
 	}
 
-	protected class XPos extends WIntTuple {
+	public class XPos extends WIntTuple {
 
 		public XPos() {
 			this(5);
@@ -142,7 +147,22 @@ public abstract class FrameObject {
 		if (!displayVersion()) {
 			return "";
 		} else {
-			return " " + MainFrame.version(MainFrame.version()) + "#" + MainFrame.version(this.version());
+			String version = " " + MainFrame.version(MainFrame.version());
+			int[] array = this.version();
+			if (array != null && array.length > 0) {
+				IntList list = new IntArrayList(array);
+				IntListIterator iterator = list.iterator();
+				while(iterator.hasNext()) {
+					int next = iterator.nextIndex();
+					if (next <= 0) {
+						iterator.remove();
+					}
+				}
+				if (!list.isEmpty()) {
+					version += "#" + MainFrame.version(list.toIntArray());
+				}
+			}
+			return version;
 		}
 	}
 

@@ -1,19 +1,16 @@
 package net.w3e.base.tuple;
 
-/**
- * 12.04.23
- */
 public abstract class WPrimitiveTuple<T> {
 
 	protected abstract T getValue();
 
 	@Override
-	public int hashCode() {
+	public final int hashCode() {
 		return getValue().hashCode();
 	}
 
 	@Override
-	public boolean equals(Object object) {
+	public final boolean equals(Object object) {
 		if (object == null) {
 			return false;
 		} else if (this == object) {

@@ -13,6 +13,9 @@ import com.sun.jna.Native;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.win32.StdCallLibrary;
+
+import net.w3e.base.api.ImageUtil;
+
 import com.sun.jna.platform.win32.WinUser;
 //import com.sun.jna.platform.win32.WinDef.*;
 
@@ -129,15 +132,6 @@ public class JNAWindow {
 	}
 
 	public static BufferedImage capture(WindowInfo window) {
-		return capture(rectangle(window));
-	}
-
-	public static BufferedImage capture(java.awt.Rectangle rectangle) {
-		try {
-			return new java.awt.Robot().createScreenCapture(rectangle);
-		} catch (AWTException e) {
-			e.printStackTrace();
-			return null;
-		}
+		return ImageUtil.capture(rectangle(window));
 	}
 }

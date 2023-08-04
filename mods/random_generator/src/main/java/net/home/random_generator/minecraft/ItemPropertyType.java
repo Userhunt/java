@@ -31,24 +31,35 @@ public class ItemPropertyType extends PropertyType {
 	}
 
 	public static final ItemPropertyType ATTRIBUTE_ATTACK_DAMAGE = register("item", "attribute", "attack_damage", 
-	new ItemFlagsBuilder().parameter(FLAG_ATTRIBUTE).propertyType(FLAG_ATTACK).weaponRange(FLAG_MELEE).item(FLAG_SWORD).build()
+	new ItemFlagsBuilder().parameter(FLAG_ATTRIBUTE).itemType(FLAG_WEAPON).propertyType(FLAG_ATTACK).weaponRange(FLAG_MELEE).item(FLAG_SWORD).build()
 	);
-	public static final ItemPropertyType ATTRIBUTE_ATTACK_SPEED = register("item", "attribute", "attack_speed", new ItemFlagsBuilder().parameter(FLAG_ATTRIBUTE).propertyType(FLAG_ATTACK).weaponRange(FLAG_MELEE).item(FLAG_SWORD).build());
+	public static final ItemPropertyType ATTRIBUTE_ATTACK_SPEED = register("item", "attribute", "attack_speed", new ItemFlagsBuilder().parameter(FLAG_ATTRIBUTE).itemType(FLAG_WEAPON).propertyType(FLAG_ATTACK).weaponRange(FLAG_MELEE).item(FLAG_SWORD).build());
+	public static final ItemPropertyType ATTRIBUTE_ARMOR = register("item", "attribute", "armor", new ItemFlagsBuilder().parameter(FLAG_ATTRIBUTE).itemType(FLAG_WEAPON).propertyType(FLAG_DEFENCE).weaponRange(FLAG_MELEE).item(FLAG_SWORD).build());
 
-	public static final ItemPropertyType ATTRIBUTE_ARMOR = register("item", "attribute", "armor", 								PropertyType.FLAG_ATTRIBUTE, PropertyType.FLAG_ARMOR, 	PropertyType.FLAG_DEFENCE, 	PropertyType.FLAG_SWORD);
+	public static final ItemPropertyType ATTRIBUTE_MOVEMENT_SPEED = register("item", "attribute", "movement_speed", 
+	PropertyType.FLAG_ATTRIBUTE, 							PropertyType.FLAG_MISC, 	PropertyType.FLAG_SWORD
+	);
 
-	public static final ItemPropertyType ATTRIBUTE_MOVEMENT_SPEED = register("item", "attribute", "movement_speed", 				PropertyType.FLAG_ATTRIBUTE, 							PropertyType.FLAG_MISC, 	PropertyType.FLAG_SWORD);
+	public static final ItemPropertyType ATTRIBUTE_MAX_HEALTH = register("item", "attribute", "max_health", 
+	PropertyType.FLAG_ATTRIBUTE, PropertyType.FLAG_ARMOR, 	PropertyType.FLAG_DEFENCE, 	PropertyType.FLAG_SWORD
+	);
 
-	public static final ItemPropertyType ATTRIBUTE_MAX_HEALTH = register("item", "attribute", "max_health", 						PropertyType.FLAG_ATTRIBUTE, PropertyType.FLAG_ARMOR, 	PropertyType.FLAG_DEFENCE, 	PropertyType.FLAG_SWORD);
+	public static final ItemPropertyType ATTRIBUTE_KNOCKBACK_RESITANCE = register("item", "attribute", "knockback_resitance", 
+	PropertyType.FLAG_ATTRIBUTE, PropertyType.FLAG_DEFENCE, PropertyType.FLAG_DEFENCE,	PropertyType.FLAG_SWORD
+	);
 
-	public static final ItemPropertyType ATTRIBUTE_KNOCKBACK_RESITANCE = register("item", "attribute", "knockback_resitance", 	PropertyType.FLAG_ATTRIBUTE, PropertyType.FLAG_DEFENCE, PropertyType.FLAG_DEFENCE,	PropertyType.FLAG_SWORD);
 
+	public static final ItemPropertyType ENCHANT_UNBREAKING = register("item", "enchant", "unbreaking", 
+	PropertyType.FLAG_ENCHANT, 								PropertyType.FLAG_MISC, 	PropertyType.FLAG_SWORD
+	);
 
-	public static final ItemPropertyType ENCHANT_UNBREAKING = register("item", "enchant", "unbreaking", 							PropertyType.FLAG_ENCHANT, 								PropertyType.FLAG_MISC, 	PropertyType.FLAG_SWORD);
+	public static final ItemPropertyType ENCHANT_MENDING = register("item", "enchant", "mending", 
+	PropertyType.FLAG_ENCHANT, 								PropertyType.FLAG_MISC, 	PropertyType.FLAG_SWORD
+	);
 
-	public static final ItemPropertyType ENCHANT_MENDING = register("item", "enchant", "mending", 								PropertyType.FLAG_ENCHANT, 								PropertyType.FLAG_MISC, 	PropertyType.FLAG_SWORD);
-
-	public static final ItemPropertyType ENCHANT_FIRE_ASPECT = register("item", "enchant", "fire_aspect", 						PropertyType.FLAG_ENCHANT, 	PropertyType.FLAG_MELEE, 	PropertyType.FLAG_ATTACK, 	PropertyType.FLAG_SWORD);
+	public static final ItemPropertyType ENCHANT_FIRE_ASPECT = register("item", "enchant", "fire_aspect", 
+	PropertyType.FLAG_ENCHANT, 	PropertyType.FLAG_MELEE, 	PropertyType.FLAG_ATTACK, 	PropertyType.FLAG_SWORD
+	);
 
 
 	public static ItemPropertyType register(String type, String subType, String id, String... flags) {

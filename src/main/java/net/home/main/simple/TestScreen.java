@@ -1,4 +1,4 @@
-package net.home.main;
+package net.home.main.simple;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -10,12 +10,13 @@ import java.util.Random;
 
 import javax.swing.JButton;
 
+import net.home.main.FrameObject;
+import net.home.main.MainFrame;
 import net.w3e.base.BStringUtil;
 import net.w3e.base.api.window.FrameWin;
 import net.w3e.base.collection.ArraySet;
 import net.w3e.base.collection.ArraySet.ArraySetStrict;
 import net.w3e.base.jar.JarUtil;
-import net.w3e.base.tuple.number.WIntTuple;
 
 public class TestScreen extends FrameObject {
 
@@ -27,7 +28,7 @@ public class TestScreen extends FrameObject {
 		this.width = 275;
 		this.toArrayList = false;
 
-		WIntTuple y = new WIntTuple(5);
+		YPos y = new YPos(5);
 
 		addCheckBox("toArrayList", e -> this.toArrayList = e.isSelected(), y, fw);
 		addButton("Random Sort", this::randomSort, y, fw);
@@ -36,6 +37,7 @@ public class TestScreen extends FrameObject {
 		addButton("Read jar", this::readJar, y, fw);
 		addButton("Quote string", this::quote, y, fw);
 		addButton("PutLinkedMap", this::putLinkedMap, y, fw);
+		this.rgba(fw, y);
 
 		fw.setSize(300, y.get() + 41);
 	}
@@ -118,13 +120,22 @@ public class TestScreen extends FrameObject {
 		System.out.println(map);
 	}
 
+	private void rgba(FrameWin fw, YPos y) {
+		y.add(new RGBAPanel().create(fw, 5, y.get(), true, true));
+	}
+
 	@Override
 	public String getName() {
 		return "Test";
 	}
 
 	@Override
+	public String fastKey() {
+		return "test";
+	}
+
+	@Override
 	public int[] version() {
-		return new int[]{1,0,0};
+		return new int[]{};
 	}
 }

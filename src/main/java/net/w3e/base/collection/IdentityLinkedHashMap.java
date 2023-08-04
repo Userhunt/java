@@ -25,27 +25,27 @@ public class IdentityLinkedHashMap<K, T> extends AbstractMap<K,T> {
 	}
 
 	@Override
-	public Set<Entry<K, T>> entrySet() {
+	public final Set<Entry<K, T>> entrySet() {
 		return set;
 	}
 
 	@Override
-	public T put(K k, T t) {
+	public final T put(K k, T t) {
 		return set.innerMap.put(equivalence.wrap(k), t);
 	}
 
 	@Override
-	public boolean containsKey(Object arg0) {
+	public final boolean containsKey(Object arg0) {
 		return set.contains(arg0);
 	}
 
 	@Override
-	public T remove(Object arg0) {
+	public final T remove(Object arg0) {
 		return set.innerMap.remove(equivalence.wrap(arg0));
 	}
 
 	@Override
-	public T get(Object arg0) {
+	public final T get(Object arg0) {
 		return set.innerMap.get(equivalence.wrap(arg0));
 	}
 

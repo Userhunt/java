@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.home.main.simple.TestScreen;
 import net.w3e.base.ReflectionUtils;
 import net.w3e.base.api.ApiJsonHelper;
 import net.w3e.base.api.window.FrameWin;
@@ -30,7 +31,7 @@ public class MainFrame {
 	public static final ApiJsonHelper JSON_HELPER = new ApiJsonHelper(LOGGER);
 
 	public static final int[] version() {
-		return new int[]{1,0,0};
+		return new int[]{1,0,2};
 	}
 
 	public static final String version(int[] version) {

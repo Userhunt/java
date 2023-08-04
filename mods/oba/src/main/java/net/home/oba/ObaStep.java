@@ -22,7 +22,7 @@ public class ObaStep {
 
 	private static final void load(int i) {
 		if (!NUMBERS.containsKey(i)) {
-			NUMBERS.put(i, ImageUtil.read(JarUtil.getResourceAsStream("oba/numbers/" + i + ".png")));
+			NUMBERS.put(i, ImageUtil.read(JarUtil.getResourceAsStream("oba/assets/numbers/" + i + ".png")));
 		}
 	}
 

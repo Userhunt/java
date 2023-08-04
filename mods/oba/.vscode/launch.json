@@ -10,7 +10,7 @@
 			"stopOnEntry": false,
 			"mainClass": "net.home.oba.OneBitAdventure",
 			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
-			"args": "key=oba"
+			"args": "key=OBA display=[map,step] save=[error] play=false"
 		}
 	]
 }

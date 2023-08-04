@@ -2,9 +2,6 @@ package net.w3e.base.tuple;
 
 import java.util.Objects;
 
-/**
- * 12.04.23
- */
 public class WTuple3<A, B, C> extends WTuple2<A, B> {
 
 	public C c;

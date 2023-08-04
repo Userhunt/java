@@ -2,9 +2,6 @@ package net.w3e.base.tuple.number;
 
 import net.w3e.base.tuple.WPrimitiveTuple;
 
-/**
- * 12.04.23
- */
 public class WDoubleTuple extends WPrimitiveTuple<Double> {
 
 	private double value;

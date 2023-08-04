@@ -46,5 +46,4 @@ public class MessageError {
 		}
 		return String.format(text, arg);
 	}
-
 }

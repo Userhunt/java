@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.google.common.base.Strings;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
@@ -107,7 +108,7 @@ public class MainArgs<T extends FrameObject> {
 		}
 	}
 
-	public abstract static class MainArg<T extends FrameObject> {
+	public static abstract class MainArg<T extends FrameObject> {
 
 		private final String key;
 
@@ -132,6 +133,117 @@ public class MainArgs<T extends FrameObject> {
 		protected abstract boolean test(MainArgs<T> args, T frame, String value);
 
 		protected void after(MainArgs<T> args, T frame) {}
+	}
+
+	public static abstract class MainStringArg<T extends FrameObject> extends MainArg<T> {
+
+		private final String def;
+
+		public MainStringArg(String key, String def) {
+			super(key);
+			this.def = def;
+		}
+
+		@Override
+		protected final boolean test(MainArgs<T> args, T frame, String value) {
+			if (Strings.isNullOrEmpty(value)) {
+				value = def;
+			}
+			return apply(args, frame, value);
+		}
+
+		protected abstract boolean apply(MainArgs<T> args, T frame, String value);
+	}
+
+	public static abstract class MainBoolArg<T extends FrameObject> extends MainArg<T> {
+
+		private final Run def;
+
+		public MainBoolArg(String key) {
+			this(key, Run._true);
+		}
+
+		public MainBoolArg(String key, Run def) {
+			super(key);
+			this.def = def;
+		}
+
+		@Override
+		@SuppressWarnings("unchecked")
+		protected final boolean test(MainArgs<T> args, T frame, String value) {
+			Run v = this.def;
+			if (!Strings.isNullOrEmpty(value)) {
+				value = value.toLowerCase();
+				if (!value.startsWith("_")) {
+					value = "_" + value;
+				}
+				try {
+					v = Enum.valueOf((Class<Run>)this.def.getClass(), value);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			return apply(args, frame, v.mode);
+		}
+
+		protected abstract boolean apply(MainArgs<T> args, T frame, Boolean value);
+	}
+
+	public static enum Run {
+		_true(true),
+		_t(true),
+		_y(true),
+		_1(true),
+
+		_false(false),
+		_f(false),
+		_n(false),
+		_0(false),
+
+		_null(null),
+		_default(null),
+		_def(null),
+		_d(null),
+		;
+
+		private final Boolean mode;
+
+		private Run(Boolean mode) {
+			this.mode = mode;
+		}
+	}
+
+	public static abstract class MainEnumArg<T extends FrameObject, V extends Enum<V>> extends MainArg<T> {
+
+		private final V def;
+		private final Class<V> clazz;
+
+		@SuppressWarnings("unchecked")
+		public MainEnumArg(String key, V def) {
+			this(key, def, (Class<V>)def.getClass());
+		}
+
+		public MainEnumArg(String key, V def, Class<V> clazz) {
+			super(key);
+			this.def = def;
+			this.clazz = clazz;
+		}
+
+		@Override
+		protected final boolean test(MainArgs<T> args, T frame, String value) {
+			V v = this.def;
+			if (!Strings.isNullOrEmpty(value)) {
+				try {
+					v =  Enum.valueOf(this.clazz, value);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			
+			return this.test(args, frame, v);
+		}
+
+		protected abstract boolean test(MainArgs<T> args, T frame, V value);
 	}
 
 	public static abstract class MainIntArg<T extends FrameObject> extends MainArg<T> {

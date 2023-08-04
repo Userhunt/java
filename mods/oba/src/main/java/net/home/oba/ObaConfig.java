@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.home.main.MainArgs;
 import net.home.main.MainArgs.MainArg;
+import net.home.main.MainArgs.MainBoolArg;
 import net.home.main.MainArgs.MainListEnumArg;
 import net.w3e.base.PackUtil;
 
@@ -42,6 +43,16 @@ public class ObaConfig {
 			for (Save save : list) {
 				ObaConfig.setSave(save, true);
 			}
+		}
+	})
+	.add(new MainBoolArg<>("play") {
+		@Override
+		protected boolean apply(MainArgs<OneBitAdventure> args, OneBitAdventure frame, Boolean value) {
+			System.out.println(value);
+			if (value != null) {
+				ObaConfig.setRun(value);
+			}
+			return true;
 		}
 	})
 	.build();
@@ -132,7 +143,8 @@ public class ObaConfig {
 	public static enum Save {
 		map(1),
 		screen(2),
-		number(3);
+		number(3),
+		error(4);
 
 		private final int i;
 
@@ -149,5 +161,17 @@ public class ObaConfig {
 
 	public static boolean getSave(Save save) {
 		return PackUtil.test(SAVE, save.i);
+	}
+
+	/* ==================== RUN ==================== */
+
+	private static boolean RUN = true;
+
+	public static void setRun(boolean mode) {
+		RUN = mode;
+	}
+
+	public static boolean getRun() {
+		return RUN;
 	}
 }

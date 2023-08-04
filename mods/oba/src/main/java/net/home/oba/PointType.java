@@ -87,7 +87,7 @@ public abstract class PointType {
 		load(name, images);
 	}
 	protected final void load(String name, Map<String, BufferedImage> images) {
-		List<Path> list = JarUtil.getJarFolder("oba/" + name);
+		List<Path> list = JarUtil.getJarFolder("oba/assets/" + name);
 		for (Path path : list) {
 			String key = path.toString();
 			images.put(key, ImageUtil.read(JarUtil.getResourceAsStream(key)));

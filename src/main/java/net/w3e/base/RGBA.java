@@ -65,11 +65,11 @@ public class RGBA {
 		this.a = a;
 	}
 
-	private static final double calc(int v) {
+	public static final double calc(int v) {
 		return ((double)v)/255d;
 	}
 
-	private static final int calc(double v) {
+	public static final int calc(double v) {
 		return (int)(v*255 + 0.5);
 	}
 
@@ -250,26 +250,33 @@ public class RGBA {
 	}
 
 	public static enum RGBAFlag {
-		R(RGBA::rInt, 0),
-		G(RGBA::gInt, 1),
-		B(RGBA::bInt, 2),
-		A(RGBA::aInt, 3);
+		R((byte)0, RGBA::rInt, rgba -> rgba.r),
+		G((byte)1, RGBA::gInt, rgba -> rgba.g),
+		B((byte)2, RGBA::bInt, rgba -> rgba.b),
+		A((byte)3, RGBA::aInt, rgba -> rgba.a);
 
 		@FunctionalInterface
-		private static interface RGBAFlagGetter {
+		public static interface RGBAFlagGetterInt {
 			int get(RGBA rgba);
 		}
 
-		private final RGBAFlagGetter getter;
-		private final int index;
+		@FunctionalInterface
+		public static interface RGBAFlagGetterDouble {
+			double get(RGBA rgba);
+		}
 
-		private RGBAFlag(RGBAFlagGetter getter, int index) {
-			this.getter = getter;
+		public final byte index;
+		public final RGBAFlagGetterInt getterInt;
+		public final RGBAFlagGetterDouble getterDouble;
+
+		private RGBAFlag(byte index, RGBAFlagGetterInt getterInt, RGBAFlagGetterDouble getterDouble) {
 			this.index = index;
+			this.getterInt = getterInt;
+			this.getterDouble = getterDouble;
 		}
 
 		public final int pack(RGBA rgba) {
-			return this.getter.get(rgba);
+			return this.getterInt.get(rgba);
 		}
 
 		public final int unpack(int rgba) {

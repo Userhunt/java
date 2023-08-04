@@ -2,9 +2,6 @@ package net.w3e.base.tuple.number;
 
 import net.w3e.base.tuple.WPrimitiveTuple;
 
-/**
- * 12.04.23
- */
 public class WIntTuple extends WPrimitiveTuple<Integer> {
 
 	private int value;
@@ -19,11 +16,11 @@ public class WIntTuple extends WPrimitiveTuple<Integer> {
 		set(value);
 	}
 
-	public int get() {
-		return value;
+	public final int get() {
+		return this.value;
 	}
 
-	public void set(int value) {
+	public final void set(int value) {
 		this.value = value;
 	}
 

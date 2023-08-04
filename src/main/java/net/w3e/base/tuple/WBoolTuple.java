@@ -1,8 +1,5 @@
 package net.w3e.base.tuple;
 
-/**
- * 12.04.23
- */
 public class WBoolTuple extends WPrimitiveTuple<Boolean> {
 
 	private boolean value = false;

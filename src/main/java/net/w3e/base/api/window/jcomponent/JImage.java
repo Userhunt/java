@@ -13,6 +13,7 @@ public class JImage extends JPanel {
 	private double scale;
 
 	public JImage(BufferedImage image, double scale) {
+		super();
 		setImage(image);
 		setScale(scale);
 	}

@@ -2,9 +2,6 @@ package net.w3e.base;
 
 import java.util.function.BiFunction;
 
-/**
- * 15.04.23
- */
 public class LogicUtil {
 
 	public static final Boolean and(Boolean... array) {

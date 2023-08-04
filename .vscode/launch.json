@@ -13,14 +13,14 @@
 		},
 		{
 			"type": "java",
-			"name": "Oba",
+			"name": "Test",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",
 			"console": "internalConsole",
 			"stopOnEntry": false,
 			"mainClass": "net.home.main.MainFrame",
 			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
-			"args": "key=OBA x=1675 print=true class=butcher_bleed display=['map','path','reward','base','run','step'] save=['screen'] preset=['box']"
+			"args": "key=test x=1675"
 		},
 		{
 			"type": "java",
