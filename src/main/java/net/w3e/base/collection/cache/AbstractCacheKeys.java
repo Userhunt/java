@@ -8,16 +8,11 @@ import net.w3e.base.collection.ArraySet;
 import net.w3e.base.json.BJsonUtil;
 import net.w3e.base.message.MessageUtil;
 
-public abstract class AbstractCacheKeys<T, V> {
+public abstract class AbstractCacheKeys<T> {
 
 	protected static boolean log = true;
 
 	private boolean init = false;
-
-	@SuppressWarnings("unchecked")
-	public final V cast() {
-		return (V)this;
-	}
 
 	public final void init() {
 		this.init = true;
@@ -26,7 +21,15 @@ public abstract class AbstractCacheKeys<T, V> {
 
 	protected abstract void initIns();
 
+	public final T getNoCache(T key) {
+		return get(key, false);
+	}
+
 	public final T get(T key) {
+		return get(key, true);
+	}
+
+	public final T get(T key, boolean cached) {
 		if (key == null) {
 			return key;
 		}
@@ -34,32 +37,51 @@ public abstract class AbstractCacheKeys<T, V> {
 			this.init = true;
 			init();
 		}
-		return getIns(key);
+		return getIns(key, cached);
 	}
 
-	protected abstract T getIns(T key);
+	protected abstract T getIns(T key, boolean cached);
+
+	public final ArraySet<T> getNoCache(T[] keys) {
+		return get(keys, false);
+	}
 
 	public final ArraySet<T> get(T[] keys) {
+		return get(keys, true);
+	}
+
+	public final ArraySet<T> get(T[] keys, boolean cached) {
 		ArraySet<T> locations = new ArraySet<>();
 
 		for (T key : keys) {
-			locations.add(get(key));
+			locations.add(get(key, cached));
 		}
 
 		return locations;
+	}
+
+	public final ArraySet<T> getNoCache(Collection<T> keys) {
+		return this.get(keys, false);
 	}
 
 	public final ArraySet<T> get(Collection<T> keys) {
+		return this.get(keys, true);
+	}
+
+	public final ArraySet<T> get(Collection<T> keys, boolean cached) {
 		ArraySet<T> locations = new ArraySet<>();
 
 		for (T key : keys) {
-			locations.add(get(key));
+			locations.add(get(key, cached));
 		}
 
 		return locations;
 	}
 
-	public final V register(T value) {
+	public abstract boolean remove(T value);
+
+	@SuppressWarnings("unchecked")
+	public final <V extends AbstractCacheKeys<T>> V register(T value) {
 		if (contains(value, true)) {
 			if (log) {
 				BJsonUtil.MSG_UTIL().warn(MessageUtil.KEY_DUPLICATE.createMsg(keys(), value) + " " + StackLocatorUtil.getStackTraceElement(2));
@@ -67,15 +89,16 @@ public abstract class AbstractCacheKeys<T, V> {
 		} else {
 			registerIns(value);
 		}
-		return cast();
+		return (V)this;
 	}
 
 	protected abstract void registerIns(T value);
 
-	public final V clear() {
+	@SuppressWarnings("unchecked")
+	public final <V extends AbstractCacheKeys<T>> V clear() {
 		this.init = false;
 		clearIns();
-		return cast();
+		return (V)this;
 	}
 
 	protected abstract void clearIns();

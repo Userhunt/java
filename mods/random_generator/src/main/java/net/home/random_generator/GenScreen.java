@@ -29,7 +29,6 @@ import net.w3e.base.generator.dungeon.Room.RoomBuilder;
 import net.w3e.base.generator.property.GenNormalProperty;
 import net.w3e.base.generator.property.GenRequiredProperty;
 import net.w3e.base.json.FileUtil;
-import net.w3e.base.tuple.number.WIntTuple;
 
 public class GenScreen extends FrameObject {
 
@@ -90,7 +89,7 @@ public class GenScreen extends FrameObject {
 		fw.setSize(maxX + 10, maxY + 10);
 	}
 
-	private final void addButton(String key, BiFunction<Boolean, RandomGenerator, RandGenRes> function, int x, WIntTuple y, FrameWin fw) {
+	private final void addButton(String key, BiFunction<Boolean, RandomGenerator, RandGenRes> function, int x, YPos y, FrameWin fw) {
 		int value = y.get();
 		super.addButton(key, (e) -> 
 			MainFrame.LOGGER.warn(key + " " + function.apply(true, this.generator(true)).toString(true, COMPARATOR))
@@ -164,8 +163,11 @@ public class GenScreen extends FrameObject {
 		protected final List<IProperty> getList(boolean update) {
 			if (update) {
 				if (GenScreen.this.FLAGS.filter) {
-					List<IProperty> list = new ArrayList<>(GenRegistry.LIST);
+					List<IProperty> list = new ArrayList<>(this.type().list());
+					MainFrame.LOGGER.debug("filter");
+					MainFrame.LOGGER.info(list);
 					list.removeIf(this.type().selector()::inversedTest);
+					MainFrame.LOGGER.info(list);
 					return list;
 				} else {
 					return this.type().list();
@@ -257,14 +259,6 @@ public class GenScreen extends FrameObject {
 			x.next();
 		}
 
-		//вход
-		//коридор
-		//сундуки
-		//враги
-		//ловушки
-		//босс
-		//выход
-		//святилище
 		private void small(JButton button) {
 			List<Room> rooms = new ArrayList<>();
 			rooms.add(new RoomBuilder(GenRegistry.DungeonRegistry.ENTERANCE.getRegistryName()).build());

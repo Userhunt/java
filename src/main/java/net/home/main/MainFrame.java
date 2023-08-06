@@ -3,11 +3,9 @@ package net.home.main;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.PrimitiveIterator.OfInt;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -17,6 +15,9 @@ import javax.swing.JFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import it.unimi.dsi.fastutil.ints.IntListIterator;
 import net.home.main.simple.TestScreen;
 import net.w3e.base.ReflectionUtils;
 import net.w3e.base.api.ApiJsonHelper;
@@ -31,19 +32,34 @@ public class MainFrame {
 	public static final ApiJsonHelper JSON_HELPER = new ApiJsonHelper(LOGGER);
 
 	public static final int[] version() {
-		return new int[]{1,0,2};
+		return new int[]{1,1};
 	}
 
 	public static final String version(int[] version) {
-		OfInt iterator = Arrays.stream(version).iterator();
-		StringBuilder builder = new StringBuilder();
-		while(iterator.hasNext()) {
-			builder.append(iterator.nextInt());
-			if (iterator.hasNext()) {
-				builder.append(".");
+		if (version != null && version.length > 0) {
+			IntList list = new IntArrayList(version);
+			int size = list.size();
+			while(size >= 0) {
+				size--;
+				if (list.getInt(size) <= 0) {
+					list.removeInt(size);
+				} else {
+					break;
+				}
 			}
+			IntListIterator iterator = list.iterator();
+			StringBuilder builder = new StringBuilder();
+			while(iterator.hasNext()) {
+				builder.append(iterator.nextInt());
+				if (iterator.hasNext()) {
+					builder.append(".");
+				}
+			}
+			return builder.toString();
+			
+		} else {
+			return "";
 		}
-		return builder.toString();
 	}
 
 	private static final FrameWin FRAME = new FrameWin("Base " + version(version())) {

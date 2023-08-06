@@ -20,22 +20,17 @@ public class PropertyType implements RegistryEntry<PropertyType> {
 
 	public static final Registry<PropertyType> REGISTRY = new CacheRegistry<>("property", "empty");
 
-	private static final List<String> FLAGS_REGISTER = new ArraySet<>();
 	public static final CacheKeys<String> FLAGS = new CacheKeys<>() {
 		@Override
 		protected void initIns() {
-			for (String string : FLAGS_REGISTER) {
-				this.register(string);
-			}
+
 		}
 	};
 
 	public static final String FLAG_GLOBAL = registerFlag("");
 
 	public static String registerFlag(String flag) {
-		FLAGS.register(flag);
-		FLAGS_REGISTER.add(flag);
-		return flag;
+		return FLAGS.get(flag);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -219,6 +214,26 @@ public class PropertyType implements RegistryEntry<PropertyType> {
 			this.push(this.flagType);
 			this.remove(previous);
 			this.add(flag);
+			if (lastKey != this.flagType) {
+				this.push(lastKey);
+			}
+			return flag;
+		}
+
+		protected final String[] push(String[] previous, String[] flag) {
+			String lastKey = this.lastKey();
+			this.push(this.flagType);
+			if (previous != null) {
+				for (String key : previous) {
+					this.remove(key);
+				}
+			}
+			if (flag != null) {
+				for (String key : flag) {
+					this.add(key);
+				}
+			}
+			
 			if (lastKey != this.flagType) {
 				this.push(lastKey);
 			}

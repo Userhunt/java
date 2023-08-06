@@ -54,12 +54,48 @@ public class Registry<T> {
 		return entry;
 	}
 
+	@SuppressWarnings("unchecked")
+	protected final RegistryEntry<T> toEntry(T value) {
+		RegistryEntry<T> entry;
+		if (value instanceof RegistryEntry<?> reg) {
+			entry = (RegistryEntry<T>)reg;
+		} else {
+			entry = new RegistryValue<>(value);
+		}
+		return entry;
+	}
+
+	@SuppressWarnings("unchecked")
+	protected final RegistryEntry<T> toEntry(String key, T value) {
+		RegistryEntry<T> entry;
+		if (value instanceof RegistryEntry<?> reg) {
+			entry = (RegistryEntry<T>)reg;
+		} else {
+			entry = new RegistryValue<>(value);
+		}
+		return entry;
+	}
+
 	protected void registerKey(String key, RegistryEntry<T> entry) {
 		entry.setRegistryName(key);
 	}
 
-	public T get(String key) {
-		RegistryEntry<T> value = this.map.getOrDefault(key, this.def == null ? null : this.map.get(this.def));
+	public final T get(String key) {
+		RegistryEntry<T> value = getEntry(key);
+		return value == null ? null : value.get();
+	}
+
+	protected RegistryEntry<T> getEntry(String key) {
+		return this.map.getOrDefault(key, this.def == null ? null : this.map.get(this.def));
+	}
+
+	protected final T remove(String key) {
+		RegistryEntry<T> value = this.map.remove(key);
+		if (value != null) {
+			this.entrySet = null;
+			this.keys = null;
+			this.values = null;
+		}
 		return value == null ? null : value.get();
 	}
 
@@ -104,8 +140,8 @@ public class Registry<T> {
 		}
 
 		@Override
-		public final T get(String key) {
-			return super.get(this.keys.get(key));
+		protected final RegistryEntry<T> getEntry(String key) {
+			return super.getEntry(this.keys.getNoCache(key));
 		}
 	}
 }

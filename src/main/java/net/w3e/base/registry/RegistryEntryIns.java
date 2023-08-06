@@ -7,7 +7,8 @@ public class RegistryEntryIns<T> implements RegistryEntry<T> {
 	private String registryName = null;
 
 	public final RegistryEntry<T> setRegistryName(String name) {
-		if (getRegistryName() != null)
+		String old = getRegistryName();
+		if (old != null && old != name)
 			throw Registry.redifine(name, this.getRegistryName());
 		this.registryName = name;
 		return this;
@@ -28,6 +29,11 @@ public class RegistryEntryIns<T> implements RegistryEntry<T> {
 
 		public final T get() {
 			return this.value;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("%s=%s", getRegistryName(), this.value);
 		}
 	}
 }

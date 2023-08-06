@@ -9,9 +9,6 @@ import javax.swing.AbstractButton;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-import it.unimi.dsi.fastutil.ints.IntListIterator;
 import net.w3e.base.api.window.FrameWin;
 import net.w3e.base.tuple.number.WIntTuple;
 
@@ -147,22 +144,13 @@ public abstract class FrameObject {
 		if (!displayVersion()) {
 			return "";
 		} else {
-			String version = " " + MainFrame.version(MainFrame.version());
-			int[] array = this.version();
-			if (array != null && array.length > 0) {
-				IntList list = new IntArrayList(array);
-				IntListIterator iterator = list.iterator();
-				while(iterator.hasNext()) {
-					int next = iterator.nextIndex();
-					if (next <= 0) {
-						iterator.remove();
-					}
-				}
-				if (!list.isEmpty()) {
-					version += "#" + MainFrame.version(list.toIntArray());
-				}
+			String version1 = MainFrame.version(MainFrame.version());
+			String version2 = MainFrame.version(this.version());
+			String version = " ";
+			if (version1.length() > 0) {
+				version += version1 + "#";
 			}
-			return version;
+			return version + version2;
 		}
 	}
 

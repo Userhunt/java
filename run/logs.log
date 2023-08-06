@@ -1,2 +1,15 @@
-2023-07-23 01:29:19.044 [main] WARN  SETUP - writter replaced
-2023-07-23 01:29:19.047 [main] INFO   - [PrintWrapper{install:26}]: test replace from net.home.main.MainFrame.<clinit>(MainFrame.java:57)
+2023-08-06 01:06:10.315 [main] WARN  SETUP - writter replaced
+2023-08-06 01:06:10.322 [main] INFO   - [PrintWrapper{install:26}]: test replace from net.home.main.MainFrame.<clinit>(MainFrame.java:73)
+2023-08-06 01:06:13.961 [AWT-EventQueue-0] WARN   - start registry
+2023-08-06 01:06:13.976 [AWT-EventQueue-0] INFO   - [TestScreen{registry:144}]: [key1, key2, key3, dynamic1, dynamic2, dynamic3]
+2023-08-06 01:06:13.979 [AWT-EventQueue-0] INFO   - [TestScreen{registry:145}]: [{key:"dynamic1",value:dynamicA,reason:[1,dynamic]}, {key:"dynamic2",value:dynamicB,reason:[2,dynamic]}, {key:"dynamic3",value:dynamicC,reason:[3,dynamic]}]
+2023-08-06 01:06:13.980 [AWT-EventQueue-0] DEBUG  - register existes
+2023-08-06 01:06:13.981 [AWT-EventQueue-0] INFO   - [TestScreen{registry:150}]: [{key:"dynamic1",value:dynamicA,reason:[1,dynamic]}, {key:"dynamic2",value:dynamicB,reason:[2,dynamic]}, {key:"dynamic3",value:dynamicC,reason:[null/1,3,dynamic]}]
+2023-08-06 01:06:13.982 [AWT-EventQueue-0] DEBUG  - modiy exists
+2023-08-06 01:06:13.983 [AWT-EventQueue-0] INFO   - [TestScreen{registry:156}]: [{key:"dynamic1",value:dynamicA,reason:[1,null/2,dynamic]}, {key:"dynamic2",value:dynamicB,reason:[2,null/3,dynamic]}, {key:"dynamic3",value:dynamicC,reason:[null/1,3,dynamic]}]
+2023-08-06 01:06:13.983 [AWT-EventQueue-0] DEBUG  - modify not exists
+2023-08-06 01:06:13.985 [AWT-EventQueue-0] INFO   - [TestScreen{registry:161}]: [{key:"dynamic1",value:dynamicA,reason:[1,null/2,dynamic]}, {key:"dynamic2",value:dynamicB,reason:[2,null/3,dynamic]}, {key:"dynamic3",value:dynamicC,reason:[null/1,3,dynamic]}]
+2023-08-06 01:06:13.985 [AWT-EventQueue-0] DEBUG  - remove reasons
+2023-08-06 01:06:13.987 [AWT-EventQueue-0] INFO   - [TestScreen{registry:166}]: [{key:"dynamic1",value:dynamicA,reason:[null/2,dynamic]}, {key:"dynamic2",value:dynamicB,reason:[2,null/3,dynamic]}, {key:"dynamic3",value:dynamicC,reason:[null/1,3,dynamic]}]
+2023-08-06 01:06:13.988 [AWT-EventQueue-0] INFO   - [TestScreen{registry:168}]: [{key:"dynamic1",value:dynamicA,reason:[null/2,dynamic]}, {key:"dynamic2",value:dynamicB,reason:[null/3,dynamic]}, {key:"dynamic3",value:dynamicC,reason:[null/1,3,dynamic]}]
+2023-08-06 01:06:13.989 [AWT-EventQueue-0] INFO   - [TestScreen{registry:170}]: [{key:"dynamic1",value:dynamicA,reason:[null/2]}, {key:"dynamic2",value:dynamicB,reason:[null/3]}, {key:"dynamic3",value:dynamicC,reason:[null/1,3]}]

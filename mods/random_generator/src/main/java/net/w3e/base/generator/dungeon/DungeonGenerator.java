@@ -32,14 +32,6 @@ public abstract class DungeonGenerator {
 		Массив
 
 	*/
-	//вход
-	//коридор
-	//сундуки
-	//враги
-	//ловушки
-	//босс
-	//выход
-	//святилище
 
 	@Override
 	public final String toString() {
