@@ -146,7 +146,6 @@ public class BMatUtil {
 	}
 
 	/* ======================== minMax ======================== */
-
 	public static final byte min(byte a, byte b) {
 		return (byte)Math.min(a, b);
 	}
@@ -185,5 +184,27 @@ public class BMatUtil {
 
 	public static final double max(double a, double b) {
 		return Math.max(a, b);
+	}
+
+	/* ======================== fastMath ======================== */
+	public static final float sin(float a) {
+		int b = (int) (a * sinTable.length / 360);
+		b %= sinTable.length;
+		if (b < 0) {
+			b += sinTable.length;
+		}
+		return sinTable[b];
+	}
+
+	public static final float cos(final float x) {
+		return sin(x + 90);
+	}
+
+	private static final float[] sinTable = new float[1024 * 16];
+
+	static {
+		for (int i = 0; i < sinTable.length; i++) {
+			sinTable[i] = (float) StrictMath.sin(2 * Math.PI * i / sinTable.length);
+		}
 	}
 }

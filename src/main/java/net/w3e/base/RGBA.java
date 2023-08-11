@@ -297,10 +297,13 @@ public class RGBA {
 	}
 
 	public static final RGBA unpackHEX(String hex) {
-		if (hex.length() == 7) {
-			hex = "#ff" + hex.substring(1);
+		if (hex.startsWith("#") && !hex.isEmpty()) {
+			hex = hex.substring(1);
 		}
-		return RGBA.bgra.unpack((int)Long.parseLong(hex.substring(1).toLowerCase(), 16));
+		if (hex.length() == 6) {
+			hex = "ff" + hex;
+		}
+		return RGBA.bgra.unpack((int)Long.parseLong(hex.toLowerCase(), 16));
 	}
 
 	public final RGBA multiplyAlpha(int a) {
