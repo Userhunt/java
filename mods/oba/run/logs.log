@@ -1,8 +1,0 @@
-2023-07-20 00:49:23.954 [main] WARN  SETUP - writter replaced
-2023-07-20 00:49:23.961 [main] INFO   - [PrintWrapper{install:26}]: test replace from net.home.main.MainFrame.<clinit>(MainFrame.java:56)
-2023-07-20 00:49:24.481 [main] INFO   - [ObaConfig$4{apply:51}]: false
-2023-07-20 00:50:59.370 [pool-3-thread-1] INFO   - [OneBitAdventure{tick:111}]: tick
-2023-07-20 00:50:59.690 [pool-3-thread-1] INFO   - [OneBitAdventure{tick:111}]: tick
-2023-07-20 00:50:59.944 [pool-3-thread-1] INFO   - [OneBitAdventure{tick:111}]: tick
-2023-07-20 00:51:00.168 [pool-3-thread-1] INFO   - [OneBitAdventure{tick:111}]: tick
-2023-07-20 00:51:00.410 [pool-3-thread-1] INFO   - [OneBitAdventure{tick:111}]: tick

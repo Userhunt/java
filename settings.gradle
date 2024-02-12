@@ -1,0 +1,17 @@
+rootProject.name = 'w3e-root'
+
+include(
+    ':root',
+	':tf2',
+	':oba',
+	':anydesk',
+	':random_generator',
+	':split_screen'
+)
+
+rootProject.children.each { project ->
+    String projectDirName = "modules/$project.name"
+    project.projectDir = new File(settingsDir, projectDirName)
+    assert project.projectDir.isDirectory()
+    assert project.buildFile.isFile()
+}

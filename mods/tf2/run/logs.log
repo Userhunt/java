@@ -1,8 +1,0 @@
-2023-05-31 16:30:40.170 [main] WARN  SETUP - writter replaced
-2023-05-31 16:30:40.177 [main] INFO   - [PrintWrapper{install:26}]: test replace from net.home.main.MainFrame.<clinit>(MainFrame.java:38)
-2023-05-31 16:30:40.177 [main] INFO   - [Tf2{main:39}]: [Ljava.lang.String;@5ef6ae06
-2023-05-31 16:30:40.260 [main] INFO   - [Throwable$WrappedPrintStream{println:763}]: java.lang.NullPointerException: Cannot read the array length because "<local2>" is null
-2023-05-31 16:30:40.260 [main] INFO   - [Throwable$WrappedPrintStream{println:763}]: 	at net.home.main.MainFrame.load(MainFrame.java:91)
-2023-05-31 16:30:40.261 [main] INFO   - [Throwable$WrappedPrintStream{println:763}]: 	at net.home.main.MainFrame.run(MainFrame.java:62)
-2023-05-31 16:30:40.261 [main] INFO   - [Throwable$WrappedPrintStream{println:763}]: 	at net.home.main.MainFrame.run(MainFrame.java:55)
-2023-05-31 16:30:40.262 [main] INFO   - [Throwable$WrappedPrintStream{println:763}]: 	at net.home.tf2.Tf2.main(Tf2.java:40)

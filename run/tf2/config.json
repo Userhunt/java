@@ -1,0 +1,848 @@
+{
+	"min": 5,
+	"dollar": 91.82,
+	"attempt": 4,
+	"items": [
+		{
+			"id": "Conscientious Objector",
+			"group": ["universal","scout","soldier","pyro","demo","heavy","engineer","medic","sniper","spy"],
+			"link": "Conscientious+Objector",
+			"image": "9xgEIUxcYXhDnrAdPidrhCLzUUbVWytkw48kB3WQ6xVYoNufsYjRjdAKWWPVYWfZuow7oDSNn7ZUwGse48BBZlnRK"
+		},
+		{
+			"id": "Freedom Staff",
+			"group": ["universal","scout","soldier","pyro","demo","heavy","engineer","medic","sniper","spy"],
+			"link": "Freedom+Staff",
+			"image": "9xgEIUxMGYh7jvzRGt8TnH_WJRuQEyN5ns8UNiWE7wVN-ZLPtZTY3IVOUWKNaWaxvrVC-DXNluJYyUNX457UB7fV5D7Y"
+		},
+		{
+			"id": "Bat Outta Hell",
+			"group": ["universal","scout","soldier","pyro","demo","heavy","engineer","medic","sniper","spy"],
+			"link": "Bat+Outta+Hell",
+			"image": "9xgEIUxQaSBfuujlXt8TnH_WJRuMBzo8345MMi2M9yAMtZrCxNmQwIFbBUfBfBaRsoli-XiFrsJ8wV9b457UBL4BMVk0"
+		},
+		{
+			"id": "Ham Shank",
+			"group": ["universal","scout","soldier","pyro","demo","heavy","engineer","medic","sniper","spy"],
+			"link": "Ham+Shank",
+			"image": "9xgEIUw8QUCTuuSpEjYa-VKuOXrRUytszsZYA3GM9yVh9MbDlNmAwIweQV_dbC_ZorAy1XnBrptdtU4darXRp"
+		},
+
+		{
+			"id": "Pistol",
+			"group": ["universal","scout","engineer"],
+			"image": "9xgEIUxcYTg_ttAdPidrhCLzbDLFXw41t5JMNjzM9kgAqYeDgYmYwdFeUUKNaWq1j8l7tDyUzu5cyGse48FeIJniL"
+		},
+		{
+			"id": "Shotgun",
+			"group": ["universal","soldier","pyro","heavy","engineer"],
+			"image": "9xgEcUxQZUg_lrTZ8hMn0CvfCUeRYn4hm4cIBiDM4lFB4N7bhY2YyJgKQBfdYCKY7rF28DSZgvcIzBpmm-bytOo7gjw"
+		},
+		{
+			"id": "Reserve Shooter",
+			"group": ["universal","soldier","pyro","engineer"],
+			"link": "Reserve+Shooter",
+			"image": "9xgEIUxUUTh7wrj18m8DpAuaJGt8Mmsgy4N4CgDc6kwIsZbW2YGIycwabV6ELCfNjrAvpDX5q7JU6AYHir-9Regi7qsKYZBvgQ7SU"
+		},
+		{
+			"id": "Panic Attack",
+			"group": ["universal","soldier","pyro","heavy","engineer"],
+			"link": "Panic+Attack",
+			"image": "9xgEIUxMDWBXhsD9WhvfqDOCLDa5Vn9kwvMYEiGU4wgUubbThY2FjcFXEV6FcCaU5ow66XyU0vsI1AIGyuasILrtGuxff"
+		},
+		{
+			"id": "Pain Train",
+			"group": ["universal","soldier","demo"],
+			"link": "Pain+Train",
+			"image": "9xgEIUxcQVBX2qjlKhvfqDOCLDa4EzI9j5pQNgG4yw1B5YLSwZGU3IQfDB_ZdWqNq9gy_CH9gvZ4xUobmuasILvNe5Zbu"
+		},
+		{
+			"id": "Half-Zatoichi",
+			"group": ["universal","soldier","demo"],
+			"link": "Half+Zatoichi",
+			"image": "9xgEIUxQZUhz3tgdIidznA_OzBOESnN97sJEHiDI6xFIvY7HlMTMwIlXDUPBbWvA_8lq9CyY3uZUyA4fvp-sCcRKv6tUa3lr7Jg"
+		},
+
+		{
+			"id": "Scattergun",
+			"group": ["scout"],
+			"image": "9xgEIUxQSXA_2vSpEncbZAfOeD-VOzotl5MkEgWc7yVkjZLbmMWEzJAaaWfgHXaU_8F65WXVmsJ80UNGz8_UWJ1tD85_Guw"
+		},
+		{
+			"id": "Force-A-Nature",
+			"group": ["scout"],
+			"link": "Force+A+Nature",
+			"image": "9xgEIUwMeSBnuvQdBidr0CP6zBOESnN97vJFXim5qyFUpMOW3ZG8_JFaaBfBdCPE4rAq8DHJr7sI2A9W39u4HLBKv6tVYdY192A"
+		},
+		{
+			"id": "Shortstop",
+			"group": ["scout"],
+			"image": "9xgEIUxQZUgn2qyxMmPfqDOCLDa4CyY1jtsMC2mIyyVgjZOW0ZTQzJACSV6VdWq1qpAy_WnNmuJIyUY_muasILkyCzE-6"
+		},
+		{
+			"id": "Soda Popper",
+			"group": ["scout"],
+			"link": "Soda+Popper",
+			"image": "9xgEIUxQeWRrdqDdTmM30Mv6NGucF1YJtscECj2A4wVgsMLDlNTQ0JgfBBKYMBKY5rAq-W3A07ZZmBIfir-NIOVK4959-Jxc"
+		},
+		{
+			"id": "Baby Face's Blaster",
+			"group": ["scout"],
+			"link": "Baby+Face's+Blaster",
+			"image": "9xgEIUxcUTSTxuzlXnM30CueCN-wBid0wq8ENijU6lQN9bbWzZjI0IlbHBPkHBKVrolC1CCMx7pVnVY7h8-1TeAzx9NyRaY7dTA4"
+		},
+		{
+			"id": "Back Scatter",
+			"group": ["scout"],
+			"link": "Back+Scatter",
+			"image": "9xgEIUxQSXA_2vSpHmt3rMv6NGucF1Y9issUEjW5twlB4MebmaWRjKwCRVfQPX6Nt8VDoXH5jvJ9nUoGwoulIOVK4z4tvGss"
+		},
+		{
+			"id": "Winger",
+			"group": ["scout"],
+			"image": "9xgEIUxAYUxznqgdTgdvyAv6zBOESnN974MFU2zAyyQR4Y7qxY24_IFHEU_dcXqFo8F-_XnJqvsNiA9bgpe0FexKv6tUtaMFjaA"
+		},
+		{
+			"id": "Pretty Boy's Pocket Pistol",
+			"group": ["scout"],
+			"link": "Pretty+Boy+Pocket+Pistol",
+			"image": "9xgEIUxcUTSTysStXh8TZAfOeD-VOwog2vJME3TBqyVB4YbS0aTZlcFebVfEMWPY-pQu6WyJlucI6UYPloPUWJ1ub4SCREw"
+		},
+		{
+			"id": "Flying Guillotine",
+			"group": ["scout"],
+			"link": "Flying+Guillotine",
+			"image": "9xgEIUxQVYhjuvTlVjdrZAfOeD-VOyNxs48VTjzc7kFl4NrPhZDFiIV2bUaQGWK1v9124WiYzupIzDNS3ofUWJ1vzhdlvNA"
+		},
+		{
+			"id": "Bat",
+			"group": ["scout"],
+			"image": "9xgEIUwUQSSTuuSpEjYbiXaHaCuVSyI9l4MQCjjJvk1IrYbTjMmM2cFyRAPYICqI5pFruWX8wptdtU1jiacVz"
+		},
+		{
+			"id": "Holy Mackerel",
+			"group": ["scout"],
+			"link": "Holy+Mackerel",
+			"image": "9xgEIUw8eUQLvuTtIjdrjAc2ACfIHnpQ058ENijVqklcuYbTmNTIwJFSRUfUKXac5p1C7UHRivZBgBYLl8etUZ0yx42z6-5Zm"
+		},
+		{
+			"id": "Unarmed Combat",
+			"group": ["scout"],
+			"link": "Unarmed+Combat",
+			"image": "9xgEIUxIfXAnvvTx8i8frD_OYN-wBid0wq8cDjmI_xFMjNuC3YmdjJwWRWPIKCq05oQm5XnY27sM0UoC09uJXeQ3x9NyREz5Xso8"
+		},
+		{
+			"id": "Sandman",
+			"group": ["scout"],
+			"image": "9xgEIUxAeUh_ntgdBidzZAfOeD-VOz9s0vMAM3WRtwwcsNuGwZzJjc1SVUKQJDq1u91zvW3Uw7sQ7ANPm8fUWJ1sZuDp64A"
+		},
+		{
+			"id": "Candy Cane",
+			"group": ["scout"],
+			"link": "Candy+Cane",
+			"image": "9xgEIUwQQUx_7hztChs3ZAfOeD-VOzIgxtZYC3GYylFV5YOazNmA1KwbEWfJaDPBioVu1DyUzsZ42DYOy8vUWJ1sFbpqfqA"
+		},
+		{
+			"id": "Boston Basher",
+			"group": ["scout"],
+			"link": "Boston+Basher",
+			"image": "9xgEIUwUeTg_ttgdBidvuCOCzBOESnN97tskD2jJpxQcjYLbsMmcydADAB6JdWPM-9lG5W35h68Y1BIay8-1ecBKv6tUgI4YCBA"
+		},
+		{
+			"id": "Three-Rune Blade",
+			"group": ["scout"],
+			"link": "Three+Rune+Blade",
+			"image": "9xgEIUxQSUg72hytUh9riMv6NGucF1YJj48dXgWBokAR9ZuGzMzYzcwLDBPlYX_A5oV_vWHBj7JMxBobv8rpIOVK4D5Mot5Q"
+		},
+		{
+			"id": "Sun-on-a-Stick",
+			"group": ["scout"],
+			"link": "Sun+on+a+Stick",
+			"image": "9xgEIUxUYWw_dvjFRjffrDPGJN-wBid0wq5NX22M-xgR-ZbHgMmBkJgGbUfUGCqVorFi0UH5jsJY0ANa1oeJfL1_x9NyRS593QLU"
+		},
+		{
+			"id": "Fan O'War",
+			"group": ["scout"],
+			"link": "Fan+O+War",
+			"image": "9xgEIUxQZUhz3tgdUidrgDPyzBOESnN97ssRTi2AywgcqNbDjaDIyK1yWAvcNCqZspl-0UXRjuZ83Bta08ukDLRKv6tVfpQ3ziw"
+		},
+		{
+			"id": "Atomizer",
+			"group": ["scout"],
+			"image": "9xgEIUwUeUxDdujlXt8TnH_WJRrhTn40w4cINjDVulFZ9N7awYmE0JlGbB_UJCPc-8li9XCM07sNgUYb457UB3phDRWo"
+		},
+		{
+			"id": "Wrap Assassin",
+			"group": ["scout"],
+			"link": "Wrap+Assassin",
+			"image": "9xgEIUx8cTiTlsT5Xn9rnHc2ACfIHnpRnt8NQiWZplVctMufnZWE3dlKaVKIHX605pF7vUH5juJE2BYXi8-kFZ0yx4-vBm4RD"
+		},
+
+		{
+			"id": "Rocket Launcher",
+			"group": ["soldier"],
+			"link": "Rocket+Launcher",
+			"image": "9xgEcUxUeXhDnrDRCncblBfeeN-wBid0wq8MCjzM-x1UsZ7LkZDM1KgWUWfcJCaw4oV60CyU06pcwV9a1puleew_x9NyRhvuqtmA"
+		},
+		{
+			"id": "Direct Hit",
+			"group": ["soldier"],
+			"link": "Direct+Hit",
+			"image": "9xgEIUwMYTx7hrDBKnPfqDOCLDa5Tyt5i4MYEiTVvxwUiNrLmM2djdFKVVaIKWqZuoAq9WHRhuJQxB4DiuasILvZuJGWS"
+		},
+		{
+			"id": "Black Box",
+			"group": ["soldier"],
+			"link": "Black+Box",
+			"image": "9xgEIUwUdXBjpujdbt8TnH_WJRuUGn4wwvJVTiTRql1J6Z-HjZWZicFKTWKJfDPE5rFG6C3JnscMxBY_457UBlPrlV5Q"
+		},
+		{
+			"id": "Liberty Launcher",
+			"group": ["soldier"],
+			"link": "Liberty+Launcher",
+			"image": "9xgEIUwsYXx7wrCF8hMnzA_GEDfI_l9sn4pUbjjIywlgrMuHgNW41c1KbVPQLWaQ_rV25DHJku580V9Phr70FKg3rs5yGbed08PxWaA"
+		},
+		{
+			"id": "Cow Mangler 5000",
+			"group": ["soldier"],
+			"link": "Cow+Mangler+5000",
+			"image": "9xgEIUwMDWiThty9OicbhAfeeN-wBid0wq8YB3288wlB5Z-XsNW8-cAeVWaZdCfdqpV_tWSFnvMM3DITm9OMCKF3x9NyRj2SxQiI"
+		},
+		{
+			"id": "Beggar's Bazooka",
+			"group": ["soldier"],
+			"link": "Beggar+Bazooka",
+			"image": "9xgEIUwMEUAvxrD1Rt8zjG_uPDd8Mmsgy4N5Ujzc_k1R-bOLhMW4yKgHEB6FcWa1s91i1UHZiu8E6VoLloOpUe169qsKYZHrBcdPH"
+		},
+		{
+			"id": "Air Strike",
+			"group": ["soldier"],
+			"link": "Air+Strike",
+			"image": "9xgEIUwYFUhbdtDlWhsvuCOCzBOESnN97vZEC3DAzx1IpY7K0ZDI-K13AUKYPCfdupwq4DSUwup40V4C19b1VfRKv6tVGrIKsTg"
+		},
+		{
+			"id": "Mantreads",
+			"group": ["soldier"],
+			"image": "9xgEGbQkFTx7jvCt8hMn0CvfCUbIGyN4z4ZFTiTM5k1UqbeexZDNjdlHEAqMOWKQ7912_UXIxscQ3V5mm-bxf6fJZ7Q"
+		},
+		{
+			"id": "Righteous Bison",
+			"group": ["soldier"],
+			"link": "Righteous+Bison",
+			"image": "9xgEIUwMDWiTwsT9LnM3pGOGOAfMPleU55IJS3Hg6w1N5ZrCzaTRkKlKXVfcICPNsoQntXyZi6pIxAtO09ekHcAzm4daXLfByZ5RgJtBf"
+		},
+		{
+			"id": "Shovel",
+			"group": ["soldier"],
+			"image": "9xgEcUxQZUg3ntAdPidrhCLyJX7dWz4sw4JQG2mU6yQUjY7fsaWAxJFObA_FbCadq9VnoWXYzuJAxGse48JSIsYv3"
+		},
+		{
+			"id": "Equalizer",
+			"group": ["soldier"],
+			"image": "9xgEIUxcYXhDjoD18m5rZAfOeD-VOwow245UHiGRtlVd4Y-K3Mm4yKwGXB_YNC_dpoAzuWSNn7p4wA9K3oPUWJ1sEtEon8w"
+		},
+		{
+			"id": "Disciplinary Action",
+			"group": ["soldier"],
+			"link": "Disciplinary+Action",
+			"image": "9xgEIUxUYWRLsvwdAmsf2Mv6NGucF1Ypm4ZZQiGc9x1gjbOWxZTQ2cAGUVqUNCKJuo1G8WHdqvpAzUdXm9b1IOVK4WH6cetM"
+		},
+		{
+			"id": "Market Gardener",
+			"group": ["soldier"],
+			"link": "Market+Gardener",
+			"image": "9xgEIUwoQTxDnrAdEidriCPyJGt8Mmsgy4N4DimdpxVUuZuGzM2JkJwHHVqENCPQ4oVq6WXNlsJMwUdXjob0CcF7tqsKYZHE9EdYU"
+		},
+		{
+			"id": "Escape Plan",
+			"group": ["soldier"],
+			"link": "Escape+Plan",
+			"image": "9xgEIUxcYXhDjoD18hMn0CvfCWbdRn49lvMEM3GQ-lQMpYOCwMjYwJlaQAvILCKA8rVm9DSVq6ZdnV5mm-bxe0Kkpjw"
+		},
+
+		{
+			"id": "Flame Thrower",
+			"group": ["pyro"],
+			"link": "Flame+Thrower",
+			"image": "9xgEIUwEdXBbnrDBRh9_jH82ACfIHnpRt4MQF3Tc7lFd_ZOCxYm5kdFKTVvEKCaRopli7Cn5isZAxV4bm9u4AZ0yx42fOX6Lt"
+		},
+		{
+			"id": "Rainblower",
+			"group": ["pyro"],
+			"image": "9xgEIUxUQVBXgtDdUjdrZAfOeD-VOz4804MYGiGQ7wFQrZ7G3Nmc_JAfDWfkOWqRjp1ntDXEw7JI3B9Hh9PUWJ1uXVRGrng"
+		},
+		{
+			"id": "Backburner",
+			"group": ["pyro"],
+			"image": "9xgEIUwUQXhDgrSpNjdrZAfOeD-VOzd8xsZUFgGc4wVEuNruxZG81JAWbWfIIC_ZjrQ20WnJk6cMxVYWyovUWJ1uvVByBiQ"
+		},
+		{
+			"id": "Degreaser",
+			"group": ["pyro"],
+			"image": "9xgEIUwMUWgnnuStGmvfqDOCLDa5SzI9ms8RWgDU4wgUsN7HgMjUzdgGRU_FdDvFs8ly_CHc0vcM7DI_juasILvdwG6rd"
+		},
+		{
+			"id": "Phlogistinator",
+			"group": ["pyro"],
+			"image": "9xgEIUwMDWiTysDRMj8H1GfuCCfQPieU55IJS3Hhul1QpY7DgMjU1JACWWaIOWac-9ly9CnEzuMIzDYG0ruxRKwXos4rALfByZ2I6H6Yn"
+		},
+		{
+			"id": "Dragon's Fury",
+			"group": ["pyro"],
+			"link": "Dragon+Fury",
+			"image": "9xgEIUwEdXBbnujlPhPfqDOCLDa5Xn9tlvcYA2GNqxFIqZeDgYDM3KlDEBfNbWfZsrA7pC39jvpQyA4bguasILuCA4r1m"
+		},
+		{
+			"id": "Flare Gun",
+			"group": ["pyro"],
+			"link": "Flare+Gun",
+			"image": "9xgEIUwEdXAnnvy1Nt9j_H_2zBOESnN974MYDimc5xFV9YLHkYGBhIgKRWfEJXvFpplm1XnY2vJEyUtW0prkFfBKv6tVkl18kbQ"
+		},
+		{
+			"id": "Detonator",
+			"group": ["pyro"],
+			"image": "9xgEIUwMUSRTsuSxMmvfqDOCLDa4BzNg0tJQMjGE_x1ItMOLgZWMzKlSUWfcOXaBop1G1CyE0u5c6VtHmuasILgEIzzDU"
+		},
+		{
+			"id": "Manmelter",
+			"group": ["pyro"],
+			"image": "9xgEIUwMDWiTvuTZOjcTyCOCzBOESnN9755YGj2I4kgJ_YeCzYWE0JFSSVKIHBaE5olq7XCFl7sMwDI7vp-8DLxKv6tXEOsjjKQ"
+		},
+		{
+			"id": "Scorch Shot",
+			"group": ["pyro"],
+			"link": "Scorch+Shot",
+			"image": "9xgEIUxQSUgnhsAdQgMfyMv6NGucF1Yw35MdT2mMyxlUiYOHmYG4-cVaUUaMOXqVtoVy9DHFlvZcxAoOyob1IOVK4fClRPEI"
+		},
+		{
+			"id": "Fire Axe",
+			"group": ["pyro"],
+			"link": "Fire+Axe",
+			"image": "9xgEIUwEYTx7joD18mNH0As2ACfIHnpQ34McNgWY6lAUjMOXiNDRjI1DHA_gHWaU-8Q6-XnVmuJ8zBYXmoupfZ0yx47GeqRym"
+		},
+		{
+			"id": "Lollichop",
+			"group": ["pyro"],
+			"image": "9xgEIUwseURfruzBMmPfqDOCLDa5Syd9k5sADj2doxlciMLbnNWU0cQHGUqRbBfQ8ogm0C3E2u5c7UIHjuasILomQbXi5"
+		},
+		{
+			"id": "Axtinguisher",
+			"group": ["pyro"],
+			"image": "9xgEIUwYJSRLsvy1Km8DjH82cEfIPpNY095dQlzU9xgd-Z7vgNGZmc1GSB_laXq04oli8WHdiuZ40V9Syru0HegXmtoDYc-57hPrnlJA"
+		},
+		{
+			"id": "Postal Pummeler",
+			"group": ["pyro"],
+			"link": "Postal+Pummeler",
+			"image": "9xgEIUwoQVBfgtyB8hMn0CvfCDuNZzdtk58YBijA6klIpMrGzYTRjIgKVBfIPCa04pA7qC3Q27pY3V5mm-bwwjh0L4w"
+		},
+		{
+			"id": "Homewrecker",
+			"group": ["pyro"],
+			"image": "9xgEIUxQdWB_lvTBChcXjH82ACfIHnpQ3s8ECjmVuwVR_Z7btMTM0JFGRWfcHCqY-9gu9D3NruMQwVYW08utWZ0yx4_AL8Wx9"
+		},
+		{
+			"id": "Maul",
+			"group": ["pyro"],
+			"image": "9xgEIUxUXXCTquTVOjdrZAfOeD-VOzYln45MFgGVowAcrYeLsaGY-JAGaA_NbDK1spQq-DXM2sZ4xUoOyr_UWJ1vem_d-Uw"
+		},
+		{
+			"id": "Powerjack",
+			"group": ["pyro"],
+			"image": "9xgEIUxceSh7wsjlAg_fqDOCLDa5Sw4k2tsNQ2mcykAQjMOLlZTM2c1zEAPNbDfM_oA61XnFksJc1DNbuuasILrs_4Bfd"
+		},
+		{
+			"id": "Back Scratcher",
+			"group": ["pyro"],
+			"link": "Back+Scratcher",
+			"image": "9xgEIUwUQXhDdqztRidzlBfeeN-wBid0wq5IBgTVvx1ArMLTjY2A3c1zGAPRdWqw4oA7vWiNksZczV4OyoLoDKFrx9NyRKaAsZzc"
+		},
+		{
+			"id": "Sharpened Volcano Fragment",
+			"group": ["pyro"],
+			"link": "Sharpened+Volcano+Fragment",
+			"image": "9xgEIUxUYWw_dvjFRjffnFfezBOESnN9758NXizNqwVIiYbWxZGE-JlSTBPVbCKBv8l61XnJhu8FlB9Th8e9ReBKv6tX56hoxdA"
+		},
+		{
+			"id": "Third Degree",
+			"group": ["pyro"],
+			"link": "Third+Degree",
+			"image": "9xgEIUwMDWiT2sDFRjMzjCuCJDd8Mmsgy4N4AiWY-xlIiZLbhNm9lJgWTAvkPBaw88F3oWHNi7sI0BdHgpe1RK1nuqsKYZN7j6fc0"
+		},
+		{
+			"id": "Neon Annihilator",
+			"group": ["pyro"],
+			"link": "Neon+Annihilator",
+			"image": "9xgEIUxQVYhXntzZQgc_oMv6NGucF1d9j48gGi2A-xwcpZLa2aDNhdgGaWflbBKU7rF66DHAxupRlDNTupeJIOVK48_bzdmc"
+		},
+		{
+			"id": "Hot Hand",
+			"group": ["pyro"],
+			"link": "Hot+Hand",
+			"image": "9xgEcUxQdXAvysTZEt8_qAuSJN-wBid0wq5MF2DczlFgtNeCzYWUyJlTHBfddBfRs9Qm9W3VkvMUzAYHh9etXLw_x9NyRC3UNgtw"
+		},
+
+		{
+			"id": "Grenade Launcher",
+			"group": ["demo"],
+			"link": "Grenade+Launcher",
+			"image": "9xgEcUwADWBXjvD1Pid3oDvqJGt8Mmsgy4N4E3GBux1EtN7W0Z2E0K1bAA_kGXaM7pFu4UXYx7cRiAI7gpe5WewvoqsKYZB0bKFy1"
+		},
+		{
+			"id": "Loch-n-Load",
+			"group": ["demo"],
+			"link": "Loch+n+Load",
+			"image": "9xgEIUwseXhPstDdCjPfqDOCLDa5Zy4MztcUF2GNvw1YiNuXnYjVidwaXVPAIDqxjrAm6USVjupVhAYOzuasILqA-SDCA"
+		},
+		{
+			"id": "Loose Cannon",
+			"group": ["demo"],
+			"link": "Loose+Cannon",
+			"image": "9xgEIUwMUUBTduzlNhsfoMv6NGucF1dg3vJVXgTQ-lQJ5NeG2YWFkK1XAU_YIBaFj8lnvXX8zvpNlUo619b9IOVK4NoWwvnM"
+		},
+		{
+			"id": "Iron Bomber",
+			"group": ["demo"],
+			"link": "Iron+Bomber",
+			"image": "9xgEIUxYEXB_guTRPt8TnH_WJRuZWz49t4cNXjmJoxVkpN-WwZ2Y1cQCXBPQICPdi9wnqCyFiuJY7BYb457UBZtROwuo"
+		},
+		{
+			"id": "Stickybomb Launcher",
+			"group": ["demo"],
+			"link": "Stickybomb+Launcher",
+			"image": "9xgEcUxQFVBjpoTpMhcrZAfOZBuMInsgK6ZFH3jMlkAQvYOK0NDQyJVSRV_AOWvRo9125CyFlv5NmAoHj8bgHcQ695oLAMK5sbo8uHAbfiA"
+		},
+		{
+			"id": "Scottish Resistance",
+			"group": ["demo"],
+			"link": "Scottish+Resistance",
+			"image": "9xgEcUxQFVBjpoTpMhcrZCfeKDe4EnsgK6ZFH3jMlxAR5Z7fsY2Y-IAeQVvgMWaw7pFu1CyQ07cFgDY-1orkDKwzs5dDPNK5sbo8uLvBU-Q"
+		},
+		{
+			"id": "Chargin' Targe",
+			"group": ["demo"],
+			"link": "Chargin+Targe",
+			"image": "9xgEIUxMQTxznhzRCms_jQ6qIWuJRn4xn4cBQjWVqwlEoMOXtNmI3JVXHVaEJDaU_8Aq4CiE27pMtRNmxNoo4FnA"
+		},
+		{
+			"id": "Splendid Screen",
+			"group": ["demo"],
+			"link": "Splendid+Screen",
+			"image": "9xgEIUxcUTwjruTZ8m8DvCP6IN-wBid0wq5YG32JowwN-MuezMWNidFOWAKQICaw_91m1CnVgupZiAtPnoeNSfVnx9NyRTdx1ZWk"
+		},
+		{
+			"id": "Tide Turner",
+			"group": ["demo"],
+			"link": "Tide+Turner",
+			"image": "9xgEIUxAZWB7uhytLgc3qCc2ACfIHnpRmvcJXiGFpxgJ9MrXjYmA2KlfEUvYJWKZipVC6DHAz6ZA0BtXjpL1RZ0yx45myd5e_"
+		},
+		{
+			"id": "Quickiebomb Launcher",
+			"group": ["demo"],
+			"link": "Quickiebomb+Launcher",
+			"image": "9xgEIUwwYUxzvuTNGmvf1GfuPA_k_l9sn4pUbjmdoxVIjZuDtaW81cVXGV_VaBfNrp1C9DXBqucI1Atbkr-wFe13s5ZyGbedsDUXNXQ"
+		},
+		{
+			"id": "Bottle",
+			"group": ["demo"],
+			"image": "9xgEcUwUeSQ_uvQdPidrhCLzYXOZVzNkxs5UM3G5oyFYjZuHmZWY3KlOSBKINDKNs8Fm1D39jvJU7Gse48EHYXjvY"
+		},
+		{
+			"id": "Scottish Handshake",
+			"group": ["demo"],
+			"link": "Scottish+Handshake",
+			"image": "9xgEIUxQSUg_uuTZHt9vuDOCIN-wBid0wq5UB3WE-l1UuN7a2aWcydlCSWfQLDaVt8Qq_UHNivJ83VdLlruoHcF3x9NyRFTn5Y5s"
+		},
+		{
+			"id": "Eyelander",
+			"group": ["demo"],
+			"image": "9xgEIUwQdXALvtypGt8TnH_WJRrdRyNhjs8cFimY-yVEjYrbsYGZiJgWUBKUOCvdj8lC0CiVi6ZdmDYb457UBC17RvN0"
+		},
+		{
+			"id": "Nessie's Nine Iron",
+			"group": ["demo"],
+			"link": "Nessie+Nine+Iron",
+			"image": "9xgEIUwAeUR3htC1Bt8TnH_WJRrVRzIpts5RRjW84lVEiYbbhMTIwKgeXV6EGCfdpol6_WHJq7pAxAdL457UB2-QouR8"
+		},
+		{
+			"id": "Scotsman's Skullcutter",
+			"group": ["demo"],
+			"link": "Scotsman+Skullcutter",
+			"image": "9xgEIUwUQSQ_uvTlbjffqDOCLDa5Vwo9i5skM3286yAR6MrTmNmNhJgXAV6YNDaY_8VnuD380v5UzA9K1uasILs5t5dNb"
+		},
+		{
+			"id": "Ullapool Caber",
+			"group": ["demo"],
+			"link": "Ullapool+Caber",
+			"image": "9xgEIUwQQXx7whzRCms_jQ6HeWuJSnd8x5pNRiGJowAQsbOfkMjY1JlyRU_cJCKI-rVDtXXY27MQtRNmx90Nr2nQ"
+		},
+		{
+			"id": "Claidheamh Mòr",
+			"group": ["demo"],
+			"link": "Claidheamh+Mòr",
+			"image": "9xgEIUwQdXBLmsD1ChcfuAP2eN-wBid0wq8MC2Gc-wFN9ZrvhMmU2K1eVWKZfC_BjpVm8XnVi7JE2BNO19bpXKg7x9NyR7tmtTkw"
+		},
+		{
+			"id": "Persian Persuader",
+			"group": ["demo"],
+			"link": "Persian+Persuader",
+			"image": "9xgEIUwMUUBTdqy1PnMnoMuGbB_IEpNY095dQl2BuwFkpNru2ZDNmKlzAUqYLCqNr8V69WXFgvMQyUIPupulTeQjusYPYc-57z1Oj6rk"
+		},
+
+		{
+			"id": "Minigun",
+			"group": ["heavy"],
+			"image": "9xgEcUwoYUxLlrTZ8hMn0CvfCUORZz9k25sJWjjNqxgUoY7axYGQ-KlWVUKULC6Zio1nqCn82upI1B5mm-byX3vQneg"
+		},
+		{
+			"id": "Natascha",
+			"group": ["heavy"],
+			"image": "9xgEIUxAuUQ7mtTFPiffqDOCLDa5Sz9xi5MVRi284xgIiNuC2aWQ3IAHAAKIGXqFv917vC3E0v5RiDdLkuasILupqt6S-"
+		},
+		{
+			"id": "Brass Beast",
+			"group": ["heavy"],
+			"link": "Brass+Beast",
+			"image": "9xgEIUwAQSRfrtj98j93oMv6NGucF1Yk0vJQMiGEzyVl5MeG2YjMydweTV_ZfWaA8rF_pDHJmuZU7UYTnr75IOVK4K0kuzjc"
+		},
+		{
+			"id": "Tomislav",
+			"group": ["heavy"],
+			"image": "9xgEIUxMeUBLxtDlVt8TnH_WJRrkEmYkxvZNTjWUywQMtYOHjYjRiIVOQUaRaDPc-oVC8D39n7pUyBYb457UB3gV7zmw"
+		},
+		{
+			"id": "Huo-Long Heater",
+			"group": ["heavy"],
+			"link": "Huo+Long+Heater",
+			"image": "9xgEIUwQQUw_ttgdPidrhCLyNXOQFnY1stcgHiGE-yVkrNbLlaGFhd1LDV6FfBaY8oVvqW3Fqv5QxGse48Kc60DPZ"
+		},
+		{
+			"id": "Family Business",
+			"group": ["heavy"],
+			"link": "Family+Business",
+			"image": "9xgEIUxUETgjruTZ8msHpGc2ACfIHnpRmvJZUjGU4lQV6MuDmYTZicVaWAqYKWaRpp1u5DHdi6pEzBdOy9uhTZ0yx45WSxnRD"
+		},
+		{
+			"id": "Fists",
+			"group": ["heavy"],
+			"image": "9xgEdUwEYTg_dsD1CntHZAfOeD-VOw9tk4MNWjTU6klkrMeDgYm8_cFWRWfcNXqdsoQ20X3QxupdhBYTuoPUWJ1sxOWrM-Q"
+		},
+		{
+			"id": "Killing Gloves of Boxing",
+			"group": ["heavy"],
+			"link": "Killing+Gloves+of+Boxing",
+			"image": "9xgEIUwUeRRLsvwdEhMfwCOGzBOESnN975sdUgGEyyFl-MufiYGMzKlGVUqUNWPFu9w65WCJm7pVhB9Tlo78CcBKv6tWPXL7Grw"
+		},
+		{
+			"id": "Gloves of Running Urgently",
+			"group": ["heavy"],
+			"link": "Gloves+of+Running+Urgently",
+			"image": "9xgEIUwUeRRLsvwdEhMfwCOGzHfIHntQ2_K9Z2CRslE8iZrS0Mm8yIAGbBPIPC6Rtplm4WiFg7JZlAYDu9L8DLQ25t9SXM-N5LpgSSPq9B4vM"
+		},
+		{
+			"id": "Warrior's Spirit",
+			"group": ["heavy"],
+			"link": "Warrior+Spirit",
+			"image": "9xgEIUwUUXAnduzRCn_fqDOCLDa5Zzdg3sMZQjzI5yVEsZuHmYGM_J1OSUPkPBKFu8gy4DHA2uZA1BoTuuasILtlSiFpj"
+		},
+		{
+			"id": "Fists of Steel",
+			"group": ["heavy"],
+			"link": "Fists+of+Steel",
+			"image": "9xgEIUwEYTg_xhzdFt9vyCPeAN-wBid0wq5YCjWI-xlQjZrHhZDJmJweVB_AJDqxjplq1DXYz6cEzUo63ruNQLQzx9NyRIporuzw"
+		},
+		{
+			"id": "Eviction Notice",
+			"group": ["heavy"],
+			"link": "Eviction+Notice",
+			"image": "9xgEIUwIHVBj2sTdNt8bpGfuPDd8Mmsgy4N4D2zI9xQV5bLWzYWczKwGRU_MPDqBq8A28C3Vl7Z5mDYa09LgCLQS9qsKYZP0YfavX"
+		},
+		{
+			"id": "Holiday Punch",
+			"group": ["heavy"],
+			"link": "Holiday+Punch",
+			"image": "9xgEIUx8cTiTltDdVjdvZAfOeD-VOyIlh48hQ2zdtx1l_ZrrjZDU2c1OUWPcJCPM7oQ2_WXQ3v5AzVoburvUWJ1uC0IaxRw"
+		},
+
+		{
+			"id": "Frontier Justice",
+			"group": ["engineer"],
+			"link": "Frontier+Justice",
+			"image": "9xgEIUwEDUhX2sT1Rgt31GfuPDd8Mmsgy4N5XgGA5k1ErNrLlNDJlK1XGU_EIBPBo91npXXQw7sM3BNbmpehQe1--qsKYZGj-Cyl2"
+		},
+		{
+			"id": "Widowmaker",
+			"group": ["engineer"],
+			"image": "9xgEIUwMURSTxsDdXj93oMv6NGucF1Y8zs5QNgW5oyVguY7S0aTRkcQbEAqUMDqxipgu-WXEwsMI6UYfi8uJIOVK49rzFX9s"
+		},
+		{
+			"id": "Pomson 6000",
+			"group": ["engineer"],
+			"link": "Pomson+6000",
+			"image": "9xgEIUwMDWiTytzVQh8bZAfOeD-VOnoMxvcEEjDAylFZ6YLvlYmQ-IVPDBKRaD6E5oFrtCiRqvJA3B4Ph8fUWJ1v0wtmh1A"
+		},
+		{
+			"id": "Rescue Ranger",
+			"group": ["engineer"],
+			"link": "Rescue+Ranger",
+			"image": "9xgEIUxMUUR7dqzBMnM_zA82ACfIHnpRntpZX2GM6yVgoYre3ZmY1I1KRUPYHDKY_oFrvCCFiupFhUYXl9OtWZ0yx49Q9P4_R"
+		},
+		{
+			"id": "Short Circuit",
+			"group": ["engineer"],
+			"link": "Short+Circuit",
+			"image": "9xgEIUwMURSTjqjV8hMn0CvfCWbABntwx48kFj2M8kAMiNrOzYW9iJQCWV_YOXq0_ol64WH82uJM1UZmm-bwufLZafg"
+		},
+		{
+			"id": "Wrench",
+			"group": ["engineer"],
+			"image": "9xgEcUxADWBXhsAdPidrhCLzcX-VTndhs58QAiTQzxlIoYLLkYGE-IFSQU_JYDK1t8lroDyRl7JY1Gse48EwydsJl"
+		},
+		{
+			"id": "Gunslinger",
+			"group": ["engineer"],
+			"image": "9xgEMeQkCURLsvz1Rt8TnH_WJRrQFn99itpUGizU4xlItNuXlMTE3JgbGBKEJDvNoolC_UHVj68NnUIb457UB7cjOSco"
+		},
+		{
+			"id": "Southern Hospitality",
+			"group": ["engineer"],
+			"link": "Southern+Hospitality",
+			"image": "9xgEIUxQBVBDnrypGhsvuMv6NGucF1Y5ttJYEgTJtxFZ-bbXlYzY2c1CSVKFYCqM5p1i-C3Uw7MVlDdazoblIOVK4VpYUVqw"
+		},
+		{
+			"id": "Jag",
+			"group": ["engineer"],
+			"image": "9xgEIUw0QWiTuuSpEjYbgDKTUUbRRnY0zvJENjjJpkwUtZ7O2Mm5kcVaSUPJfDqNjpVC1XXBjptdtUw5AXZ6j"
+		},
+		{
+			"id": "Eureka Effect",
+			"group": ["engineer"],
+			"link": "Eureka+Effect",
+			"image": "9xgEIUwMDWiT1qj1Ni8DrAuaeB-4_l9sn4pUbjjdokwQsZrbgZ24yc1LDB_kJWPBroAq0DXUwuJU0V4fj9u5SfV29tJyGbec-DkUX6w"
+		},
+
+		{
+			"id": "Syringe Gun",
+			"group": ["medic"],
+			"link": "Syringe+Gun",
+			"image": "9xgEcUxQITxLsvz1EncbZAfOeD-VOnoJivMVTiDU5wFMqZ7ThMjFjdlORWfkIC6E-9Q6_CCVi6sM7AIfnr_UWJ1uPRUPN0g"
+		},
+		{
+			"id": "Blutsauger",
+			"group": ["medic"],
+			"image": "9xgEIUwsUWBjqvy1Nt8TnH_WJRuIDmI1kvJJTjjAzyFl4MrThMTQwdAXDA6JaWaI79li-X3Nm6pQ1Vob457UBFM06SEc"
+		},
+		{
+			"id": "Crusader's Crossbow",
+			"group": ["medic"],
+			"link": "Crusader+Crossbow",
+			"image": "9xgEIUwQDSAjjvD1Rm_flH_2fG-IPjOU55IJS3HhplVgrZ7DhYG4wJQGWU_JfD6Q7pFvoWXUz6sVnUo_hpblRK1m-tYqQLfByZ90l5Q0R"
+		},
+		{
+			"id": "Overdose",
+			"group": ["medic"],
+			"image": "9xgEIUxcDUg_thytamsHoCveLHe4_l9sn4pUbiTM9xVh9YbrgNmE2J1OSU6VYDvY89Vq_XHI2uZRlVo7vp-sEKg26tpyGbecbDo8m6Q"
+		},
+		{
+			"id": "Medi Gun",
+			"group": ["medic"],
+			"link": "Medi+Gun",
+			"image": "9xgEIUwoUWRLlrTZ8hMn0CvfCDbNZwtkx5JEBjG8-lFIrZ-HlZGNiJwaXA6JbDqY-9wm4USNq6p5nBZmm-bxFPGWS4w"
+		},
+		{
+			"id": "Kritzkrieg",
+			"group": ["medic"],
+			"image": "9xgEIUwgHWAnqvTlPjdrZAfOeD-VOmt9h58kA3WY-kAAiZ-HkM2M1IVSSVvgOBKQ49Vu_XHBmvZYwBIfjr_UWJ1saY-ME6A"
+		},
+		{
+			"id": "Quick-Fix",
+			"group": ["medic"],
+			"link": "Quick+Fix",
+			"image": "9xgEIUxcDUg_thzVGjMHhGPyzBOESnN975pJWim49xAAjYrXiZm40dgKTAKFYD6Jr91rtDSNr6ZU6AIPuou0EexKv6tV8Onb0zg"
+		},
+		{
+			"id": "Vaccinator",
+			"group": ["medic"],
+			"image": "9xgEIUwoUWRLlrTZ8jM3gCPyfDd8Mmsgy4N4HizAyxFQuMeDmaTEwc1SUWPkNBKI_8lG_C38zvp83AIDloesDcFjuqsKYZD2aO7gJ"
+		},
+		{
+			"id": "Bonesaw",
+			"group": ["medic"],
+			"image": "9xgEIUwUeUx7xuS98hMn0CvfCCeUGmt5jtMcAjmY8xwctZrXtMjIzdlWXAPRfD6Fj8A7pXnYw6ZM7VZmm-by4sbbgvA"
+		},
+		{
+			"id": "Ubersaw",
+			"group": ["medic"],
+			"image": "9xgEIUxITWAnxuS98hMn0CvfCCbcGyNtivJMH3TU5l1MoMrOwZWcxIgaRVqQLBKQ5pQ68DH42vpIwUpmm-bzmnodrQQ"
+		},
+		{
+			"id": "Vita-Saw",
+			"group": ["medic"],
+			"link": "Vita+Saw",
+			"image": "9xgEIUxITWAnsvT1HhM3ZAfOeD-VOzII2tJMBgDAyk1J6MeGzZDMxIweTA_gIDvA7owztWyRi6ZUxDYfvoPUWJ1tto1TL8Q"
+		},
+		{
+			"id": "Amputator",
+			"group": ["medic"],
+			"image": "9xgEIUwYcTQ72uSxMmvfqDOCLDa4CzIwzsMYAj2cykgJ6MLq2YDM2IALDU_MGWPFop1u0WnJrsJIxDIPhuasILuZAMKd1"
+		},
+		{
+			"id": "Solemn Vow",
+			"group": ["medic"],
+			"link": "Solemn+Vow",
+			"image": "9xgEIUw8YTQvtuypCnM31MvCZG_Q_l9sn4pUbjzc9xwV-MrDsZjU1Jl2WA_ZbD_Q5ow66XnMwvMZmBNLvpusFeF7msJyGbeeA9muMVA"
+		},
+
+		{
+			"id": "Sniper Rifle",
+			"group": ["sniper"],
+			"link": "Sniper+Rifle",
+			"image": "9xgEcUxQfVAvnqipKjsTjMv6NGucF1Yln48ECjDQ5x1grYuaxMmJiJlDGWfUMDPdv8g3tDyYxvpJgVY7h9OJIOVK4tSW1UdY"
+		},
+		{
+			"id": "AWPer Hand",
+			"group": ["sniper"],
+			"link": "AWPer+Hand",
+			"image": "9xgEIUwQCWhTduS9Tt8TnH_WJRuJZyoMx5MMMi2FtlVUuZbblM29hKwaUBaVYDfRuoVu7DCIxvsZmVoH457UBFLISf9s"
+		},
+		{
+			"id": "Huntsman",
+			"group": ["sniper"],
+			"image": "9xgEIUwUeSiTuuSpEjYa0XfHcX7FSzY0xt8QEi24-kFYoZ7flZGQ0dAGTB_RfX6Nrp13pXCU0ptdtU0RvzSF9"
+		},
+		{
+			"id": "Fortified Compound",
+			"group": ["sniper"],
+			"link": "Fortified+Compound",
+			"image": "9xgEIUwUeSiT2sDFGjvfqDOCLDa5SmoJl48IEiGA9xFciN7rgaDJkKwCaVPJfC6I-pF60DyU3vsFnAoTjuasILgVwpcuO"
+		},
+		{
+			"id": "Sydney Sleeper",
+			"group": ["sniper"],
+			"link": "Sydney+Sleeper",
+			"image": "9xgEIUxQIWRXnoQdQhM3jHfeeN-wBid0wq8AC2mc4wAMjYua3Nm82IFfHVqILBfZv8A3vWHIzuMUxAdXir-NeeF_x9NyRrkq1V_Q"
+		},
+		{
+			"id": "Bazaar Bargain",
+			"group": ["sniper"],
+			"link": "Bazaar+Bargain",
+			"image": "9xgEIUwUQRxrjqgdQhsH2COCzBOESnN97tJRQ2jA7wFYsZuLmZjQwJwKUB_kNWqFppVzpCyVn6cNnDY_norgALRKv6tUkDF2o4Q"
+		},
+		{
+			"id": "Machina",
+			"group": ["sniper"],
+			"image": "9xgEIUwMURSTxtjFTjdr0BPSADd8Mmsgy4N5Q2mc7wwN5NuXiaGM1IFeWUKNaWvE8ogvoDyJhv5dlUNWz8-kDegW7qsKYZDofWCwb"
+		},
+		{
+			"id": "Hitman's Heatmaker",
+			"group": ["sniper"],
+			"link": "Hitman+Heatmaker",
+			"image": "9xgEIUxcDUiTwsT5PjffqDOCLDa4Cy41s4JUEiTRplwMiNuCzaWA2JlKXWfNfX_Y8o1m0D3JquJ82DdbguasILu1VN3sn"
+		},
+		{
+			"id": "Classic",
+			"group": ["sniper"],
+			"image": "9xgEIUxMXXiTxtjFTjdr0BPSADd8Mmsgy4N4BiWIyxlh-ZebsMmI_K1WRVfNfWPBv8l65UXZm68RnAY7n8-1UfF29qsKYZPuyWy4i"
+		},
+		{
+			"id": "SMG",
+			"group": ["sniper"],
+			"image": "9xgEcUxQcWiTuuSpEjYawXfCIDrJTzowztMQAimY7yVYiMLvsYTNkIQKbWPNcCaI4rFm7X3dlptdtU0j3tFEU"
+		},
+		{
+			"id": "Cleaner's Carbine",
+			"group": ["sniper"],
+			"link": "Cleaner+Carbine",
+			"image": "9xgEIUxcDUiTxtT98hMn0CvfCC-ZSzNtt4ZUEiWA_xlEpZOfiYDY3IleUV6MJCPM_9Qu0UHQ2vJdlUJmm-bxQd8-97g"
+		},
+		{
+			"id": "Kukri",
+			"group": ["sniper"],
+			"image": "9xgEcUwoQXhPnrD18hMn0CvfCCeJZy4tgscgF2mNpxQJ_MuLnMW8xJ1OVVvUGWPNu8Qq8CnE0vZEzUJmm-bzNCd4jcw"
+		},
+		{
+			"id": "Tribalman's Shiv",
+			"group": ["sniper"],
+			"link": "Tribalman+Shiv",
+			"image": "9xgEIUxAeUh_dtTlAgM3yCM2ACfIHnpRg4MlWjWFvlQMpbLTlYmJjJVCSUaUNDvBtplC9UCE26p9gBtbko-MDZ0yx46qNxYOx"
+		},
+		{
+			"id": "Bushwacka",
+			"group": ["sniper"],
+			"image": "9xgEIUwQDUhjdszZKjs3ZAfOeD-VOmII0ssVW2jQ4k1h-Nra3aGVmdlbHA6VfDKFj8V_tX3RmsJY7BoXgp_UWJ1t8YRvBDw"
+		},
+		{
+			"id": "Shahanshah",
+			"group": ["sniper"],
+			"image": "9xgEIUxQSVBbrrDlRt8TnH_WJRrUCzoNs4JFRiGNul1YpNbC3aGE2dwHHWPENWvBqrVi8CncxucMxDYH457UBONa7Wf0"
+		},
+
+		{
+			"id": "Revolver",
+			"group": ["spy"],
+			"image": "9xgEcUxUUSxTurj1Rt8TnH_WJRrhWyYhj5JEH2jM7xgMoZ7vjZDU_JlzDBaQKXaE_oA64XnBj7sFgBY_457UBpl4WEDk"
+		},
+		{
+			"id": "Ambassador",
+			"group": ["spy"],
+			"image": "9xgEIUwYcXxrxqzlHh9rZAuKYN-wBid0wq5QH2zJpxFUvYeHtYmM2IVDAUqUICvA_pF68XXJnvcEwDYKz9rhffgXx9NyRSl-PUaY"
+		},
+		{
+			"id": "L'Etranger",
+			"group": ["spy"],
+			"link": "L+Etranger",
+			"image": "9xgEIUwsUSQnjtj9GmvfqDOCLDa4ByNxs4MYF2GM_w1R9MLLtMWI0IweTV_kGCfRj8F3oWn5isJEzDIDluasILuj1vNqr"
+		},
+		{
+			"id": "Enforcer",
+			"group": ["spy"],
+			"image": "9xgEIUxQfSBndtjdQjffqDOCLDa5YyNszvcUGjDUykFkoZLbsZDUzJFbAA_QPXaI7pFm6WyFiucE2UIG1uasILqi7cxJ_"
+		},
+		{
+			"id": "Diamondback",
+			"group": ["spy"],
+			"image": "9xgEIUwMURSTwvS5MhN7jH82ACfIHnpRmvJFUgGBuwgUsMLDjaG4_IlebVqIHWfZvo1C6CnM2usI2DNHk9ulSZ0yx49vfTbuS"
+		},
+		{
+			"id": "Knife",
+			"group": ["spy"],
+			"image": "9xgEcUwwfVB3nhzRCms_jQ6DeCuFZmtwwsJQHi2A9lVJ_beKzYDEwdgfEWPlaCqI-oVC0CiVqsZItRNmxr5xPBI8"
+		},
+		{
+			"id": "Sharp Dresser",
+			"group": ["spy"],
+			"link": "Sharp+Dresser",
+			"image": "9xgEIUwYSTyTqtzdIisTnCfezBOESnN975JZTj2M8x1N5bLHhYWRmI1KQWKVYX61row25XXAxvZcxV9Gy9L9QexKv6tXSDTXaEw"
+		},
+		{
+			"id": "Your Eternal Reward",
+			"group": ["spy"],
+			"link": "Your+Eternal+Reward",
+			"image": "9xgEIUwIFWAnsuTR8ms3xDOCIN-wBid0wq8INjWQ9lwMoNbq3aTQzcQfGU6EOCaI_rQm_UHFlupY6A4Hvoe1XfAnx9NyR6XUuLuY"
+		},
+		{
+			"id": "Wanga Prick",
+			"group": ["spy"],
+			"link": "Wanga+Prick",
+			"image": "9xgEIUxEeUh_ttwdTgcbZAfOeD-VOyo9ktJFRgTVuyVEtYbLsZDNlK1KXUvYOXfA5plrqDX80vcM0UIbkpfUWJ1tjMarw-Q"
+		},
+		{
+			"id": "Conniver's Kunai",
+			"group": ["spy"],
+			"link": "Conniver+Kunai",
+			"image": "9xgEIUxQZUhz3tgdIncbnBM2ACfIHnpQxs5EEi285xgV-bObsZmYwd1yUUaZYWPRj9lq1DXM0sMIzUISy9OsFZ0yx41dhz7pB"
+		},
+		{
+			"id": "Big Earner",
+			"group": ["spy"],
+			"link": "Big+Earner",
+			"image": "9xgEIUxQGVA_hsDpPiczjMv6NGucF1Yhk5sFW2GA9xgIrNru3Y2FhdlaWB6UGCKM7og3uDSFg7JRnUNbm9O1IOVK48VrCKzk"
+		},
+		{
+			"id": "Spy-cicle",
+			"group": ["spy"],
+			"link": "Spy+cicle",
+			"image": "9xgEIUx8cTiThtzRHt9vuAueADOUSpNY095dQlzRuxlF5Y7XsNmMzKgaaUKFYDqc4rFu9XiVnsZQxUtbjpOpefQjtsIDYc-57AYZrMBI"
+		}
+	]
+}

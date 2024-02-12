@@ -13,6 +13,42 @@
 		},
 		{
 			"type": "java",
+			"name": "Tf2",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.home.tf2.Tf2",
+			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"args": "key=TF2"
+		},
+		{
+			"type": "java",
+			"name": "Oba",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.home.oba.OneBitAdventure",
+			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"args": "key=OBA display=[map,path,reward,base,step] play=false"
+		},
+		{
+			"type": "java",
+			"name": "Random Generator",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.home.random_generator.RandGenScreen",
+			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"args": "key=rand_gen"
+		},
+
+
+
+		{
+			"type": "java",
 			"name": "Test",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",
@@ -21,17 +57,6 @@
 			"mainClass": "net.home.main.MainFrame",
 			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
 			"args": "key=test x=1675"
-		},
-		{
-			"type": "java",
-			"name": "AnyDesk",
-			"request": "launch",
-			"cwd": "${workspaceFolder}/run",
-			"console": "internalConsole",
-			"stopOnEntry": false,
-			"mainClass": "net.home.main.MainFrame",
-			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
-			"args": "key=AnyDesk"
 		}
 	]
 }

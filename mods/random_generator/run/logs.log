@@ -1,6 +1,0 @@
-2023-08-05 22:47:37.689 [main] WARN  SETUP - writter replaced
-2023-08-05 22:47:37.732 [main] INFO   - [PrintWrapper{install:26}]: test replace from net.home.main.MainFrame.<clinit>(MainFrame.java:73)
-2023-08-05 22:47:39.698 [AWT-EventQueue-0] INFO   - [GenScreen$Dungeon{small:268}]: {class:"CubeDungeonGenerator",hash:2050680174,modificators:["room:enterance"]}
-2023-08-05 22:47:39.699 [AWT-EventQueue-0] INFO   - [GenScreen$Dungeon{small:269}]: net.w3e.base.registry.Registry$CacheRegistry@6324b74d
-2023-08-05 22:47:56.682 [AWT-EventQueue-0] INFO   - [GenScreen$Dungeon{small:268}]: {class:"CubeDungeonGenerator",hash:248928185,modificators:["room:enterance"]}
-2023-08-05 22:47:56.709 [AWT-EventQueue-0] INFO   - [GenScreen$Dungeon{small:269}]: [empty, room:empty, room:enterance, item:attribute#attack_damage, item:attribute#attack_speed, item:attribute#armor, item:attribute#movement_speed, item:attribute#max_health, item:attribute#knockback_resitance, item:enchant#unbreaking, item:enchant#mending, item:enchant#fire_aspect]
