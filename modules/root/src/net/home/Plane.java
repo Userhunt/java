@@ -1,7 +1,7 @@
 package net.home;
 
 public class Plane {
-	
+
 	/*
 	Dungeon generator
 	3d in java

@@ -52,7 +52,7 @@ public class ReflectionUtils {
 		return false;
 	}
 
-	public static Field access(Class<?> cl, String key) {
+	public static final Field access(Class<?> cl, String key) {
 		try {
 			Field field = cl.getDeclaredField(key);
 			field.setAccessible(true);
@@ -62,7 +62,7 @@ public class ReflectionUtils {
 		}
 	}
 
-	public static Field access(Class<?> cl, int key) {
+	public static final Field access(Class<?> cl, int key) {
 		try {
 			Field field = cl.getDeclaredFields()[key];
 			field.setAccessible(true);

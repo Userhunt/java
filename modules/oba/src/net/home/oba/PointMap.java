@@ -11,8 +11,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.home.oba.ObaConfig.ITexture;
 import net.home.oba.OneBitAdventure.Point;
 import net.home.oba.PointType.PointInterractiveType;
+import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.math.BMatUtil;
-import net.w3e.base.tuple.number.WIntTuple;
 
 public class PointMap {
 	private static final Int2ObjectArrayMap<Int2ObjectArrayMap<Point>> map = new Int2ObjectArrayMap<>();
@@ -70,17 +70,17 @@ public class PointMap {
 			if (point.getType() == PointType.UNKNOWN) {
 				return;
 			}
-			WIntTuple background = new WIntTuple();
-			WIntTuple floor = new WIntTuple();
+			IntHolder background = new IntHolder();
+			IntHolder floor = new IntHolder();
 			point.iterate((x1, y1, rgba) -> {
 				if (rgba == PointType.BACKGROUND) {
 					point.setPixel(x1, y1, PointType.ALPHA);
-					background.increase();
+					background.add();
 				} else if (rgba == PointType.FLOOR) {
-					floor.increase();
+					floor.add();
 				}
 			});
-			if (background.get() + floor.get() / 1.25 >= point.sizeImage() * 0.95) {
+			if (background.getAsInt() + floor.getAsInt() / 1.25 >= point.sizeImage() * 0.95) {
 				point.set(PointType.EMPTY);
 			}
 		});

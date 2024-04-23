@@ -31,7 +31,7 @@ public class CustomOutputStream extends OutputStream {
 		} : new PrintStream(this);
 	}
 
-	public void enable() {
+	public final void enable() {
 		if (this.enabled) {
 			return;
 		}
@@ -42,13 +42,24 @@ public class CustomOutputStream extends OutputStream {
 		System.setErr(this.printStream);
 	}
 
-	public void disable() {
+	public final void disable() {
 		if (!this.enabled) {
 			return;
 		}
 		this.enabled = false;
 		System.setOut(this.out);
 		System.setErr(this.err);
+	}
+
+	public final void print(Runnable runnable) {
+		boolean enabled = this.enabled;
+		if (!enabled) {
+			this.enable();
+		}
+		runnable.run();
+		if (!enabled) {
+			this.disable();
+		}
 	}
 
 	@Override

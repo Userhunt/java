@@ -6,7 +6,8 @@ include(
 	':oba',
 	':anydesk',
 	':random_generator',
-	':split_screen'
+	':notes',
+	':cyberpunk'
 )
 
 rootProject.children.each { project ->

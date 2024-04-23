@@ -9,9 +9,6 @@ import org.jetbrains.annotations.Nullable;
 
 import net.w3e.base.message.BMessageLoggerHelper;
 
-/**
- * 15.04.23
- */
 public class PrintWrapper extends java.io.PrintStream {
 
 	public static final Logger LOGGER = LogManager.getRootLogger();
@@ -67,6 +64,9 @@ public class PrintWrapper extends java.io.PrintStream {
 		String cl = stack.getClassName();
 		cl = cl.substring(cl.lastIndexOf(".") + 1);
 		String res = "[" + cl + "{" + stack.getMethodName() + ":" + stack.getLineNumber() + "}]: " + x;
+		if (res.startsWith("[Throwable$WrappedPrintStream{println:763}]: 	at")) {
+			res = "  " + x.substring(1);
+		}
 		//"[" + stackTraceElement.getClassName() + ":" + stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber() + "]: "
 		this.info(res);
 	}

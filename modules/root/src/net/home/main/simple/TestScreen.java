@@ -21,15 +21,17 @@ import net.api.registry.DynamicRegistry;
 import net.api.registry.DynamicRegistry.CacheDynamicRegistry;
 import net.api.window.BackgroundExecutor;
 import net.api.window.FrameWin;
+import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
 import net.home.main.FrameObject;
 import net.home.main.MainFrame;
 import net.w3e.base.BStringUtil;
 import net.w3e.base.collection.ArraySet;
 import net.w3e.base.collection.CollectionOfCollections;
 import net.w3e.base.collection.ModifiedQueue;
+import net.w3e.base.collection.RandomCollection;
 import net.w3e.base.collection.ModifiedQueue.QueueTask;
+import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.jar.JarUtil;
-import net.w3e.base.tuple.number.WIntTuple;
 
 public class TestScreen extends FrameObject {
 
@@ -56,6 +58,10 @@ public class TestScreen extends FrameObject {
 		addButton("CollectinoOfCollections", this::collectionOfCollections, y);
 		addButton("concurrent", this::concurrent, y);
 		addButton("queue", this::modifiedQueue, y);
+		addButton("sneak", this::sneakDisplay, y);
+		addButton("randomCollection", this::randomCollection, y);
+		addButton("ThreadList", this::threadList, y);
+		addButton("Frame Location", this::location, y);
 
 		fw.setSize(300, y.get() + 41);
 	}
@@ -213,8 +219,8 @@ public class TestScreen extends FrameObject {
 			this.println(entry);
 		}
 		this.println(collection);
-		WIntTuple i = new WIntTuple(2);
-		BackgroundExecutor.run("Concurent", this.getFrame(), (oldProgress, executor) -> {
+		IntHolder i = new IntHolder(2);
+		new BackgroundExecutorBuilder("Concurent", this.getFrame()).setExecute((oldProgress, executor) -> {
 			sleep(500);
 			iterateConcurrent(collection, i);
 			int size = collection.size();
@@ -224,10 +230,10 @@ public class TestScreen extends FrameObject {
 				this.println(collection);
 			}
 			return Math.min(size * 7, 100);
-		});
+		}).run();
 	}
 
-	private final void iterateConcurrent(ConcurrentLinkedQueue<ConcurrentEntry> collection, WIntTuple i) {
+	private final void iterateConcurrent(ConcurrentLinkedQueue<ConcurrentEntry> collection, IntHolder i) {
 		int size = collection.size();
 		if (size >= 100 || size == 0) {
 			return;
@@ -242,8 +248,8 @@ public class TestScreen extends FrameObject {
 					iterator.remove();
 				}
 				if (RANDOM.nextInt(100) < 50) {
-					collection.add(new ConcurrentEntry(i.get()));
-					i.increase();
+					collection.add(new ConcurrentEntry(i.getAsInt()));
+					i.add();
 				}
 			} else {
 				this.println("ignore " + entry);
@@ -291,16 +297,119 @@ public class TestScreen extends FrameObject {
 		queue.run();
 
 		this.println();
-		WIntTuple tuple = new WIntTuple(11);
+		IntHolder tuple = new IntHolder(11);
 		queue.add(() -> {
 			println("3." + (12-tuple.get()));
-			tuple.decrease();
+			tuple.remove();
 			return tuple.get() <= 0;
 		});
 		for (int i = 0; i < 11; i++) {
 			println("i " + (i + 1));
 			queue.run();
 		}
+	}
+
+	private final void sneakDisplay(JButton button) {
+		SneakType[][] array = new SneakType[10][];
+		for (int i = 0; i < array.length; i++) {
+			array[i] = new SneakType[]{SneakType.empty, SneakType.empty, SneakType.empty, SneakType.empty, SneakType.empty, SneakType.empty, SneakType.empty, SneakType.empty, SneakType.empty, SneakType.empty};
+		}
+		System.out.println("sneak");
+
+		array[1][4] = SneakType.eat;
+		array[4][0] = SneakType.empty;
+		array[4][1] = SneakType.sneak;
+		array[3][1] = SneakType.sneak;
+		array[2][1] = SneakType.sneak;
+
+		int i = 0;
+		for (SneakType[] sneakTypes : array) {
+			System.out.println();
+			System.out.print(i + "    |");
+			for (SneakType type : sneakTypes) {
+				switch (type) {
+					case empty -> System.out.print(" - ");
+					case sneak -> System.out.print(" * ");
+					case eat -> System.out.print(" ■ ");
+				}
+			}
+			i++;
+		}
+	}
+
+	private final void randomCollection(JButton button) {
+		this.randomCollection(false);
+	}
+
+	private final void randomCollection(boolean sort) {
+		int iteration = 1_000_000;
+		int size = 100;
+
+		RandomCollection<Integer> collection = new RandomCollection<Integer>().autoSort();
+		IntList list = new IntArrayList();
+		for (int i = 0; i < size; i++) {
+			list.add(i + 1);
+		}
+		Collections.shuffle(list, new Random(0));
+		list.forEach(i -> collection.add(i, i));
+
+		if (sort) {
+			collection.sort();
+		}
+		int array[] = new int[size];
+		IntHolder intTuple = new IntHolder(100 * iteration);
+
+		long time = System.currentTimeMillis();
+
+		new BackgroundExecutor.BackgroundExecutorBuilder("Title", this.getFrame()).runThread((executor) -> {
+			boolean stop = false;
+			try {
+				while(intTuple.getAsInt() > 0) {
+					intTuple.remove();
+					array[collection.getRandom() - 1] += 1;
+					if (executor.isStop()) {
+						stop = true;
+						break;
+					}
+				}
+			} catch (Exception e) {
+				stop = true;
+			}
+			executor.print(() -> {
+				println(list);
+				println();
+				println(BStringUtil.toString(array));
+				println();
+				float a = array[size - 1];
+				float b = array[0];
+				println(a / iteration);
+				println(b / iteration);
+				println(sort + " " + (System.currentTimeMillis() - time));
+			});
+			if (!executor.isStop()) {
+				if (!sort) {
+					randomCollection(true);
+				}
+				if (stop) {
+					executor.stop();
+					return;
+				}
+			}
+		}, () -> 100 - intTuple.getAsInt() / iteration);
+	}
+
+	private final void threadList(JButton button) {
+		System.out.println(Thread.getAllStackTraces().keySet());
+	}
+
+	private final void location(JButton button) {
+		System.out.println(this.getFrame().getLocation());
+	}
+
+	private static enum SneakType {
+		empty,
+		sneak,
+		eat;
 	}
 
 	@Override

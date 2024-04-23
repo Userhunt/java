@@ -398,25 +398,25 @@ public class GsonHelper {
 	}
 
 	private static String abbreviateMiddle(String str, String middle, int length) {
-        if (isEmpty(str) || isEmpty(middle)) {
-            return str;
-        }
+		if (isEmpty(str) || isEmpty(middle)) {
+			return str;
+		}
 
-        if (length >= str.length() || length < (middle.length()+2)) {
-            return str;
-        }
+		if (length >= str.length() || length < (middle.length()+2)) {
+			return str;
+		}
 
-        int targetSting = length-middle.length();
-        int startOffset = targetSting/2+targetSting%2;
-        int endOffset = str.length()-targetSting/2;
+		int targetSting = length-middle.length();
+		int startOffset = targetSting/2+targetSting%2;
+		int endOffset = str.length()-targetSting/2;
 
-        StringBuilder builder = new StringBuilder(length);
-        builder.append(str.substring(0,startOffset));
-        builder.append(middle);
-        builder.append(str.substring(endOffset));
+		StringBuilder builder = new StringBuilder(length);
+		builder.append(str.substring(0,startOffset));
+		builder.append(middle);
+		builder.append(str.substring(endOffset));
 
-        return builder.toString();
-    }
+		return builder.toString();
+	}
 
 	@Nullable
 	public static <T> T fromNullableJson(Gson p_13781_, Reader p_13782_, Class<T> p_13783_, boolean p_13784_) {

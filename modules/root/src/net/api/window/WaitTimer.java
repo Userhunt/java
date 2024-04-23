@@ -9,12 +9,12 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
-import net.w3e.base.tuple.number.WLongTuple;
+import net.w3e.base.holders.number.LongHolder;
 
 public class WaitTimer extends Timer {
 
 	private final ExecutorService service = Executors.newFixedThreadPool(1);
-	private final WLongTuple time = new WLongTuple();
+	private final LongHolder time = new LongHolder();
 	private WaitTimerTask task;
 
 	public WaitTimer(String name) {
@@ -29,12 +29,12 @@ public class WaitTimer extends Timer {
 		if (delay < 0) {
 			throw new IllegalArgumentException("Negative delay.");
 		}
-		stop(interrupt);
-		this.time.set(0);
+		stop(interrupt, false);
+		this.time.setValue(0);
 		this.task = new WaitTimerTask(run, delay);
 		if (run instanceof TimerExt ext) {
 			ext.onSleep = (sleep) -> {
-				this.time.set(System.currentTimeMillis() + Math.max(delay, sleep));
+				this.time.setValue(System.currentTimeMillis() + Math.max(delay, sleep));
 			};
 		}
 		super.schedule(task, delay, 5);
@@ -66,16 +66,18 @@ public class WaitTimer extends Timer {
 		return this.task == null || this.task.isStop();
 	}
 
-
-
 	public final void stop() {
-		this.stop(true);
+		this.stop(true, true);
 	}
 
-	public final void stop(boolean interrupt) {
+	public final void stop(boolean interrupt, boolean kill) {
 		if (this.task != null) {
 			this.task.stop(interrupt);
 			this.task = null;
+		}
+		if (kill) {
+			this.service.shutdown();
+			this.cancel();
 		}
 	}
 
@@ -123,9 +125,9 @@ public class WaitTimer extends Timer {
 			}
 			long time = System.currentTimeMillis();
 			WaitTimer timer = WaitTimer.this;
-			if (time >= timer.time.get() && isStop()) {
+			if (time >= timer.time.getAsLong() && isStop()) {
 				this.last = service.submit(run);
-				timer.time.set(time + delay - 5);
+				timer.time.setValue(time + delay - 5);
 			}
 		}
 	}

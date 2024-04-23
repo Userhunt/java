@@ -56,7 +56,6 @@ public class MainFrame {
 				}
 			}
 			return builder.toString();
-			
 		} else {
 			return "";
 		}

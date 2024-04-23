@@ -239,7 +239,7 @@ public class MainArgs<T extends FrameObject> {
 					e.printStackTrace();
 				}
 			}
-			
+
 			return this.test(args, frame, v);
 		}
 

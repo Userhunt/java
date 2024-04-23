@@ -42,11 +42,30 @@
 			"stopOnEntry": false,
 			"mainClass": "net.home.random_generator.RandGenScreen",
 			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
-			"args": "key=rand_gen"
+			"args": "key=rand_gen x=3593"
 		},
-
-
-
+		{
+			"type": "java",
+			"name": "Notes",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.home.notes.NotesScreen",
+			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"args": "key=notes x=3593"
+		},
+		{
+			"type": "java",
+			"name": "CyberpunkGenerator",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.home.cyberpunk.CyberpunkGenerator",
+			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"args": "key=cyberpunk x=3593"
+		},
 		{
 			"type": "java",
 			"name": "Test",

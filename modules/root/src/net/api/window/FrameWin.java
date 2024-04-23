@@ -14,13 +14,19 @@ public class FrameWin extends AbstractFrameWin {
 	protected final void onClose() {
 		onCloseIns();
 		if (this.parent != null) {
-			this.parent.setLocation(this.getLocation());
-			this.parent.setVisible(true);
-			this.parent.setEnabled(true);
+			if (this.showParentWhenClose()) {
+				this.parent.setLocation(this.getLocation());
+				this.parent.setVisible(true);
+				this.parent.setEnabled(true);
+			}
 		} else {
 			System.exit(0);
 		}
 	}
 
 	protected void onCloseIns() {}
+
+	protected boolean showParentWhenClose() {
+		return true;
+	}
 }

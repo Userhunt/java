@@ -1,13 +1,13 @@
 package net.home.tf2;
 
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
+import net.api.ApiSharedConstant;
 import net.api.window.IBackgroundExecutor;
 import net.home.main.FrameObject;
 
@@ -32,7 +32,7 @@ public record Tf2Price(Tf2RegistryObject reg, float weapon, float kit, float pro
 		return (int)((o.profit - this.profit) * 100 + 0.5f);
 	}
 
-	public static Tf2Price get(HttpClient client, Tf2RegistryObject reg, IBackgroundExecutor stop, int attempt) {
+	public static Tf2Price get(Tf2RegistryObject reg, IBackgroundExecutor stop, int attempt) {
 		URI uri = null;
 		try {
 			uri = URI.create("https://steamcommunity.com/market/search?q=%22Killstreak+" +
@@ -48,7 +48,7 @@ public record Tf2Price(Tf2RegistryObject reg, float weapon, float kit, float pro
 
 			int i = 0;
 			while (true) {
-				HttpResponse<String> dom = client.send(request, HttpResponse.BodyHandlers.ofString());
+				HttpResponse<String> dom = ApiSharedConstant.CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 				Element rows = Jsoup.parse(dom.body()).getElementById("searchResultsRows");
 				try {
 					if (rows.select("div.market_listing_table_message").get(0).text().equals("There was an error performing your search. Please try again later.")) {
@@ -64,10 +64,10 @@ public record Tf2Price(Tf2RegistryObject reg, float weapon, float kit, float pro
 						continue;
 					}
 				} catch (Exception e) {}
-	
+
 				float weapon = Float.valueOf(rows.select(String.format("div[%s]%s", "data-hash-name=\"Killstreak " + reg.id() + "\"", SELECTOR)).get(0).attr("data-price")) / 100;
 				float kit = Float.valueOf(rows.select(String.format("div[%s]%s", "data-hash-name=\"Killstreak " + reg.id() + " Kit\"", SELECTOR)).get(0).attr("data-price")) / 100;
-	
+
 				return new Tf2Price(reg, weapon, kit, weapon - kit * 1.15f);
 			}
 		} catch (Exception e) {

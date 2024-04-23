@@ -51,7 +51,6 @@ public class ModifiedQueue<T extends ModifiedQueue.QueueTask> {
 						this.entries.remove(entry);
 					}
 				} else {
-					System.out.println("x");
 					break;
 				}
 			}
@@ -73,30 +72,25 @@ public class ModifiedQueue<T extends ModifiedQueue.QueueTask> {
 
 	@SuppressWarnings("unchecked")
 	public final void forEach(Predicate<T> function, boolean instant) {
-
-		QueueForTask forTask = new QueueForTask() {
-			@Override
-			public boolean isDone() {
-				ModifiedQueue.this.run++;
-				if (!ModifiedQueue.this.entries.isEmpty()) {
-					Iterator<QueueEntry> iterator = ModifiedQueue.this.entries.iterator();
-					while(iterator.hasNext()) {
-						QueueEntry entry = iterator.next();
-						if (entry.tick < ModifiedQueue.this.tick) {
-							if (entry.test(false)) {
-								if (function.test((T)entry.task)) {
-									iterator.remove();
-								}
+		QueueForTask forTask = () -> {
+			ModifiedQueue.this.run++;
+			if (!ModifiedQueue.this.entries.isEmpty()) {
+				Iterator<QueueEntry> iterator = ModifiedQueue.this.entries.iterator();
+				while(iterator.hasNext()) {
+					QueueEntry entry = iterator.next();
+					if (entry.tick < ModifiedQueue.this.tick) {
+						if (entry.test(false)) {
+							if (function.test((T)entry.task)) {
+								iterator.remove();
 							}
-						} else {
-							System.out.println("x");
-							break;
 						}
+					} else {
+						break;
 					}
 				}
-				ModifiedQueue.this.run--;
-				return true;
 			}
+			ModifiedQueue.this.run--;
+			return true;
 		};
 		if (instant) {
 			forTask.isDone();

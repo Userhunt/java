@@ -3,6 +3,9 @@ package net.home;
 public class CoreMix {
 
 	/*
-	CollectionOfCollections
+	math/vector
+	PrintWrapper
+	RandomCollection
+	ReflectionsUtils
 	 */
 }

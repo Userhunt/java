@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import net.api.window.FrameWin;
-import net.w3e.base.tuple.number.WIntTuple;
+import net.w3e.base.holders.number.IntHolder;
 
 public abstract class FrameObject {
 
@@ -92,7 +92,7 @@ public abstract class FrameObject {
 		return this.addCmonent(component, x, y);
 	}
 
-	public class YPos extends WIntTuple {
+	public class YPos extends IntHolder {
 
 		public YPos() {
 			this(5);
@@ -113,7 +113,7 @@ public abstract class FrameObject {
 		}
 	}
 
-	public class XPos extends WIntTuple {
+	public class XPos extends IntHolder {
 
 		public XPos() {
 			this(5);

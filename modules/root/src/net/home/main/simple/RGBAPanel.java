@@ -110,7 +110,7 @@ public class RGBAPanel {
 			public void insertUpdate(DocumentEvent e) {
 				edit();
 			}
-		
+
 			public void edit() {
 				if (update) {
 					f.edit();

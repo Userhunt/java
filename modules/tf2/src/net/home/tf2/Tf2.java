@@ -6,7 +6,6 @@ import com.google.gson.JsonObject;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
-import java.net.http.HttpClient;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -22,17 +21,17 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import net.api.ApiJsonHelper;
-import net.api.window.BackgroundExecutor;
 import net.api.window.FrameWin;
 import net.api.window.IBackgroundExecutor;
+import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
 import net.home.main.FrameObject;
 import net.home.main.MainFrame;
 import net.w3e.base.collection.ArraySet;
+import net.w3e.base.holders.ObjectHolder;
+import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.json.BJsonUtil;
 import net.w3e.base.json.FileUtil;
 import net.w3e.base.message.MessageUtil;
-import net.w3e.base.tuple.WTuple1;
-import net.w3e.base.tuple.number.WIntTuple;
 
 public class Tf2 extends FrameObject {
 
@@ -55,8 +54,6 @@ public class Tf2 extends FrameObject {
 	private float dollar;
 	private float min;
 	private int attempt;
-
-	private final HttpClient client = HttpClient.newHttpClient();
 
 	@Override
 	protected void init(FrameWin fw, List<String> args) {
@@ -223,22 +220,21 @@ public class Tf2 extends FrameObject {
 
 		int size = set.size();
 
-		WIntTuple progress = new WIntTuple();
-		WTuple1<String> last = new WTuple1<String>("");
+		IntHolder progress = new IntHolder();
+		ObjectHolder<String> holder = new ObjectHolder<>("");
 
 		List<Tf2Price> prices = new ArraySet.ArraySetStrict<>();
 
 		if (!set.isEmpty()) {
-			BackgroundExecutor.run("Calculating", fw, (oldProgress, executor) -> {
+			new BackgroundExecutorBuilder("Calculating", fw).setExecute((oldProgress, executor) -> {
 				if (executor.isStop()) {
-					setCalculated(prices);
 					return oldProgress;
 				}
 				// первый элемент
 				String next = map.keySet().iterator().next();
-				if (!last.get().equals(next)) {
+				if (!holder.get().equals(next)) {
 					System.out.println("group " + next);
-					last.set(next);
+					holder.set(next);
 				}
 				List<Tf2RegistryObject> list = map.get(next);
 				// пусто, продолжаем
@@ -257,7 +253,6 @@ public class Tf2 extends FrameObject {
 							}
 						}
 					}
-					setCalculated(prices);
 					executor.stop();
 					return oldProgress;
 				}
@@ -271,15 +266,16 @@ public class Tf2 extends FrameObject {
 				progress.add(1);
 				prices.add(price);
 
-				// результа
-				if (progress.get() == size)	{
-					setCalculated(prices);
+				// результ
+				if (progress.getAsInt() == size)	{
 					return 100;
 				}
 
 				// результат
-				return progress.get() * 100 / size;
-			});
+				return progress.getAsInt() * 100 / size;
+			}).setDone(exe -> {
+				setCalculated(prices);
+			}).run();
 		}
 	}
 
@@ -300,7 +296,7 @@ public class Tf2 extends FrameObject {
 	private final Tf2Price getPrice(Tf2RegistryObject value, IBackgroundExecutor stop) {
 		Tf2Price price = this.PRICES.get(value);
 		if (price == null) {
-			price = Tf2Price.get(client, value, stop, this.attempt);
+			price = Tf2Price.get(value, stop, this.attempt);
 			if (price != null) {
 				this.PRICES.put(value, price);
 			}

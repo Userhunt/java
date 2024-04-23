@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 
-import net.w3e.base.tuple.WTuple2;
+import net.w3e.base.holders.Object2Holder;
 
 public class BStringUtil {
 
@@ -128,14 +128,14 @@ public class BStringUtil {
 	}
 
 	public static final <T, V> String toString(Map<T, V> map) {
-		return toString(map, (e) -> new WTuple2<>(e.getKey(), e.getValue()));
+		return toString(map, (e) -> new Object2Holder<>(e.getKey(), e.getValue()));
 	}
 
-	public static final <T, V, R, F> String toString(Map<T, V> map, Function<Entry<T, V>, WTuple2<R, F>> function) {
+	public static final <T, V, R, F> String toString(Map<T, V> map, Function<Entry<T, V>, Object2Holder<R, F>> function) {
 		Map<R, F> m = new LinkedHashMap<>();
 		for (Entry<T, V> entry : map.entrySet()) {
-			WTuple2<R, F> tuple = function.apply(entry);
-			m.put(tuple.a, tuple.b);
+			Object2Holder<R, F> tuple = function.apply(entry);
+			m.put(tuple.getA(), tuple.getB());
 		}
 		String str = "{";
 		Iterator<Entry<R, F>> iterator = m.entrySet().iterator();
