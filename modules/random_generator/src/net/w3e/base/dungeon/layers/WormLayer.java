@@ -9,6 +9,7 @@ import net.w3e.base.collection.CollectionUtils;
 import net.w3e.base.collection.ArraySet.ArraySetStrict;
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
+import net.w3e.base.dungeon.DungeonLayer.IPathLayer;
 import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.dungeon.direction.DungeonChances;
@@ -16,7 +17,7 @@ import net.w3e.base.dungeon.direction.DungeonPos;
 import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.math.vector.WVector3;
 
-public class WormLayer<T> extends DungeonLayer<T> {
+public class WormLayer<T> extends DungeonLayer<T> implements IPathLayer {
 
 	public final DungeonPos[] centers;
 	public final WormDungeonStepChances stepChances;

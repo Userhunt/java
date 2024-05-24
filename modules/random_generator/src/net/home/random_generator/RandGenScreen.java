@@ -18,6 +18,9 @@ import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
 import net.home.main.FrameObject;
 import net.home.main.MainFrame;
 import net.w3e.base.dungeon.DungeonGenerator;
+import net.w3e.base.dungeon.DungeonLayer;
+import net.w3e.base.dungeon.DungeonLayer.IPathLayer;
+import net.w3e.base.dungeon.DungeonLayer.ITemperatureLayer;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.math.vector.WBox;
@@ -82,6 +85,18 @@ public class RandGenScreen extends FrameObject {
 				return oldProgres;
 			}
 
+			sleep(1000);
+			if (holder.getAsInt() >= 16) {
+				System.out.println("limit reached");
+				executor.stop();
+				return oldProgres;
+			}
+
+			if (executor.isStop()) {
+				return oldProgres;
+			}
+
+			DungeonLayer<String> generator = dungeon.getFirst();
 			int progress = dungeon.generate();
 			holder.add();
 			int rooms = 0;
@@ -117,13 +132,13 @@ public class RandGenScreen extends FrameObject {
 					}
 				}
 			}
-			System.out.println(String.format("[%s] rooms %s, connections:[%s,%s]", holder.getAsInt(), rooms, hard, soft));
-			this.image.update();
-			sleep(1000);
-
-			if (holder.getAsInt() >= 16) {
-				executor.stop();
+			if (generator instanceof IPathLayer) {
+				System.out.println(String.format("[%s](path) rooms %s, connections:[%s,%s]", holder.getAsInt(), rooms, hard, soft));
 			}
+			if (generator instanceof ITemperatureLayer) {
+				System.out.println(String.format("[%s](temperature) rooms %s?", holder.getAsInt(), rooms));
+			}
+			this.image.update();
 
 			return progress;
 		}).setParentVisible(true).setUpdateParentPosition(false).build();

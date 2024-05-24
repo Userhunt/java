@@ -11,11 +11,12 @@ import java.util.zip.ZipFile;
 
 public class FindStrInJar {
 
-	public String condition;  //Query condition
+	public String condition; // Query condition
 
 	public ArrayList<String> jarFiles = new ArrayList<String>();
 
-	public FindStrInJar() {}
+	public FindStrInJar() {
+	}
 
 	public FindStrInJar(String condition) {
 		this.condition = condition;
@@ -62,14 +63,14 @@ public class FindStrInJar {
 								ZipEntry entry = (ZipEntry) entries.nextElement();
 								String thisClassName = getClassName(entry);
 								BufferedReader r = new BufferedReader(new InputStreamReader(zip.getInputStream(entry)));
-								while(r.read()!=-1){
+								while (r.read() != -1) {
 									String tempStr = r.readLine();
-									if(null!=tempStr && tempStr.indexOf(condition)>-1){
-										this.jarFiles.add(filename + "  --->  " + thisClassName);
+									if (null != tempStr && tempStr.indexOf(condition) > -1) {
+										this.jarFiles.add(thisClassName);
 										break;
 									}
 								}
-								}
+							}
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -82,8 +83,8 @@ public class FindStrInJar {
 	}
 
 	public static void main(String args[]) {
-		FindStrInJar findInJar = new  FindStrInJar("Received passengers"); //String to be looking for
-		List<String> jarFiles = findInJar.find("D:\\Minecraft\\fabric\\data-pack-mod-template-1.20.1\\.gradle\\loom-cache\\minecraftMaven\\net\\minecraft\\minecraft-merged-6af62f5924\\24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true);
+		FindStrInJar findInJar = new FindStrInJar("perlin"); // String to be looking for
+		List<String> jarFiles = findInJar.find("D:\\Minecraft\\fabric\\vanilla-fabric\\.gradle\\loom-cache\\minecraftMaven\\net\\minecraft\\minecraft-merged-6af62f5924\\24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true);
 		if (jarFiles.size() == 0) {
 			System.out.println("Not Found");
 		} else {

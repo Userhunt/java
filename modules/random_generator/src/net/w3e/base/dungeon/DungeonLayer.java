@@ -24,4 +24,7 @@ public abstract class DungeonLayer<T> {
 	protected final DungeonRoomCreateInfo<T> get(WVector3 pos) {
 		return this.generator.get(pos);
 	}
+
+	public static interface IPathLayer {}
+	public static interface ITemperatureLayer {}
 }

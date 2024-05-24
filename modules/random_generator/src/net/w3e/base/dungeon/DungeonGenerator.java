@@ -2,6 +2,7 @@ package net.w3e.base.dungeon;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -11,6 +12,9 @@ import java.util.function.Supplier;
 import net.w3e.base.collection.CollectionBuilder;
 import net.w3e.base.collection.MapT;
 import net.w3e.base.collection.MapT.MapTString;
+import net.w3e.base.dungeon.layers.BiomeLayer;
+import net.w3e.base.dungeon.layers.FeatureLayer;
+import net.w3e.base.dungeon.layers.RoomLayer;
 import net.w3e.base.dungeon.layers.TemperatureLayer;
 import net.w3e.base.dungeon.layers.WormLayer;
 import net.w3e.base.holders.BoolHolder;
@@ -28,7 +32,7 @@ public class DungeonGenerator<T> {
 	private final List<Factory<T>> layers = new ArrayList<>();
 
 	private Random random;
-	private final List<DungeonLayer<T>> queue = new ArrayList<>();
+	private final List<DungeonLayer<T>> queue = new LinkedList<>();
 
 	public DungeonGenerator(long seed, WBox dimension, Supplier<MapT<T>> dataFactory, List<Factory<T>> layers) {
 		this.seed = seed;
@@ -126,15 +130,19 @@ public class DungeonGenerator<T> {
 	public final int generate() {
 		int i = 100;
 		if (!queue.isEmpty()) {
-			DungeonLayer<T> generator = this.queue.get(0);
+			DungeonLayer<T> generator = this.queue.getFirst();
 			i = generator.generate();
 			if (i == 100) {
 				i = 0;
-				this.queue.remove(0);
+				this.queue.removeFirst();
 			}
 		}
 
 		return (this.layers.size() - this.queue.size()) * 100 / this.layers.size() + i / this.layers.size();
+	}
+
+	public final DungeonLayer<T> getFirst() {
+		return this.queue.isEmpty() ? null : this.queue.getFirst();
 	}
 
 	public static interface Factory<T> {
@@ -152,13 +160,13 @@ public class DungeonGenerator<T> {
 			// path
 			WormLayer::example,
 			// temperature
-			TemperatureLayer::example
+			TemperatureLayer::example,
 			// biomes
-
-			// boss
-
+			BiomeLayer::example,
+			// rooms
+			RoomLayer::example,
 			// features
-
+			FeatureLayer::example
 		).build());
 	}
 }
