@@ -4,47 +4,37 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 
-import net.api.window.jcomponent.JImage;
+import javax.swing.BorderFactory;
+
+import net.api.window.jcomponent.JImageLabel;
 
 public class ImageScreen extends AbstractFrameWin {
 
-	private final BufferedImage image;
+	private final JImageLabel image;
 
-	public ImageScreen(String frameTitle, int width, int height, int scale, Color background) {
+	public ImageScreen(String frameTitle, int width, int height, int scale, Color background, Object fake) {
 		super(frameTitle);
-		this.image = image(1, 1, width, height, scale);
-		width += 2;
-		height += 2;
-		BufferedImage backgroundImage = image(0, 0, width, height, scale);
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				backgroundImage.setRGB(i, j, background.getRGB());
-			}
-		}
 
-		this.setSize(width * scale + 16, height * scale + 39);
-		this.setResizable(false);
-	}
+		this.getRootPane().setBorder(BorderFactory.createEmptyBorder(1 * scale, 1 * scale, 1 * scale, 1 * scale));
+		this.getRootPane().setBackground(background);
 
-	private final BufferedImage image(int x, int y, int width, int height, int scale) {
-		x *= scale;
-		y *= scale;
+		int x = scale;
+		int y = scale;
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		JImage jImage = new JImage(image, scale);
-		jImage.setBounds(x, y, width * scale, height * scale);
-		jImage.setPreferredSize(jImage.getSize());
+		this.image = new JImageLabel(image, width * scale, height * scale);
+		this.setColor(x + 2, y + 2, Color.red.getRGB());
 
-		this.add(jImage);
+		this.add(this.image);
 
-		return image;
+		this.pack();
 	}
 
 	public final void setColor(int x, int y, int color) {
-		this.image.setRGB(x, y, color);
+		this.image.setColor(x, y, color);
 	}
 
 	public final void setColor(int x, int y, Color color) {
-		this.image.setRGB(x, y, color.getRGB());
+		this.setColor(x, y, color.getRGB());
 	}
 
 	public final void setColor(Color color) {
@@ -52,11 +42,11 @@ public class ImageScreen extends AbstractFrameWin {
 	}
 
 	public final void setColor(int color) {
-		for (int x = 0; x < this.image.getWidth(); x++) {
-			for (int y = 0; y < this.image.getHeight(); y++) {
-				setColor(x, y, color);
-			}
-		}
+		this.image.setColor(color);
+	}
+
+	public final void update() {
+		this.image.repaint();
 	}
 
 	public static class ImageScreenBuilder {
@@ -129,7 +119,7 @@ public class ImageScreen extends AbstractFrameWin {
 		}
 
 		public final ImageScreen build(boolean visible) {
-			ImageScreen screen = new ImageScreen(this.title, this.width, this.height, this.scale, this.background);
+			ImageScreen screen = new ImageScreen(this.title, this.width, this.height, this.scale, this.background, null);
 			screen.setLocation(this.x, this.y);
 			screen.setVisible(visible);
 			return screen;

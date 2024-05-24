@@ -26,7 +26,7 @@ public class MainArgs<T extends FrameObject> {
 		@Override
 		public boolean test(MainArgs<FrameObject> args, FrameObject frame, String value) {
 			if (frame.fastKey().equals(value)) {
-				args.init = () -> frame.run(args.main, args.args);
+				args.init = () -> frame.run(args.main, args.args, null);
 				return true;
 			} else {
 				return false;

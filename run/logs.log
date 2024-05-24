@@ -1,17 +1,2 @@
-2024-04-19 18:15:06.999 [main] WARN  SETUP - writter replaced
-2024-04-19 18:15:07.006 [main] INFO   - [PrintWrapper{install:23}]: test replace from net.home.cyberpunk.CyberpunkGenerator.main(CyberpunkGenerator.java:18)
-2024-04-19 18:15:07.064 [main] INFO   - [CyberwareGenerator{generateOperatingSystem:65}]: Items.HauntedCyberdeck_Rare
-2024-04-19 18:15:07.065 [main] INFO   - [CyberwareGenerator{generateOperatingSystem:65}]: Items.HauntedCyberdeck_Epic
-2024-04-19 18:15:07.065 [main] INFO   - [CyberwareGenerator{generateOperatingSystem:65}]: Items.HauntedCyberdeck_Legendary
-2024-04-19 18:15:07.123 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 66 предметов в магазине Cyberware Arms
-2024-04-19 18:15:07.124 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 57 предметов в магазине Cyberware Operating System
-2024-04-19 18:15:07.125 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 48 предметов в магазине Cyberware Circulatory
-2024-04-19 18:15:07.126 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 33 предметов в магазине Cyberware Face
-2024-04-19 18:15:07.127 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 43 предметов в магазине Cyberware Frontal
-2024-04-19 18:15:07.128 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 24 предметов в магазине Cyberware Hands
-2024-04-19 18:15:07.129 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 58 предметов в магазине Cyberware Integumentary
-2024-04-19 18:15:07.129 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 19 предметов в магазине Cyberware Legs
-2024-04-19 18:15:07.130 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 49 предметов в магазине Cyberware Nervous
-2024-04-19 18:15:07.131 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 54 предметов в магазине Cyberware Skeleton
-2024-04-19 18:15:07.132 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 19 предметов в магазине Shards
-2024-04-19 18:15:07.132 [main] INFO   - [ShopPage$ShopGenerator{generate:112}]: Сгенерировано 46 предметов в магазине QuickHacks
+2024-05-24 18:55:08.353 [main] WARN  SETUP - writter replaced
+2024-05-24 18:55:08.363 [main] INFO   - [PrintWrapper{install:23}]: test replace from net.home.main.MainFrame.<clinit>(MainFrame.java:76)

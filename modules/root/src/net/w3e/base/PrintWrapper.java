@@ -74,5 +74,4 @@ public class PrintWrapper extends java.io.PrintStream {
 	protected void info(String string) {
 		LOGGER.info(string);
 	}
-
 }

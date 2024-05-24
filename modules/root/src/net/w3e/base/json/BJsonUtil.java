@@ -22,6 +22,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -37,7 +38,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.util.StackLocatorUtil;
 import org.jetbrains.annotations.Nullable;
 
-import net.api.GsonHelper;
 import net.w3e.base.BStringUtil;
 import net.w3e.base.PrintWrapper;
 import net.w3e.base.ReflectionUtils;
@@ -45,7 +45,7 @@ import net.w3e.base.collection.ArraySet;
 import net.w3e.base.message.BMessageLoggerHelper;
 import net.w3e.base.message.MessageUtil;
 
-public class BJsonUtil extends GsonHelper {
+public class BJsonUtil {
 
 	private static Logger DEFAULT_LOGGER = PrintWrapper.LOGGER;
 
@@ -234,7 +234,137 @@ public class BJsonUtil extends GsonHelper {
 		return null;
 	}
 
+	/*========================================= Getter ======================================*/
+
+	public static final boolean getAsBoolean(JsonObject element, String target) {
+		if (element.has(target)) {
+			return convertToBoolean(element.get(target), target);
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Boolean.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final byte getAsByte(JsonObject element, String target) {
+		if (element.has(target)) {
+			return convertToByte(element.get(target), target);
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Byte.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final short getAsShort(JsonObject element, String target) {
+		if (element.has(target)) {
+			return convertToShort(element.get(target), target);
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Short.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final int getAsInt(JsonObject element, String target) {
+		if (element.has(target)) {
+			return convertToInt(element.get(target), target);
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Integer.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final long getAsLong(JsonObject element, String target) {
+		if (element.has(target)) {
+			return convertToLong(element.get(target), target);
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Long.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final float getAsFloat(JsonObject element, String target) {
+		if (element.has(target)) {
+			return convertToFloat(element.get(target), target);
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Float.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final double getAsDouble(JsonObject element, String target) {
+		if (element.has(target)) {
+			return convertToDouble(element.get(target), target);
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Double.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final String getAsString(JsonObject element, String target) {
+		if (element.has(target)) {
+			return convertToString(element.get(target), target);
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, String.class.getSimpleName(), getType(element)));
+		}
+	}
+	
 	/*========================================= Converter ======================================*/
+
+	private static final String abbreviateMiddle(String str, String middle, int length) {
+		if (Strings.isNullOrEmpty(str) || Strings.isNullOrEmpty(middle)) {
+			return str;
+		}
+
+		if (length >= str.length() || length < (middle.length()+2)) {
+			return str;
+		}
+
+		int targetSting = length-middle.length();
+		int startOffset = targetSting/2+targetSting%2;
+		int endOffset = str.length()-targetSting/2;
+
+		StringBuilder builder = new StringBuilder(length);
+		builder.append(str.substring(0,startOffset));
+		builder.append(middle);
+		builder.append(str.substring(endOffset));
+
+		return builder.toString();
+	}
+
+	public static final String getType(@Nullable JsonElement p_13884_) {
+		String s = abbreviateMiddle(String.valueOf((Object) p_13884_), "...", 10);
+		if (p_13884_ == null) {
+			return "null (missing)";
+		} else if (p_13884_.isJsonNull()) {
+			return "null (json)";
+		} else if (p_13884_.isJsonArray()) {
+			return "an array (" + s + ")";
+		} else if (p_13884_.isJsonObject()) {
+			return "an object (" + s + ")";
+		} else {
+			if (p_13884_.isJsonPrimitive()) {
+				JsonPrimitive jsonprimitive = p_13884_.getAsJsonPrimitive();
+				if (jsonprimitive.isNumber()) {
+					return "a number (" + s + ")";
+				}
+
+				if (jsonprimitive.isBoolean()) {
+					return "a boolean (" + s + ")";
+				}
+			}
+
+			return s;
+		}
+	}
+
+	public static final boolean convertToBoolean(JsonElement element, String target) {
+		if (element.isJsonPrimitive()) {
+			return element.getAsBoolean();
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Boolean.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final byte convertToByte(JsonElement element, String target) {
+		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber()) {
+			return element.getAsByte();
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Byte.class.getSimpleName(), getType(element)));
+		}
+	}
+
 	public static final short convertToShort(JsonElement element, String target) {
 		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber()) {
 			return element.getAsShort();
@@ -243,11 +373,43 @@ public class BJsonUtil extends GsonHelper {
 		}
 	}
 
+	public static final int convertToInt(JsonElement element, String target) {
+		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber()) {
+			return element.getAsInt();
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Integer.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final long convertToLong(JsonElement element, String target) {
+		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber()) {
+			return element.getAsLong();
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Long.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final float convertToFloat(JsonElement element, String target) {
+		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber()) {
+			return element.getAsFloat();
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Float.class.getSimpleName(), getType(element)));
+		}
+	}
+
 	public static final double convertToDouble(JsonElement element, String target) {
 		if (element.isJsonPrimitive() && element.getAsJsonPrimitive().isNumber()) {
 			return element.getAsDouble();
 		} else {
 			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, Double.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static String convertToString(JsonElement element, String target) {
+		if (element.isJsonPrimitive()) {
+			return element.getAsString();
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, String.class.getSimpleName(), getType(element)));
 		}
 	}
 
@@ -268,12 +430,36 @@ public class BJsonUtil extends GsonHelper {
 		return asString;
 	}
 
-	public static final <T> T convertToObject(@Nullable JsonElement p_188179_0_, JsonDeserializationContext p_188179_2_, Class<? extends T> p_188179_3_) {
+	public static JsonObject convertToJsonObject(JsonElement element, String target) {
+		if (element.isJsonObject()) {
+			return element.getAsJsonObject();
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, JsonObject.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static JsonArray convertToJsonArray(JsonElement element, String target) {
+		if (element.isJsonArray()) {
+			return element.getAsJsonArray();
+		} else {
+			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, JsonArray.class.getSimpleName(), getType(element)));
+		}
+	}
+
+	public static final <T> T convertToObject(@Nullable JsonElement element, JsonDeserializationContext context, Class<? extends T> type) {
 		String last = "";
 		try {
 			last = lastSubMessage().toString();
 		} catch (Exception ignored) {}
-		return convertToObject(p_188179_0_, last, p_188179_2_, p_188179_3_);
+		return convertToObject(element, last, context, type);
+	}
+
+	public static <T> T convertToObject(@Nullable JsonElement element, String arg, JsonDeserializationContext context, Class<? extends T> type) {
+		if (element != null) {
+			return context.deserialize(element, type);
+		} else {
+			throw new JsonSyntaxException("Missing " + arg);
+		}
 	}
 
 	/*========================================= readObject ======================================*/
@@ -1070,4 +1256,433 @@ public class BJsonUtil extends GsonHelper {
 		}
 		return Arrays.copyOf(base, base.length);
 	}
+
+	/*
+	public static boolean isStringValue(JsonObject p_13814_, String p_13815_) {
+		return !isValidPrimitive(p_13814_, p_13815_) ? false : p_13814_.getAsJsonPrimitive(p_13815_).isString();
+	}
+
+	public static boolean isStringValue(JsonElement p_13804_) {
+		return !p_13804_.isJsonPrimitive() ? false : p_13804_.getAsJsonPrimitive().isString();
+	}
+
+	public static boolean isNumberValue(JsonObject p_144763_, String p_144764_) {
+		return !isValidPrimitive(p_144763_, p_144764_) ? false : p_144763_.getAsJsonPrimitive(p_144764_).isNumber();
+	}
+
+	public static boolean isNumberValue(JsonElement p_13873_) {
+		return !p_13873_.isJsonPrimitive() ? false : p_13873_.getAsJsonPrimitive().isNumber();
+	}
+
+	public static boolean isBooleanValue(JsonObject p_13881_, String p_13882_) {
+		return !isValidPrimitive(p_13881_, p_13882_) ? false : p_13881_.getAsJsonPrimitive(p_13882_).isBoolean();
+	}
+
+	public static boolean isBooleanValue(JsonElement p_144768_) {
+		return !p_144768_.isJsonPrimitive() ? false : p_144768_.getAsJsonPrimitive().isBoolean();
+	}
+
+	public static boolean isArrayNode(JsonObject p_13886_, String p_13887_) {
+		return !isValidNode(p_13886_, p_13887_) ? false : p_13886_.get(p_13887_).isJsonArray();
+	}
+
+	public static boolean isObjectNode(JsonObject p_144773_, String p_144774_) {
+		return !isValidNode(p_144773_, p_144774_) ? false : p_144773_.get(p_144774_).isJsonObject();
+	}
+
+	public static boolean isValidPrimitive(JsonObject p_13895_, String p_13896_) {
+		return !isValidNode(p_13895_, p_13896_) ? false : p_13895_.get(p_13896_).isJsonPrimitive();
+	}
+
+	public static boolean isValidNode(JsonObject p_13901_, String p_13902_) {
+		if (p_13901_ == null) {
+			return false;
+		} else {
+			return p_13901_.get(p_13902_) != null;
+		}
+	}
+
+	@Contract("_,_,!null->!null;_,_,null->_")
+	public static String getAsString(JsonObject p_13852_, String p_13853_, @Nullable String p_13854_) {
+		return p_13852_.has(p_13853_) ? convertToString(p_13852_.get(p_13853_), p_13853_) : p_13854_;
+	}
+
+	public static boolean getAsBoolean(JsonObject p_13856_, String p_13857_, boolean p_13858_) {
+		return p_13856_.has(p_13857_) ? convertToBoolean(p_13856_.get(p_13857_), p_13857_) : p_13858_;
+	}
+
+	public static double getAsDouble(JsonObject p_144743_, String p_144744_, double p_144745_) {
+		return p_144743_.has(p_144744_) ? convertToDouble(p_144743_.get(p_144744_), p_144744_) : p_144745_;
+	}
+
+	public static float getAsFloat(JsonObject p_13821_, String p_13822_, float p_13823_) {
+		return p_13821_.has(p_13822_) ? convertToFloat(p_13821_.get(p_13822_), p_13822_) : p_13823_;
+	}
+
+	public static long getAsLong(JsonObject p_13829_, String p_13830_, long p_13831_) {
+		return p_13829_.has(p_13830_) ? convertToLong(p_13829_.get(p_13830_), p_13830_) : p_13831_;
+	}
+
+	public static int getAsInt(JsonObject p_13825_, String p_13826_, int p_13827_) {
+		return p_13825_.has(p_13826_) ? convertToInt(p_13825_.get(p_13826_), p_13826_) : p_13827_;
+	}
+
+	public static byte getAsByte(JsonObject p_13817_, String p_13818_, byte p_13819_) {
+		return p_13817_.has(p_13818_) ? convertToByte(p_13817_.get(p_13818_), p_13818_) : p_13819_;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static char convertToCharacter(JsonElement p_144776_, String p_144777_) {
+		if (p_144776_.isJsonPrimitive() && p_144776_.getAsJsonPrimitive().isNumber()) {
+			return p_144776_.getAsCharacter();
+		} else {
+			throw new JsonSyntaxException("Expected " + p_144777_ + " to be a Character, was " + getType(p_144776_));
+		}
+	}
+
+	public static char getAsCharacter(JsonObject p_144794_, String p_144795_) {
+		if (p_144794_.has(p_144795_)) {
+			return convertToCharacter(p_144794_.get(p_144795_), p_144795_);
+		} else {
+			throw new JsonSyntaxException("Missing " + p_144795_ + ", expected to find a Character");
+		}
+	}
+
+	public static char getAsCharacter(JsonObject p_144739_, String p_144740_, char p_144741_) {
+		return p_144739_.has(p_144740_) ? convertToCharacter(p_144739_.get(p_144740_), p_144740_) : p_144741_;
+	}
+
+	public static BigDecimal convertToBigDecimal(JsonElement p_144779_, String p_144780_) {
+		if (p_144779_.isJsonPrimitive() && p_144779_.getAsJsonPrimitive().isNumber()) {
+			return p_144779_.getAsBigDecimal();
+		} else {
+			throw new JsonSyntaxException("Expected " + p_144780_ + " to be a BigDecimal, was " + getType(p_144779_));
+		}
+	}
+
+	public static BigDecimal getAsBigDecimal(JsonObject p_144797_, String p_144798_) {
+		if (p_144797_.has(p_144798_)) {
+			return convertToBigDecimal(p_144797_.get(p_144798_), p_144798_);
+		} else {
+			throw new JsonSyntaxException("Missing " + p_144798_ + ", expected to find a BigDecimal");
+		}
+	}
+
+	public static BigDecimal getAsBigDecimal(JsonObject p_144751_, String p_144752_, BigDecimal p_144753_) {
+		return p_144751_.has(p_144752_) ? convertToBigDecimal(p_144751_.get(p_144752_), p_144752_) : p_144753_;
+	}
+
+	public static BigInteger convertToBigInteger(JsonElement p_144782_, String p_144783_) {
+		if (p_144782_.isJsonPrimitive() && p_144782_.getAsJsonPrimitive().isNumber()) {
+			return p_144782_.getAsBigInteger();
+		} else {
+			throw new JsonSyntaxException("Expected " + p_144783_ + " to be a BigInteger, was " + getType(p_144782_));
+		}
+	}
+
+	public static BigInteger getAsBigInteger(JsonObject p_144800_, String p_144801_) {
+		if (p_144800_.has(p_144801_)) {
+			return convertToBigInteger(p_144800_.get(p_144801_), p_144801_);
+		} else {
+			throw new JsonSyntaxException("Missing " + p_144801_ + ", expected to find a BigInteger");
+		}
+	}
+
+	public static BigInteger getAsBigInteger(JsonObject p_144755_, String p_144756_, BigInteger p_144757_) {
+		return p_144755_.has(p_144756_) ? convertToBigInteger(p_144755_.get(p_144756_), p_144756_) : p_144757_;
+	}
+
+	public static short getAsShort(JsonObject p_144803_, String p_144804_) {
+		if (p_144803_.has(p_144804_)) {
+			return convertToShort(p_144803_.get(p_144804_), p_144804_);
+		} else {
+			throw new JsonSyntaxException("Missing " + p_144804_ + ", expected to find a Short");
+		}
+	}
+
+	public static short getAsShort(JsonObject p_144759_, String p_144760_, short p_144761_) {
+		return p_144759_.has(p_144760_) ? convertToShort(p_144759_.get(p_144760_), p_144760_) : p_144761_;
+	}
+
+	public static JsonObject convertToJsonObject(JsonElement p_13919_, String p_13920_) {
+		if (p_13919_.isJsonObject()) {
+			return p_13919_.getAsJsonObject();
+		} else {
+			throw new JsonSyntaxException("Expected " + p_13920_ + " to be a JsonObject, was " + getType(p_13919_));
+		}
+	}
+
+	public static JsonObject getAsJsonObject(JsonObject p_13931_, String p_13932_) {
+		if (p_13931_.has(p_13932_)) {
+			return convertToJsonObject(p_13931_.get(p_13932_), p_13932_);
+		} else {
+			throw new JsonSyntaxException("Missing " + p_13932_ + ", expected to find a JsonObject");
+		}
+	}
+
+	@Nullable
+	@Contract("_,_,!null->!null;_,_,null->_")
+	public static JsonObject getAsJsonObject(JsonObject p_13842_, String p_13843_, @Nullable JsonObject p_13844_) {
+		return p_13842_.has(p_13843_) ? convertToJsonObject(p_13842_.get(p_13843_), p_13843_) : p_13844_;
+	}
+
+	public static JsonArray convertToJsonArray(JsonElement p_13925_, String p_13926_) {
+		if (p_13925_.isJsonArray()) {
+			return p_13925_.getAsJsonArray();
+		} else {
+			throw new JsonSyntaxException("Expected " + p_13926_ + " to be a JsonArray, was " + getType(p_13925_));
+		}
+	}
+
+	public static JsonArray getAsJsonArray(JsonObject p_13934_, String p_13935_) {
+		if (p_13934_.has(p_13935_)) {
+			return convertToJsonArray(p_13934_.get(p_13935_), p_13935_);
+		} else {
+			throw new JsonSyntaxException("Missing " + p_13935_ + ", expected to find a JsonArray");
+		}
+	}
+
+	@Nullable
+	@Contract("_,_,!null->!null;_,_,null->_")
+	public static JsonArray getAsJsonArray(JsonObject p_13833_, String p_13834_, @Nullable JsonArray p_13835_) {
+		return p_13833_.has(p_13834_) ? convertToJsonArray(p_13833_.get(p_13834_), p_13834_) : p_13835_;
+	}
+
+	public static <T> T convertToObject(@Nullable JsonElement p_13809_, String p_13810_,
+			JsonDeserializationContext p_13811_, Class<? extends T> p_13812_) {
+		if (p_13809_ != null) {
+			return p_13811_.deserialize(p_13809_, p_13812_);
+		} else {
+			throw new JsonSyntaxException("Missing " + p_13810_);
+		}
+	}
+
+	public static <T> T getAsObject(JsonObject p_13837_, String p_13838_, JsonDeserializationContext p_13839_,
+			Class<? extends T> p_13840_) {
+		if (p_13837_.has(p_13838_)) {
+			return convertToObject(p_13837_.get(p_13838_), p_13838_, p_13839_, p_13840_);
+		} else {
+			throw new JsonSyntaxException("Missing " + p_13838_);
+		}
+	}
+
+	@Nullable
+	@Contract("_,_,!null,_,_->!null;_,_,null,_,_->_")
+	public static <T> T getAsObject(JsonObject p_13846_, String p_13847_, @Nullable T p_13848_,
+			JsonDeserializationContext p_13849_, Class<? extends T> p_13850_) {
+		return (T) (p_13846_.has(p_13847_) ? convertToObject(p_13846_.get(p_13847_), p_13847_, p_13849_, p_13850_)
+				: p_13848_);
+	}
+
+	public static String getType(@Nullable JsonElement p_13884_) {
+		String s = abbreviateMiddle(String.valueOf((Object) p_13884_), "...", 10);
+		if (p_13884_ == null) {
+			return "null (missing)";
+		} else if (p_13884_.isJsonNull()) {
+			return "null (json)";
+		} else if (p_13884_.isJsonArray()) {
+			return "an array (" + s + ")";
+		} else if (p_13884_.isJsonObject()) {
+			return "an object (" + s + ")";
+		} else {
+			if (p_13884_.isJsonPrimitive()) {
+				JsonPrimitive jsonprimitive = p_13884_.getAsJsonPrimitive();
+				if (jsonprimitive.isNumber()) {
+					return "a number (" + s + ")";
+				}
+
+				if (jsonprimitive.isBoolean()) {
+					return "a boolean (" + s + ")";
+				}
+			}
+
+			return s;
+		}
+	}
+
+	private static boolean isEmpty(CharSequence cs) {
+		return cs == null || cs.length() == 0;
+	}
+
+	private static String abbreviateMiddle(String str, String middle, int length) {
+		if (isEmpty(str) || isEmpty(middle)) {
+			return str;
+		}
+
+		if (length >= str.length() || length < (middle.length()+2)) {
+			return str;
+		}
+
+		int targetSting = length-middle.length();
+		int startOffset = targetSting/2+targetSting%2;
+		int endOffset = str.length()-targetSting/2;
+
+		StringBuilder builder = new StringBuilder(length);
+		builder.append(str.substring(0,startOffset));
+		builder.append(middle);
+		builder.append(str.substring(endOffset));
+
+		return builder.toString();
+	}
+
+	@Nullable
+	public static <T> T fromNullableJson(Gson p_13781_, Reader p_13782_, Class<T> p_13783_, boolean p_13784_) {
+		try {
+			JsonReader jsonreader = new JsonReader(p_13782_);
+			jsonreader.setLenient(p_13784_);
+			return p_13781_.getAdapter(p_13783_).read(jsonreader);
+		} catch (IOException ioexception) {
+			throw new JsonParseException(ioexception);
+		}
+	}
+
+	public static <T> T fromJson(Gson p_263516_, Reader p_263522_, Class<T> p_263539_, boolean p_263489_) {
+		T t = fromNullableJson(p_263516_, p_263522_, p_263539_, p_263489_);
+		if (t == null) {
+			throw new JsonParseException("JSON data was null or empty");
+		} else {
+			return t;
+		}
+	}
+
+	@Nullable
+	public static <T> T fromNullableJson(Gson p_13772_, Reader p_13773_, TypeToken<T> p_13774_, boolean p_13775_) {
+		try {
+			JsonReader jsonreader = new JsonReader(p_13773_);
+			jsonreader.setLenient(p_13775_);
+			return p_13772_.getAdapter(p_13774_).read(jsonreader);
+		} catch (IOException ioexception) {
+			throw new JsonParseException(ioexception);
+		}
+	}
+
+	public static <T> T fromJson(Gson p_263499_, Reader p_263527_, TypeToken<T> p_263525_, boolean p_263507_) {
+		T t = fromNullableJson(p_263499_, p_263527_, p_263525_, p_263507_);
+		if (t == null) {
+			throw new JsonParseException("JSON data was null or empty");
+		} else {
+			return t;
+		}
+	}
+
+	@Nullable
+	public static <T> T fromNullableJson(Gson p_13790_, String p_13791_, TypeToken<T> p_13792_, boolean p_13793_) {
+		return fromNullableJson(p_13790_, new StringReader(p_13791_), p_13792_, p_13793_);
+	}
+
+	public static <T> T fromJson(Gson p_263492_, String p_263488_, Class<T> p_263503_, boolean p_263506_) {
+		return fromJson(p_263492_, new StringReader(p_263488_), p_263503_, p_263506_);
+	}
+
+	@Nullable
+	public static <T> T fromNullableJson(Gson p_13799_, String p_13800_, Class<T> p_13801_, boolean p_13802_) {
+		return fromNullableJson(p_13799_, new StringReader(p_13800_), p_13801_, p_13802_);
+	}
+
+	public static <T> T fromJson(Gson p_13768_, Reader p_13769_, TypeToken<T> p_13770_) {
+		return fromJson(p_13768_, p_13769_, p_13770_, false);
+	}
+
+	@Nullable
+	public static <T> T fromNullableJson(Gson p_13786_, String p_13787_, TypeToken<T> p_13788_) {
+		return fromNullableJson(p_13786_, p_13787_, p_13788_, false);
+	}
+
+	public static <T> T fromJson(Gson p_13777_, Reader p_13778_, Class<T> p_13779_) {
+		return fromJson(p_13777_, p_13778_, p_13779_, false);
+	}
+
+	public static <T> T fromJson(Gson p_13795_, String p_13796_, Class<T> p_13797_) {
+		return fromJson(p_13795_, p_13796_, p_13797_, false);
+	}
+
+	public static JsonObject parse(String p_13870_, boolean p_13871_) {
+		return parse(new StringReader(p_13870_), p_13871_);
+	}
+
+	public static JsonObject parse(Reader p_13862_, boolean p_13863_) {
+		return fromJson(GSON, p_13862_, JsonObject.class, p_13863_);
+	}
+
+	public static JsonObject parse(String p_13865_) {
+		return parse(p_13865_, false);
+	}
+
+	public static JsonObject parse(Reader p_13860_) {
+		return parse(p_13860_, false);
+	}
+
+	public static JsonArray parseArray(String p_216215_) {
+		return parseArray(new StringReader(p_216215_));
+	}
+
+	public static JsonArray parseArray(Reader p_144766_) {
+		return fromJson(GSON, p_144766_, JsonArray.class, false);
+	}
+
+	public static String toStableString(JsonElement p_216217_) {
+		StringWriter stringwriter = new StringWriter();
+		JsonWriter jsonwriter = new JsonWriter(stringwriter);
+
+		try {
+			writeValue(jsonwriter, p_216217_, Comparator.naturalOrder());
+		} catch (IOException ioexception) {
+			throw new AssertionError(ioexception);
+		}
+
+		return stringwriter.toString();
+	}
+
+	public static void writeValue(JsonWriter p_216208_, @Nullable JsonElement p_216209_,
+			@Nullable Comparator<String> p_216210_) throws IOException {
+		if (p_216209_ != null && !p_216209_.isJsonNull()) {
+			if (p_216209_.isJsonPrimitive()) {
+				JsonPrimitive jsonprimitive = p_216209_.getAsJsonPrimitive();
+				if (jsonprimitive.isNumber()) {
+					p_216208_.value(jsonprimitive.getAsNumber());
+				} else if (jsonprimitive.isBoolean()) {
+					p_216208_.value(jsonprimitive.getAsBoolean());
+				} else {
+					p_216208_.value(jsonprimitive.getAsString());
+				}
+			} else if (p_216209_.isJsonArray()) {
+				p_216208_.beginArray();
+
+				for (JsonElement jsonelement : p_216209_.getAsJsonArray()) {
+					writeValue(p_216208_, jsonelement, p_216210_);
+				}
+
+				p_216208_.endArray();
+			} else {
+				if (!p_216209_.isJsonObject()) {
+					throw new IllegalArgumentException("Couldn't write " + p_216209_.getClass());
+				}
+
+				p_216208_.beginObject();
+
+				for (Map.Entry<String, JsonElement> entry : sortByKeyIfNeeded(p_216209_.getAsJsonObject().entrySet(),
+						p_216210_)) {
+					p_216208_.name(entry.getKey());
+					writeValue(p_216208_, entry.getValue(), p_216210_);
+				}
+
+				p_216208_.endObject();
+			}
+		} else {
+			p_216208_.nullValue();
+		}
+
+	}
+
+	private static Collection<Map.Entry<String, JsonElement>> sortByKeyIfNeeded(
+			Collection<Map.Entry<String, JsonElement>> p_216212_, @Nullable Comparator<String> p_216213_) {
+		if (p_216213_ == null) {
+			return p_216212_;
+		} else {
+			List<Map.Entry<String, JsonElement>> list = new ArrayList<>(p_216212_);
+			list.sort(Entry.comparingByKey(p_216213_));
+			return list;
+		}
+	}
+	 */
 }

@@ -1,10 +1,14 @@
 package net.home.random_generator;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.PrimitiveIterator.OfLong;
+import java.util.stream.LongStream;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 
 import net.api.window.BackgroundExecutor;
@@ -31,14 +35,21 @@ public class RandGenScreen extends FrameObject {
 	private ImageScreen image;
 
 	protected void init(FrameWin fw, List<String> args) {
-		YPos y = new YPos();
-
-		for (int i = 0; i < 5; i++) {
-			long seed = i;
-			addButton("" + i, btn -> exampleDungeon(btn, seed), y);
+		OfLong iterator = LongStream.range(0, 5).iterator();
+		while(iterator.hasNext()) {
+			long seed = iterator.nextLong();
+			JButton button = new JButton("" + seed);
+			button.setPreferredSize(new Dimension(300, 26));
+			button.setMinimumSize(button.getPreferredSize());
+			button.setMaximumSize(button.getPreferredSize());
+			button.addActionListener(FrameWin.onClick(button, btn -> exampleDungeon(btn, seed)));
+			fw.add(button);
+			if (iterator.hasNext()) {
+				fw.add(Box.createVerticalStrut(10));
+			}
 		}
 
-		fw.setSize(300, y.get() + 41);
+		fw.pack();
 	}
 
 	@Override
@@ -107,7 +118,7 @@ public class RandGenScreen extends FrameObject {
 				}
 			}
 			System.out.println(String.format("[%s] rooms %s, connections:[%s,%s]", holder.getAsInt(), rooms, hard, soft));
-			this.image.repaint();
+			this.image.update();
 			sleep(1000);
 
 			if (holder.getAsInt() >= 16) {

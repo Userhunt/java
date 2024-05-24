@@ -12,7 +12,7 @@ public class CacheSupplier<T> implements Supplier<T> {
 	}
 
 	@Override
-	public T get() {
+	public final T get() {
 		if (this.value == null) {
 			this.value = sup.get();
 		}

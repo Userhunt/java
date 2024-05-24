@@ -115,7 +115,9 @@ public class Tf2 extends FrameObject {
 		}
 	}
 
+	@Deprecated
 	private final void initButtons(FrameWin fw) {
+		fw.setLayout(null);
 		fw.setSize(fw.getWidth(), GROUPS.size() / 2 * 20);
 
 		for (Component component : BUTTONS) {
@@ -145,13 +147,11 @@ public class Tf2 extends FrameObject {
 		{
 			JButton button = new JButton("Calculate");
 			button.setBounds(10, y, 130, 26);
-			button.addActionListener(FrameWin.onClick(() -> {
-				this.calculate(fw);
-			}));
+			button.addActionListener(FrameWin.onClick(() -> this.calculate(fw)));
 			BUTTONS.add(button);
 		}
 		{
-			JButton button = new JButton("Generate");
+			JButton button = this.addCmonentListiner(new JButton("Generate"), e -> this.generate());
 			button.setBounds(145, y, 130, 26);
 			button.addActionListener(FrameWin.onClick(this::generate));
 			BUTTONS.add(button);

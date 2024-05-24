@@ -1,7 +1,10 @@
 package net.home.main.simple;
 
 import java.awt.Color;
+import java.awt.FlowLayout;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
@@ -15,10 +18,9 @@ import net.w3e.base.RGBA;
 import net.w3e.base.RGBA.RGBAFlag;
 import net.w3e.base.math.BMatUtil;
 
-public class RGBAPanel {
+public class RGBAPanel extends JPanel {
 
 	private static final int WIDTH = 28;
-	private static final int D = 10;
 	private static final int HEIGHT = 26;
 	private static final int PRECISION = 4;
 
@@ -31,67 +33,76 @@ public class RGBAPanel {
 	private boolean update = true;
 	private final JPanel panel = new JPanel();
 
-	public RGBAPanel() {
+	/**
+	 * 
+	 * @param i - int fields
+	 * @param d - double fields
+	 */
+	public RGBAPanel(boolean i, boolean d) {
 		for(RGBAFlag flag : RGBAFlag.values()) {
 			int index = flag.index + 1;
-			this.fields.put(index, null);
-			this.fields.put(-index, null);
+			if (i) {
+				this.fields.put(index, null);
+			}
+			if (d) {
+				this.fields.put(-index, null);
+			}
 		}
-	}
+		for(int key : new IntOpenHashSet(fields.keySet())) {
+			this.fields.put(key, null);
+		}
 
-	public final int create(FrameWin fw, int x, int y, boolean i, boolean d) {
-		int old = y;
+		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+
 		for(int key : new IntOpenHashSet(fields.keySet())) {
 			this.fields.put(key, null);
 		}
 
 		int width = this.width(i, d);
-		int height = RGBAPanel.HEIGHT + 5;
-		int dX1 = width + RGBAPanel.D + 5;
-		int dX2 = dX1 + dX1;
-		int dX3 = dX2 + dX1;
-		x += 5;
 		if (i) {
-			createNumber(fw, width, x, y, true, RGBAFlag.R);
-			createNumber(fw, width, x + dX1, y, true, RGBAFlag.G);
-			createNumber(fw, width, x + dX2, y, true, RGBAFlag.B);
-			createNumber(fw, width, x + dX3, y, true, RGBAFlag.A);
-			y += height;
+			this.createLine(width, true);
 		}
 		if (d) {
-			createNumber(fw, width, x, y, false, RGBAFlag.R);
-			createNumber(fw, width, x + dX1, y, false, RGBAFlag.G);
-			createNumber(fw, width, x + dX2, y, false, RGBAFlag.B);
-			createNumber(fw, width, x + dX3, y, false, RGBAFlag.A);
-			y += height;
+			this.createLine(width, false);
 		}
 		if (i || d) {
-			y += 5;
 			JPanel panel = new JPanel();
+			panel.setLayout(null);
 			panel.setBackground(Color.BLACK);
 
-			panel.setBounds(x - 5, y - 5, dX3 + dX1 + 5, RGBAPanel.HEIGHT + 10);
+			width = ((width + 22) * 4 + 5 * 3);
 
-			this.panel.setBounds(x, y, dX3 + dX1 - 5, RGBAPanel.HEIGHT);
+			FrameWin.setSize(panel, width, RGBAPanel.HEIGHT + 10);
 
-			fw.add(this.panel);
-			fw.add(panel);
+			this.panel.setBounds(5, 5, width - 10, RGBAPanel.HEIGHT);
 
-			y += 5;
+			panel.add(this.panel);
 
-			y += height;
+			this.add(panel);
+
+			FrameWin.setSize(this, width, this.getPreferredSize().height);
 		}
 
 		this.update();
-
-		return y - old;
 	}
 
-	private final void createNumber(FrameWin fw, int width, int x, int y, boolean i, RGBA.RGBAFlag flag) {
+	private final void createLine(int width, boolean i) {
+		JPanel panel = new JPanel();
+		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 2));
+		createNumber(panel, width, i, RGBAFlag.R);
+		panel.add(Box.createHorizontalStrut(5));
+		createNumber(panel, width, i, RGBAFlag.G);
+		panel.add(Box.createHorizontalStrut(5));
+		createNumber(panel, width, i, RGBAFlag.B);
+		panel.add(Box.createHorizontalStrut(5));
+		createNumber(panel, width, i, RGBAFlag.A);
+		this.add(panel);
+	}
+
+	private final void createNumber(JPanel panel, int width, boolean i, RGBA.RGBAFlag flag) {
 		JLabel label = new JLabel();
-		label.setBounds(x, y, RGBAPanel.D, RGBAPanel.HEIGHT);
 		label.setText(flag.name());
-		fw.add(label);
+		panel.add(label);
 
 		JNumberTextField field = new JNumberTextField(i ? 3 : 1, i ? JNumberTextField.NUMERIC : JNumberTextField.DECIMAL);
 		field.setAllowNegative(false);
@@ -101,25 +112,26 @@ public class RGBAPanel {
 		RGBAField f = new RGBAField(this, field, flag, i);
 
 		field.getDocument().addDocumentListener(new DocumentListener() {
-			public void changedUpdate(DocumentEvent e) {
+			public final void changedUpdate(DocumentEvent e) {
 				edit();
 			}
-			public void removeUpdate(DocumentEvent e) {
+			public final void removeUpdate(DocumentEvent e) {
 				edit();
 			}
-			public void insertUpdate(DocumentEvent e) {
+			public final void insertUpdate(DocumentEvent e) {
 				edit();
 			}
 
-			public void edit() {
+			public final void edit() {
 				if (update) {
 					f.edit();
 				}
 			}
 		});
 
-		field.setBounds(x + D, y, width, RGBAPanel.HEIGHT);
-		fw.add(field);
+		FrameWin.setSize(field, width, RGBAPanel.HEIGHT);
+
+		panel.add(field);
 
 		this.fields.put(f.pack(), f);
 	}

@@ -48,7 +48,7 @@ public class JNAWindow {
 	}
 
 	public static WindowInfo getWindowInfo(String title) {
-		return getWindowInfo(User32.instance.FindWindowA(null, "OneBit Adventure"));
+		return getWindowInfo(User32.instance.FindWindowA(null, title));
 	}
 
 	public static WindowInfo getWindowInfo(int hWnd) {

@@ -1,5 +1,8 @@
 package net.home.main.simple;
 
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +16,10 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -40,30 +46,49 @@ public class TestScreen extends FrameObject {
 
 	@Override
 	protected void init(FrameWin fw, List<String> args) {
+		List<Component> list = new ArrayList<>();
 
-		this.width = 275;
-		this.toArrayList = false;
+		list.add(this.addCmonentListiner(new JCheckBox("toArrayList"), e -> this.toArrayList = e.isSelected()));
+		list.add(this.addCmonentListiner(new JButton("Random Sort"), this::randomSort));
+		list.add(this.addCmonentListiner(new JButton("Random Shuffle"), this::randomShuffle));
+		list.add(this.addCmonentListiner(new JButton("Random Shuffle Sort"), this::randomShuffleSort));
+		list.add(this.addCmonentListiner(new JButton("Read jar"), this::readJar));
+		list.add(this.addCmonentListiner(new JButton("Quote string"), this::quote));
+		list.add(this.addCmonentListiner(new JButton("PutLinkedMap"), this::putLinkedMap));
+		list.add(this.addCmonentListiner(new JButton("Registry"), this::registry));
+		list.add(new RGBAPanel(true, true));
+		list.add(this.addCmonentListiner(new JButton("CollectinoOfCollections"), this::collectionOfCollections));
+		list.add(this.addCmonentListiner(new JButton("concurrent"), this::concurrent));
+		list.add(this.addCmonentListiner(new JButton("queue"), this::modifiedQueue));
+		list.add(this.addCmonentListiner(new JButton("sneak"), this::sneakDisplay));
+		list.add(this.addCmonentListiner(new JButton("randomCollection"), this::randomCollection));
+		list.add(this.addCmonentListiner(new JButton("ThreadList"), this::threadList));
+		list.add(this.addCmonentListiner(new JButton("Frame Location"), this::location));
 
-		YPos y = new YPos(5);
+		int w = 0;
 
-		addCheckBox("toArrayList", e -> this.toArrayList = e.isSelected(), y);
-		addButton("Random Sort", this::randomSort, y);
-		addButton("Random Shuffle", this::randomShuffle, y);
-		addButton("Random Shuffle Sort", this::randomShuffleSort, y);
-		addButton("Read jar", this::readJar, y);
-		addButton("Quote string", this::quote, y);
-		addButton("PutLinkedMap", this::putLinkedMap, y);
-		addButton("Registry", this::registry, y);
-		this.rgba(y);
-		addButton("CollectinoOfCollections", this::collectionOfCollections, y);
-		addButton("concurrent", this::concurrent, y);
-		addButton("queue", this::modifiedQueue, y);
-		addButton("sneak", this::sneakDisplay, y);
-		addButton("randomCollection", this::randomCollection, y);
-		addButton("ThreadList", this::threadList, y);
-		addButton("Frame Location", this::location, y);
+		for (Component component : list) {
+			w = Math.max(w, component.getPreferredSize().width);
+		}
+		for (Component component : list) {
+			FrameWin.setSize(component, w, component.getPreferredSize().height);
+		}
 
-		fw.setSize(300, y.get() + 41);
+		Iterator<Component> iterator = list.iterator();
+
+		while (iterator.hasNext()) {
+			Component next = iterator.next();
+			JPanel panel = new JPanel();
+			panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+			panel.setBackground(Color.RED);
+			panel.add(next);
+			fw.add(panel);
+			if (iterator.hasNext()) {
+				fw.add(Box.createVerticalStrut(5));
+			}
+		}
+
+		fw.pack();
 	}
 
 	private final List<Integer> randomExample() {
@@ -193,9 +218,9 @@ public class TestScreen extends FrameObject {
 		System.out.println(registry.dynamic());
 	}
 
-	private final void rgba(YPos y) {
+	/*private final void rgba(YPos y) {
 		y.add(new RGBAPanel().create(this.getFrame(), 5, y.get(), true, true));
-	}
+	}*/
 
 	private final void collectionOfCollections(JButton btn) {
 		Collection<Integer> collection = CollectionOfCollections.newCollection(Arrays.asList(1, 4, 5), Arrays.asList(4, 3, 10), Arrays.asList(50, 123, 51, 51, 6, 43));

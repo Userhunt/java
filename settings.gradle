@@ -4,9 +4,8 @@ include(
     ':root',
 	':tf2',
 	':oba',
-	':anydesk',
+	':oba2',
 	':random_generator',
-	':notes',
 	':cyberpunk'
 )
 

@@ -29,6 +29,9 @@ public class MessageUtil {
 	 */
 	public static final MessageError KEY_DUPLICATE = new MessageError("Collection %s already contains \"%s\"");
 
+	/**
+	 * %s is empty or null
+	 */
 	public static final MessageError IS_EMPTY_OR_NULL = new MessageError("%s is empty or null");
 	public static final MessageError IS_EMPTY = new MessageError("%s is empty");
 	/*
@@ -37,6 +40,9 @@ public class MessageUtil {
 	public static final MessageError NULL = new MessageError("%s is null");
 	public static final MessageError NULL_IN = new MessageError("%s is null, %s");
 	public static final MessageError CLASS_CAST = new MessageError("%s is not %s");
+	/*
+	 * %s, type %s in not equals %s, type %s
+	 */
 	public static final MessageError NOT_EQUAL = new MessageError("%s, type %s in not equals %s, type %s");
 
 	public static final MessageError FILE_NOT_FOUND_JAR = new MessageError("File not found in jar - %s");

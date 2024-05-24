@@ -8,7 +8,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
-import net.api.GsonHelper;
+import net.w3e.base.json.BJsonUtil;
 import net.w3e.base.json.W3EJsonSerializer;
 
 public record Tf2RegistryObject(String id, String link, String image, String[] group) implements Tf2IconImpl {
@@ -19,7 +19,7 @@ public record Tf2RegistryObject(String id, String link, String image, String[] g
 
 		@Override
 		public Tf2RegistryObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			JsonObject jsonObject = GsonHelper.convertToJsonObject(json, "item");
+			JsonObject jsonObject = BJsonUtil.convertToJsonObject(json, "item");
 
 			String id = Tf2.JSON.readString(jsonObject, "id", null);
 			if (id == null) {

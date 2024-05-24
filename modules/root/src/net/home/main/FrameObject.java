@@ -16,7 +16,7 @@ public abstract class FrameObject {
 
 	private FrameWin frame;
 
-	protected final FrameWin run(FrameWin parent, List<String> args) {
+	protected final FrameWin run(FrameWin parent, List<String> args, Object fake) {
 		parent.setVisible(false);
 		FrameWin fw = new FrameWin(getName() + versionString(), parent, true) {
 			@Override
@@ -51,32 +51,48 @@ public abstract class FrameObject {
 		return this.height + 5;
 	}
 
+	protected final <T extends AbstractButton> T addCmonent(T component, Consumer<T> onClick) {
+		component.addActionListener(FrameWin.onClick(component, onClick));
+		FrameWin fw = this.getFrame();
+		if (fw != null) {
+			fw.add(component);
+		}
+		return component;
+	}
+
+	@Deprecated
 	protected final JButton addButton(String text, Consumer<JButton> onClick, YPos y) {
 		return this.addButton(text, onClick, 5, y);
 	}
 
+	@Deprecated
 	protected final JButton addButton(String text, Consumer<JButton> onClick, int x, YPos y) {
 		return this.addCmonent(new JButton(text), onClick, x, y);
 	}
 
 	protected static final ActionListener EMPTY_CLICK = FrameWin.onClick(() -> {});
 
+	@Deprecated
 	protected final JCheckBox addCheckBox(String text, YPos y) {
 		return this.addCheckBox(text, 5, y);
 	}
 
+	@Deprecated
 	protected final JCheckBox addCheckBox(String text, int x, YPos y) {
 		return this.addCmonent(new JCheckBox(text), x, y);
 	}
 
+	@Deprecated
 	protected final JCheckBox addCheckBox(String text, Consumer<JCheckBox> onClick, YPos y) {
 		return this.addCheckBox(text, onClick, 5, y);
 	}
 
+	@Deprecated
 	protected final JCheckBox addCheckBox(String text, Consumer<JCheckBox> onClick, int x, YPos y) {
 		return this.addCmonent(new JCheckBox(text), onClick, x, y);
 	}
 
+	@Deprecated
 	protected final <T extends Component> T addCmonent(T component, int x, YPos y) {
 		component.setBounds(x, y.get(), this.width, this.height);
 		y.add(dY());
@@ -87,11 +103,18 @@ public abstract class FrameObject {
 		return component;
 	}
 
+	@Deprecated
 	protected final <T extends AbstractButton> T addCmonent(T component, Consumer<T> onClick, int x, YPos y) {
 		component.addActionListener(FrameWin.onClick(component, onClick));
 		return this.addCmonent(component, x, y);
 	}
 
+	protected final <T extends AbstractButton> T addCmonentListiner(T component, Consumer<T> onClick) {
+		component.addActionListener(FrameWin.onClick(component, onClick));
+		return component;
+	}
+
+	@Deprecated
 	public class YPos extends IntHolder {
 
 		public YPos() {

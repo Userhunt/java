@@ -35,6 +35,17 @@
 		},
 		{
 			"type": "java",
+			"name": "Oba2",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.home.oba2.OneBitAdventure",
+			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"args": "key=OBA"
+		},
+		{
+			"type": "java",
 			"name": "Random Generator",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",
@@ -43,17 +54,6 @@
 			"mainClass": "net.home.random_generator.RandGenScreen",
 			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
 			"args": "key=rand_gen x=3593"
-		},
-		{
-			"type": "java",
-			"name": "Notes",
-			"request": "launch",
-			"cwd": "${workspaceFolder}/run",
-			"console": "internalConsole",
-			"stopOnEntry": false,
-			"mainClass": "net.home.notes.NotesScreen",
-			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
-			"args": "key=notes x=3593"
 		},
 		{
 			"type": "java",

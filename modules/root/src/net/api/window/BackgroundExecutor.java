@@ -7,13 +7,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
 
-import javax.annotation.Nullable;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JProgressBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import net.api.CustomOutputStream;
 import net.api.window.jcomponent.JConsole;
@@ -22,7 +21,7 @@ import net.w3e.base.holders.number.IntHolder;
 
 public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor {
 
-	private final JTextArea textArea = new JConsole();
+	private final JConsole textArea = new JConsole(1100, 700);
 	private final CustomOutputStream printStream = new CustomOutputStream(textArea, true);
 	private final JProgressBar bar = new JProgressBar();
 	private final boolean updateParentPosition;
@@ -37,30 +36,24 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 		this.parent.setVisible(!hideParent);
 		this.updateParentPosition = updateParentPosition;
 		this.setLocation(parent.getLocation());
-		this.setSize(1200, 800);
 		this.setVisible(true);
-		this.setResizable(false);
 		this.run = run;
 		this.done = done;
 		this.timer = new WaitTimer(frameTitle);
 
-		int y = 5;
-
-		//progress
-		this.bar.setBounds(5, y, 1110, 26);
 		this.bar.setStringPainted(true);
-		this.add(bar);
 
 		JButton button = new JButton("Stop");
-		button.setBounds(1120, y, 60, 26);
+		FrameWin.setSize(button, 60, 26);
 		button.addActionListener(FrameWin.onClick(() -> this.stop = true));
-		this.add(button);
 
-		//console
-		y += 30;
-		JScrollPane scroll = new JScrollPane(this.textArea, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
-		scroll.setBounds(5, y, 1175, 780 - y);
-		this.add(scroll);
+		this.add(FrameWin.horisontalPanelBuilder().add(this.bar, button).setWidth(1100).setMinWidth(1100).build());
+
+		this.add(Box.createVerticalStrut(10));
+
+		this.add(this.textArea.scroll);
+
+		this.pack();
 	}
 
 	@Override

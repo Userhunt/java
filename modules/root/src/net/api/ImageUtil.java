@@ -2,13 +2,13 @@ package net.api;
 
 import java.awt.AWTException;
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
+import java.awt.image.ColorConvertOp;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,18 +38,26 @@ public class ImageUtil {
 		return scaleOp.filter(image, after);
 	}
 
-	public static BufferedImage deepCopy(BufferedImage bi) {
-		ColorModel cm = bi.getColorModel();
-		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-		WritableRaster raster = bi.copyData(null);
-		return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
+	public static BufferedImage deepCopy(BufferedImage source) {
+		BufferedImage b = new BufferedImage(source.getWidth(), source.getHeight(), source.getType());
+		Graphics g = b.getGraphics();
+		g.drawImage(source, 0, 0, null);
+		g.dispose();
+		return b;
 	}
 
-	public static BufferedImage toRGBA(BufferedImage bi) {
-		BufferedImage image = new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_INT_ARGB);
-		image.getGraphics().drawImage(bi, 0, 0, null);
+	public static BufferedImage toRGBA(BufferedImage source) {
+		BufferedImage image = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_INT_ARGB);
+		image.getGraphics().drawImage(source, 0, 0, null);
 		return image;
 	}
+
+	public static final BufferedImage toGRAY(BufferedImage source) {
+		BufferedImage image = new BufferedImage(source.getWidth(), source.getHeight(), BufferedImage.TYPE_BYTE_GRAY);  
+		ColorConvertOp op = new ColorConvertOp(source.getColorModel().getColorSpace(), image.getColorModel().getColorSpace(), null);
+		op.filter(source, image);
+		return image;
+	} 
 
 	public static boolean compareImages(BufferedImage imgA, BufferedImage imgB) {
 		// The images must be the same size.

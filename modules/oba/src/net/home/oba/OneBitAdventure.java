@@ -63,6 +63,8 @@ public class OneBitAdventure extends FrameObject {
 	}
 
 	protected void init(FrameWin fw, List<String> args) {
+		fw.setLayout(null);
+		fw.getRootPane().setBorder(null);
 		ObaMove.init();
 		fw.setSize(300, 41 + dY() * 3);
 

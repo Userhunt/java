@@ -1,14 +1,18 @@
 package net.home.main;
 
+import java.awt.Component;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
@@ -86,31 +90,33 @@ public class MainFrame {
 	}
 
 	public static void run(String[] args) {
-		run(args, false);
+		run(args, false, null);
 	}
 
-	private static void run(String[] args, boolean clear) {
+	private static void run(String[] args, boolean clear, Object fake) {
 		if (clear) {
 			FRAMES.clear();
 		}
 		load();
 		init();
 
-		int x = 5;
-		int y = 5;
-		for (FrameObject frame : FRAMES) {
+		Iterator<FrameObject> iterator = FRAMES.iterator();
+		while(iterator.hasNext()) {
+			FrameObject frame = iterator.next();
 			JButton button = new JButton(frame.getName());
 			button.addActionListener(FrameWin.onClick(() -> {
-				frame.run(FRAME, Collections.emptyList());
+				frame.run(FRAME, Collections.emptyList(), fake);
 			}));
-
-			button.setBounds(x, y, 150, 26);
-			y += 30;
-
+			FrameWin.setSize(button, 150, 26);
+			button.setAlignmentX(Component.CENTER_ALIGNMENT);
 			FRAME.add(button);
+			if (iterator.hasNext()) {
+				FRAME.add(Box.createVerticalStrut(10));
+			}
 		}
 
-		FRAME.setSize(300, y + 41);
+		FRAME.setMinimumSize(new Dimension(250, 0));
+		FRAME.pack();
 
 		FRAME.setVisible(true);
 

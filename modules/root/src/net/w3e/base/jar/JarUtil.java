@@ -25,13 +25,33 @@ public class JarUtil {
 			if (stream != null) {
 				return stream;
 			}
-		} catch (Exception ignored) {}
-		try {
-			return new FileInputStream(target);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		} catch (Exception e) {}
+		if (isDebug() && target.startsWith(getDebugFolder().toString())) {
+			try {
+				return new FileInputStream(target);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
+		return null;
+	}
+
+	public static final Path getDebugFolder() {
+		return getDebugFolder("");
+	}
+
+	public static final Path getDebugFolder(String path) {
+		if (isDebug()) {
+			ClassLoader classLoader = JarUtil.class.getClassLoader();
+
+			URL resource = classLoader.getResource(path);
+
+			// dun walk the root path, we will walk all the classes
+			try {
+				return Paths.get(resource.toURI());
+			} catch (Exception e) {}
+		}
+		return null;
 	}
 
 	public static final List<Path> getJarFolder(String folder) {

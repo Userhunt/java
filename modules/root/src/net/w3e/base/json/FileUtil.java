@@ -110,7 +110,7 @@ public class FileUtil {
 	 * @param path - path to file
 	 * @param jar - path to jar, used if file is not exists
 	 * @return file
-	 * @see FileReaderUtil#file(File, String)
+	 * @see FileReaderUtil#singleFile(File, String)
 	 */
 	public static File file(Logger log, String path, String jar) {
 		jar = addJson(jar);
