@@ -112,7 +112,7 @@ public record DungeonRoomInfo<T>(WVector3 pos, WVector2 chunk, int[] flags, MapT
 		}
 		return this;
 	}
-	
+
 	public final void copyFrom(DungeonRoomInfo<T> info) {
 		this.flags[0] = info.flags[0];
 		this.flags[1] = info.flags[1];

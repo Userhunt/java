@@ -185,7 +185,7 @@ public class OneBitAdventure extends FrameObject implements IOneBitHelper {
 			OneBitState oldState = this.gameState;
 
 			this.gameState = this.createGameState(helper);
-	
+
 			if (this.gameState == null) {
 				error("Game state is unknown " + oldState + " " + this.gameState);
 				this.waitFor(50);
@@ -381,7 +381,7 @@ public class OneBitAdventure extends FrameObject implements IOneBitHelper {
 		public final int width() {
 			return this.rectangle.width;
 		}
-		
+
 		public final int height() {
 			return this.rectangle.height;
 		}
@@ -410,7 +410,6 @@ public class OneBitAdventure extends FrameObject implements IOneBitHelper {
 
 		@Deprecated
 		public final void crop() {
-			
 			this.applyImage();
 		}
 

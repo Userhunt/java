@@ -89,7 +89,7 @@ public class AssetLoader {
 		}
 		return null;
 	}
-	
+
 	public Asset<?> getValue(String string) {
 		return this.assets.get(string);
 	}
@@ -197,7 +197,7 @@ public class AssetLoader {
 		protected final void unload(AssetHolder<AssetLoader> assetHolder) {
 			this.loader.unloadAll();
 		}
-	
+
 		@Override
 		protected final AssetLoader getEmptyValue() {
 			return this.loader;
@@ -207,7 +207,7 @@ public class AssetLoader {
 		protected final AssetLoader copyValue(AssetLoader value) {
 			return this.loader;
 		}
-	
+
 		@Override
 		public final String toString() {
 			return this.loader.loadedToString();

@@ -22,5 +22,5 @@ public class TemperatureLayer<T> extends DungeonLayer<T> {
 	public static final TemperatureLayer<String> example(DungeonGenerator<String> generator) {
 		return new TemperatureLayer<>(generator, 0, 0, 0);
 	}
-	
+
 }

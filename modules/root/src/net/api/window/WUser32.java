@@ -18,7 +18,7 @@ public class WUser32 {
 	public static final HWND findWindow(String title) {
 		return INSTANCE.FindWindow(null, title);
 	}
-	
+
 	public static final HWND getActive() {
 		return INSTANCE.GetForegroundWindow();
 	}
@@ -90,7 +90,7 @@ public class WUser32 {
 	public static final int MOD_SHIFT = 0x0004;
 	public static final int MOD_WIN = 0x0008;
 	public static final int WM_HOTKEY = 0x0312;
-	
+
 	public static final boolean RegisterHotKey(WinDef.HWND hWnd, int id, int fsModifiers, int vk) {
 		return User32.INSTANCE.RegisterHotKey(hWnd, id, fsModifiers, vk);
 	}

@@ -1,8 +1,6 @@
 package net.home.main.simple;
 
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,10 +14,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JPanel;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
@@ -45,7 +41,7 @@ public class TestScreen extends FrameObject {
 	private final Random RANDOM = new Random();
 
 	@Override
-	protected void init(FrameWin fw, List<String> args) {
+	protected final void init(FrameWin fw, List<String> args) {
 		List<Component> list = new ArrayList<>();
 
 		list.add(this.addCmonentListiner(new JCheckBox("toArrayList"), e -> this.toArrayList = e.isSelected()));
@@ -65,28 +61,7 @@ public class TestScreen extends FrameObject {
 		list.add(this.addCmonentListiner(new JButton("ThreadList"), this::threadList));
 		list.add(this.addCmonentListiner(new JButton("Frame Location"), this::location));
 
-		int w = 0;
-
-		for (Component component : list) {
-			w = Math.max(w, component.getPreferredSize().width);
-		}
-		for (Component component : list) {
-			FrameWin.setSize(component, w, component.getPreferredSize().height);
-		}
-
-		Iterator<Component> iterator = list.iterator();
-
-		while (iterator.hasNext()) {
-			Component next = iterator.next();
-			JPanel panel = new JPanel();
-			panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-			panel.setBackground(Color.RED);
-			panel.add(next);
-			fw.add(panel);
-			if (iterator.hasNext()) {
-				fw.add(Box.createVerticalStrut(5));
-			}
-		}
+		this.simpleColumn(fw.getRootPane(), list);
 
 		fw.pack();
 	}

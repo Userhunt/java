@@ -115,5 +115,5 @@ public class PlayStateSetup extends OneBitState {
 
 		pos = copy.getPos(.25, .75);
 	}
-	
+
 }

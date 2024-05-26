@@ -22,5 +22,5 @@ public class FeatureLayer<T> extends DungeonLayer<T> {
 	public static final FeatureLayer<String> example(DungeonGenerator<String> generator) {
 		return new FeatureLayer<>(generator);
 	}
-	
+
 }

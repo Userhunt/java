@@ -68,7 +68,7 @@ public abstract class Asset<T> {
 
 		private AssetFileLoader() {
 			File file = Asset.this.source.getRunPath();
-	
+
 			if (file != null && file.exists()) {
 				int length = file.getAbsolutePath().length();
 				if (Asset.this.source.singleFile() == file.isFile()) {
@@ -93,7 +93,7 @@ public abstract class Asset<T> {
 				}
 			}
 		}
-	
+
 		private final void loadTree(int length, File file) {
 			for (File f : file.listFiles()) {
 				if (f.isFile()) {

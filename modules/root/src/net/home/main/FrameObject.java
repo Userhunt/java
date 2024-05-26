@@ -1,13 +1,19 @@
 package net.home.main;
 
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
+import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
 import javax.swing.AbstractButton;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 
 import net.api.window.FrameWin;
 import net.w3e.base.holders.number.IntHolder;
@@ -51,13 +57,29 @@ public abstract class FrameObject {
 		return this.height + 5;
 	}
 
-	protected final <T extends AbstractButton> T addCmonent(T component, Consumer<T> onClick) {
-		component.addActionListener(FrameWin.onClick(component, onClick));
-		FrameWin fw = this.getFrame();
-		if (fw != null) {
-			fw.add(component);
+	protected final void simpleColumn(Container container, List<Component> list) {
+		int w = 0;
+
+		for (Component component : list) {
+			w = Math.max(w, component.getPreferredSize().width);
 		}
-		return component;
+		for (Component component : list) {
+			FrameWin.setSize(component, w, component.getPreferredSize().height);
+		}
+
+		Iterator<Component> iterator = list.iterator();
+
+		while (iterator.hasNext()) {
+			Component next = iterator.next();
+			JPanel panel = new JPanel();
+			panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+			panel.setBackground(Color.RED);
+			panel.add(next);
+			container.add(panel);
+			if (iterator.hasNext()) {
+				container.add(Box.createVerticalStrut(5));
+			}
+		}
 	}
 
 	@Deprecated

@@ -108,7 +108,7 @@ public abstract class AbstractFrameWin extends JFrame {
 		component.setMinimumSize(new Dimension(width, height));
 		component.setMaximumSize(new Dimension(width, height));
 	}
-	
+
 	public static final HorisontalPanelBuilder horisontalPanelBuilder() {
 		return new HorisontalPanelBuilder();
 	}

@@ -12,7 +12,7 @@ public class ImageScreen extends AbstractFrameWin {
 
 	private final JImageLabel image;
 
-	public ImageScreen(String frameTitle, int width, int height, int scale, Color background, Object fake) {
+	public ImageScreen(String frameTitle, int width, int height, int scale, Color background) {
 		super(frameTitle);
 
 		this.getRootPane().setBorder(BorderFactory.createEmptyBorder(1 * scale, 1 * scale, 1 * scale, 1 * scale));
@@ -116,7 +116,7 @@ public class ImageScreen extends AbstractFrameWin {
 		}
 
 		public final ImageScreen build(boolean visible) {
-			ImageScreen screen = new ImageScreen(this.title, this.width, this.height, this.scale, this.background, null);
+			ImageScreen screen = new ImageScreen(this.title, this.width, this.height, this.scale, this.background);
 			screen.setLocation(this.x, this.y);
 			screen.setVisible(visible);
 			return screen;

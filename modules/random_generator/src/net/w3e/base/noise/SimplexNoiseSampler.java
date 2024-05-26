@@ -1,4 +1,4 @@
-package net.home.random_generator.noise;
+package net.w3e.base.noise;
 
 import java.util.Random;
 

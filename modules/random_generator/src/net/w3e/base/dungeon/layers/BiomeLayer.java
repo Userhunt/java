@@ -22,5 +22,5 @@ public class BiomeLayer<T> extends DungeonLayer<T> {
 	public static final BiomeLayer<String> example(DungeonGenerator<String> generator) {
 		return new BiomeLayer<>(generator);
 	}
-	
+
 }

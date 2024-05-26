@@ -13,6 +13,7 @@ public class CoreMix {
 
 	CacheSupplier
 	ValueSupplier
+	MathData
 
 	to core
 		zip/

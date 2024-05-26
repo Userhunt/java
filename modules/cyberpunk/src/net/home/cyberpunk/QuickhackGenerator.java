@@ -21,7 +21,6 @@ public class QuickhackGenerator {
 			//https://cyberpunk.fandom.com/wiki/Cyberpunk_2077_Quickhacks#Covert
 		// Ultimate
 			//https://cyberpunk.fandom.com/wiki/Cyberpunk_2077_Quickhacks#Ultimate
-			
 	);
 
 	private ShopPage page;

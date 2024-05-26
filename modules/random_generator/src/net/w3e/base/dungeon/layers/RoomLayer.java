@@ -22,5 +22,5 @@ public class RoomLayer<T> extends DungeonLayer<T> {
 	public static final RoomLayer<String> example(DungeonGenerator<String> generator) {
 		return new RoomLayer<>(generator);
 	}
-	
+
 }

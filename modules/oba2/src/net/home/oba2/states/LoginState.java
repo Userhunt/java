@@ -10,7 +10,7 @@ public class LoginState extends OneBitState {
 	public static LoginState INSTANCE = new LoginState();
 
 	private LoginState() {}
-	
+
 	public static final LoginState test(OneBitState oldState, ObaHelper helper) {
 		if (helper.getGray().getRGB(0, 4) == COLOR) {
 			return INSTANCE;
