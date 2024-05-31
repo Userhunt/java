@@ -3,6 +3,8 @@ package net.w3e.base.noise;
 import java.util.Random;
 
 import net.w3e.base.math.BMatUtil;
+import net.w3e.base.random.IRandom;
+import net.w3e.base.random.RandomProvider;
 
 public final class PerlinNoiseSampler {
     //private static final float field_31701 = 1.0E-7F;
@@ -11,25 +13,28 @@ public final class PerlinNoiseSampler {
     public final double originY;
     public final double originZ;
 
-    public PerlinNoiseSampler(Random random) {
-        this.originX = random.nextDouble() * 256.0;
-        this.originY = random.nextDouble() * 256.0;
-        this.originZ = random.nextDouble() * 256.0;
-        this.permutation = new byte[256];
+	public PerlinNoiseSampler(Random random) {
+		this(new RandomProvider(random));
+	}
 
-        int i;
-        for(i = 0; i < 256; ++i) {
-            this.permutation[i] = (byte)i;
-        }
+	public PerlinNoiseSampler(IRandom random) {
+		this.originX = random.nextDouble() * 256.0;
+		this.originY = random.nextDouble() * 256.0;
+		this.originZ = random.nextDouble() * 256.0;
+		this.permutation = new byte[256];
 
-        for(i = 0; i < 256; ++i) {
-            int j = random.nextInt(256 - i);
-            byte b = this.permutation[i];
-            this.permutation[i] = this.permutation[i + j];
-            this.permutation[i + j] = b;
-        }
+		int i;
+		for(i = 0; i < 256; ++i) {
+			this.permutation[i] = (byte)i;
+		}
 
-    }
+		for(i = 0; i < 256; ++i) {
+			int j = random.nextInt(256 - i);
+			byte b = this.permutation[i];
+			this.permutation[i] = this.permutation[i + j];
+			this.permutation[i + j] = b;
+		}
+	}
 
     public double sample(double x, double y, double z) {
         return this.sample(x, y, z, 0.0, 0.0);
@@ -103,7 +108,7 @@ public final class PerlinNoiseSampler {
         double r = SimplexNoiseSampler.perlinFade(localX);
         double s = SimplexNoiseSampler.perlinFade(fadeLocalY);
         double t = SimplexNoiseSampler.perlinFade(localZ);
-        return SimplexNoiseSampler.lerp3(r, s, t, d, e, f, g, h, o, p, q);
+        return BMatUtil.lerp3(r, s, t, d, e, f, g, h, o, p, q);
     }
 
     private double sampleDerivative(int sectionX, int sectionY, int sectionZ, double localX, double localY, double localZ, double[] ds) {
@@ -140,12 +145,12 @@ public final class PerlinNoiseSampler {
         double z = SimplexNoiseSampler.perlinFade(localX);
         double aa = SimplexNoiseSampler.perlinFade(localY);
         double ab = SimplexNoiseSampler.perlinFade(localZ);
-        double ac = SimplexNoiseSampler.lerp3(z, aa, ab, (double)is[0], (double)js[0], (double)ks[0], (double)ls[0], (double)ms[0], (double)ns[0], (double)os[0], (double)ps[0]);
-        double ad = SimplexNoiseSampler.lerp3(z, aa, ab, (double)is[1], (double)js[1], (double)ks[1], (double)ls[1], (double)ms[1], (double)ns[1], (double)os[1], (double)ps[1]);
-        double ae = SimplexNoiseSampler.lerp3(z, aa, ab, (double)is[2], (double)js[2], (double)ks[2], (double)ls[2], (double)ms[2], (double)ns[2], (double)os[2], (double)ps[2]);
-        double af = SimplexNoiseSampler.lerp2(aa, ab, e - d, g - f, w - h, y - x);
-        double ag = SimplexNoiseSampler.lerp2(ab, z, f - d, x - h, g - e, y - w);
-        double ah = SimplexNoiseSampler.lerp2(z, aa, h - d, w - e, x - f, y - g);
+        double ac = BMatUtil.lerp3(z, aa, ab, (double)is[0], (double)js[0], (double)ks[0], (double)ls[0], (double)ms[0], (double)ns[0], (double)os[0], (double)ps[0]);
+        double ad = BMatUtil.lerp3(z, aa, ab, (double)is[1], (double)js[1], (double)ks[1], (double)ls[1], (double)ms[1], (double)ns[1], (double)os[1], (double)ps[1]);
+        double ae = BMatUtil.lerp3(z, aa, ab, (double)is[2], (double)js[2], (double)ks[2], (double)ls[2], (double)ms[2], (double)ns[2], (double)os[2], (double)ps[2]);
+        double af = BMatUtil.lerp2(aa, ab, e - d, g - f, w - h, y - x);
+        double ag = BMatUtil.lerp2(ab, z, f - d, x - h, g - e, y - w);
+        double ah = BMatUtil.lerp2(z, aa, h - d, w - e, x - f, y - g);
         double ai = SimplexNoiseSampler.perlinFadeDerivative(localX);
         double aj = SimplexNoiseSampler.perlinFadeDerivative(localY);
         double ak = SimplexNoiseSampler.perlinFadeDerivative(localZ);
@@ -155,6 +160,6 @@ public final class PerlinNoiseSampler {
         ds[0] += al;
         ds[1] += am;
         ds[2] += an;
-        return SimplexNoiseSampler.lerp3(z, aa, ab, d, e, f, g, h, w, x, y);
+        return BMatUtil.lerp3(z, aa, ab, d, e, f, g, h, w, x, y);
     }
 }

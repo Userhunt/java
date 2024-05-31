@@ -9,7 +9,7 @@ import org.jsoup.nodes.Element;
 
 import net.api.ApiSharedConstant;
 import net.api.window.IBackgroundExecutor;
-import net.home.main.FrameObject;
+import net.home.FrameObject;
 
 public record Tf2Price(Tf2RegistryObject reg, float weapon, float kit, float profit) implements Tf2IconImpl, Comparable<Tf2Price> {
 

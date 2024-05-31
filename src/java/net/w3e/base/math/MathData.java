@@ -1,5 +1,7 @@
 package net.w3e.base.math;
 
+import java.awt.Color;
+
 public class MathData {
 	private final String round;
 	private double min = Double.MAX_VALUE;
@@ -20,10 +22,17 @@ public class MathData {
 		this.max = Math.max(this.max, value);
 		double abs = Math.abs(value);
 		if (this.zero > abs) {
-			this.zero = value;
+			this.zero = abs;
 			this.zeroValue = value;
 		}
 		return this;
+	}
+
+	public final Color toColor(double value) {
+		value -= this.min;
+		value /= this.max - this.min;
+		int color = BMatUtil.round(value * 255);
+		return new Color(color, color, color);
 	}
 
 	public final String generateString() {

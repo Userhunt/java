@@ -1,2 +1,21 @@
-2024-05-24 19:28:23.367 [main] WARN  SETUP - writter replaced
-2024-05-24 19:28:23.375 [main] INFO   - [PrintWrapper{install:23}]: test replace from net.home.main.MainFrame.<clinit>(MainFrame.java:76)
+2024-05-28 03:46:55.672 [main] WARN  SETUP - writter replaced
+2024-05-28 03:46:55.680 [main] INFO   - [PrintWrapper{install:23}]: test replace from net.home.MainFrame.<clinit>(MainFrame.java:76)
+2024-05-28 03:46:58.074 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-26,8276,max:181,2630,zero:-0,5624,zeroValue:-0,5624}
+2024-05-28 03:47:05.965 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-862,4109,max:314,2622,zero:-0,2440,zeroValue:-0,2440}
+2024-05-28 03:48:21.893 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-3,1585,max:2,9849,zero:-0,1119,zeroValue:-0,1119}
+2024-05-28 03:48:25.762 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-862,4109,max:314,2622,zero:-0,2440,zeroValue:-0,2440}
+2024-05-28 03:48:42.998 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-215,2813,max:288,8766,zero:-30,6237,zeroValue:-30,6237}
+2024-05-28 03:48:49.991 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-923,6454,max:442,4255,zero:-110,6406,zeroValue:-110,6406}
+2024-05-28 03:49:05.255 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-923,4944,max:450,1847,zero:-112,0000,zeroValue:-112,0000}
+2024-05-28 03:49:13.798 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-923,2055,max:452,3428,zero:-113,4124,zeroValue:-113,4124}
+2024-05-28 03:49:18.454 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-927,1610,max:452,6572,zero:-114,7615,zeroValue:-114,7615}
+2024-05-28 03:49:22.018 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-938,6960,max:460,4688,zero:-116,0285,zeroValue:-116,0285}
+2024-05-28 03:49:26.383 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-950,3188,max:468,3291,zero:-117,2451,zeroValue:-117,2451}
+2024-05-28 03:49:32.508 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-961,9026,max:476,2023,zero:-118,3855,zeroValue:-118,3855}
+2024-05-28 03:49:35.783 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-973,4519,max:484,0352,zero:-119,5067,zeroValue:-119,5067}
+2024-05-28 03:49:43.814 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-26,8276,max:181,2630,zero:-0,5624,zeroValue:-0,5624}
+2024-05-28 03:49:51.182 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-145,6599,max:181,9567,zero:-39,0524,zeroValue:-39,0524}
+2024-05-28 03:49:57.309 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-33,1650,max:153,5739,zero:-19,9910,zeroValue:-19,9910}
+2024-05-28 03:50:05.309 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-923,6454,max:424,2542,zero:-22,5244,zeroValue:-22,5244}
+2024-05-28 03:50:20.052 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-297,1285,max:433,7330,zero:-31,4210,zeroValue:-31,4210}
+2024-05-28 03:50:29.266 [AWT-EventQueue-0] INFO   - [RandGenScreen{perlinImage:235}]: {min:-937,6409,max:495,3189,zero:-0,3769,zeroValue:-0,3769}

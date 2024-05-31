@@ -1,4 +1,4 @@
-package net.home.main;
+package net.home;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package net.home.main.simple;
+package net.home.simple;
 
 import java.awt.Component;
 import java.nio.file.Path;
@@ -24,8 +24,8 @@ import net.api.registry.DynamicRegistry.CacheDynamicRegistry;
 import net.api.window.BackgroundExecutor;
 import net.api.window.FrameWin;
 import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
-import net.home.main.FrameObject;
-import net.home.main.MainFrame;
+import net.home.FrameObject;
+import net.home.MainFrame;
 import net.w3e.base.BStringUtil;
 import net.w3e.base.collection.ArraySet;
 import net.w3e.base.collection.CollectionOfCollections;
@@ -61,7 +61,7 @@ public class TestScreen extends FrameObject {
 		list.add(this.addCmonentListiner(new JButton("ThreadList"), this::threadList));
 		list.add(this.addCmonentListiner(new JButton("Frame Location"), this::location));
 
-		this.simpleColumn(fw.getRootPane(), list);
+		this.simpleColumn(fw.getContentPane(), list);
 
 		fw.pack();
 	}

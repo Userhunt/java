@@ -73,7 +73,7 @@
 			"cwd": "${workspaceFolder}/run",
 			"console": "internalConsole",
 			"stopOnEntry": false,
-			"mainClass": "net.home.main.MainFrame",
+			"mainClass": "net.home.MainFrame",
 			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
 			"args": "key=test x=1675"
 		}

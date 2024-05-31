@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 
 import net.w3e.base.holders.Object2Holder;
+import net.w3e.base.math.BVec3;
 
 public class BStringUtil {
 
@@ -207,6 +208,10 @@ public class BStringUtil {
 
 	public static final String toString(double[] objects) {
 		return toString(Arrays.stream(objects).boxed().collect(Collectors.toList()));
+	}
+
+	public static final String toString(BVec3<?> vec) {
+		return String.format("[%s,%s,%s]", vec.x, vec.y, vec.z);
 	}
 
 	public static final List<StringBuilder> tableFormat(List<?>... lists) {

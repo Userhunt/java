@@ -1,4 +1,4 @@
-package net.home.main;
+package net.home;
 
 import java.awt.Component;
 import java.awt.Dimension;
@@ -25,7 +25,7 @@ import it.unimi.dsi.fastutil.ints.IntListIterator;
 import net.api.ApiJsonHelper;
 import net.api.window.FrameWin;
 import net.api.window.Inputs;
-import net.home.main.simple.TestScreen;
+import net.home.simple.TestScreen;
 import net.w3e.base.ReflectionUtils;
 import net.w3e.base.jar.JarUtil;
 

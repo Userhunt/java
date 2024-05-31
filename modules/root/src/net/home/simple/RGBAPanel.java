@@ -1,4 +1,4 @@
-package net.home.main.simple;
+package net.home.simple;
 
 import java.awt.Color;
 import java.awt.FlowLayout;

@@ -66,9 +66,9 @@ public class WAttributeModifier {
 	}
 
 	public static enum Operation {
-		ADDITION(0),
-		MULTIPLY_BASE(1),
-		MULTIPLY_TOTAL(2);
+		ADD_VALUE(0),
+		ADD_MULTIPLIED_BASE(1),
+		ADD_MULTIPLIED_TOTAL(2);
 
 		private final int value;
 

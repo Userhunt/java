@@ -8,17 +8,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.function.Consumer;
+import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JSlider;
 
+import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
+import it.unimi.dsi.fastutil.doubles.DoubleIterator;
+import it.unimi.dsi.fastutil.doubles.DoubleList;
 import net.api.window.BackgroundExecutor;
 import net.api.window.FrameWin;
 import net.api.window.ImageScreen;
 import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
-import net.home.main.FrameObject;
-import net.home.main.MainFrame;
+import net.home.FrameObject;
+import net.home.MainFrame;
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.DungeonLayer.IPathLayer;
@@ -30,7 +35,11 @@ import net.w3e.base.math.MathData;
 import net.w3e.base.math.vector.WBox;
 import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.math.vector.WVector3;
+import net.w3e.base.noise.DoublePerlinNoiseSampler;
+import net.w3e.base.noise.InterpolatedNoiseSampler;
+import net.w3e.base.noise.OctavePerlinNoiseSampler;
 import net.w3e.base.noise.PerlinNoiseSampler;
+import net.w3e.base.random.Xoroshiro128PlusPlusRandom;
 
 public class RandGenScreen extends FrameObject {
 
@@ -41,8 +50,10 @@ public class RandGenScreen extends FrameObject {
 
 	private BackgroundExecutor backgroundExecutor;
 	private ImageScreen image;
-	private final JSlider size = new JSlider(0, 400);
+	private final JSlider size = new JSlider(0, 200);
 	private final JSlider seed = new JSlider(0, 100);
+	private final JSlider y = new JSlider(-64, 320);
+	private final JSlider scale = new JSlider(1, 10);
 
 	protected void init(FrameWin fw, List<String> args) {
 		List<Component> buttons = new ArrayList<>();
@@ -51,8 +62,19 @@ public class RandGenScreen extends FrameObject {
 
 		buttons.add(this.createButton("perlin 1", this::perlin1));
 		buttons.add(this.createButton("perlin 2", this::perlin2));
+		buttons.add(this.createButton("perlin 3", this::perlin3));
+		buttons.add(this.createButton("perlin 4", this::perlin4));
+		buttons.add(this.createButton("perlin 5", this::perlin5));
+		buttons.add(this.createButton("perlin 6", this::perlin6));
+		buttons.add(this.createButton("perlin 7", this::perlin7));
+		buttons.add(new JLabel("Размер"));
 		buttons.add(this.setSettings(this.size, 15));
+		buttons.add(new JLabel("Сид"));
 		buttons.add(this.setSettings(this.seed, 10));
+		buttons.add(new JLabel("Y"));
+		buttons.add(this.setSettings(this.y, 0));
+		buttons.add(new JLabel("Scale"));
+		buttons.add(this.setSettings(this.scale, 1));
 
 		this.simpleColumn(fw, buttons);
 
@@ -165,33 +187,64 @@ public class RandGenScreen extends FrameObject {
 		this.backgroundExecutor.run();
 	}
 
-	private final void perlin1(JButton button) {
-		int size = this.size.getValue();
+	private record SizeData(int size, int d) {
+		public static SizeData create(RandGenScreen screen) {
+			int size = screen.size.getValue();
 
-		if (size % 2 == 0) {
-			size++;
-		}
-		int d = size / 2;
-
-		ImageScreen image = new ImageScreen.ImageScreenBuilder().setTitle("Map").setSize(size).build();
-
-		PerlinNoiseSampler perlin = new PerlinNoiseSampler(new Random(this.seed.getValue()));
-		MathData data = new MathData(4);
-		double scalar = 0.1856;
-		for (int x = 0; x < size; x++) {
-			for (int z = 0; z < size; z++) {
-				double res = perlin.sample(x - d, 0, z - d);
-				data.calculate(res);
-				//System.out.print(String.format("%+.4f ", res * 10));
-
-				res = BMatUtil.clamp(res, -scalar, scalar) + scalar;
-				res *= 255d / (scalar * 2);
-				int color = 255 - BMatUtil.round(res);
-				image.setColor(x, z, new Color(color, color, color, 255));
+			if (size % 2 == 0) {
+				size++;
 			}
-			//System.out.println();
+			int d = size / 2;
+			return new SizeData(size, d);
+		} 
+	}
+
+	private final ImageScreen perlinImage(SizeData size, DoubleList values) {
+		ImageScreen image = new ImageScreen.ImageScreenBuilder().setTitle("Map").setSize(size.size).build();
+
+		MathData data = new MathData(4);
+
+		for (double d : values.toDoubleArray()) {
+			data.calculate(d);
+		}
+
+		int x = 0;
+		int y = 0;
+
+		int s = size.size;
+
+		DoubleIterator iterator = values.doubleIterator();
+		while (iterator.hasNext()) {
+			image.setColor(x, y, data.toColor(iterator.nextDouble()));
+
+			if (!iterator.hasNext()) {
+				break;
+			}
+			x++;
+			if (x >= s) {
+				x = 0;
+				y++;
+			}
 		}
 		System.out.println(data.generateString());
+		return image;
+	}
+
+	private final void perlin1(JButton button) {
+		SizeData size = SizeData.create(this);
+
+		DoubleArrayList list = new DoubleArrayList();
+
+		PerlinNoiseSampler perlin = new PerlinNoiseSampler(new Random(this.seed.getValue()));
+
+		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
+		int y = this.y.getValue();
+		for (int x = 0; x < size.size; x++) {
+			for (int z = 0; z < size.size; z++) {
+				list.add(perlin.sample((x - size.d) * scale, y, (z - size.d) * scale));
+			}
+		}
+		this.perlinImage(size, list);
 	}
 
 	private final void perlin2(JButton button) {
@@ -217,6 +270,138 @@ public class RandGenScreen extends FrameObject {
 			}
 		}
 		System.out.println(data.generateString());
+	}
+
+	private final void perlin3(JButton button) {
+		SizeData size = SizeData.create(this);
+		
+		DoubleArrayList list = new DoubleArrayList();
+
+		OctavePerlinNoiseSampler noise = OctavePerlinNoiseSampler.createLegacy(new Xoroshiro128PlusPlusRandom(this.seed.getValue()), IntStream.rangeClosed(-15, 0));
+
+		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
+		int y = this.y.getValue();
+		for (int x = 0; x < size.size; x++) {
+			for (int z = 0; z < size.size; z++) {
+				list.add(noise.sample((x - size.d) * scale, y, (z - size.d) * scale));
+			}
+		}
+		this.perlinImage(size, list);
+	}
+
+	private final void perlin4(JButton button) {
+		SizeData size = SizeData.create(this);
+
+		DoubleArrayList list = new DoubleArrayList();
+
+		Xoroshiro128PlusPlusRandom random = new Xoroshiro128PlusPlusRandom(this.seed.getValue());
+
+		InterpolatedNoiseSampler noise = new InterpolatedNoiseSampler(
+			OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-15, 0)),
+			OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-15, 0)),
+			OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-7, 0)),
+		.25, 0.125, 80.0, 160.0, 8.0);
+		//InterpolatedNoiseSampler.noise_nether(new RandomProvider(this.seed.getValue()));
+
+		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
+		int y = this.y.getValue();
+		for (int x = 0; x < size.size; x++) {
+			for (int z = 0; z < size.size; z++) {
+				list.add(noise.sample(new InterpolatedNoiseSampler.NoisePos((x - size.d) * scale, y, (z - size.d) * scale)));
+			}
+		}
+		this.perlinImage(size, list);
+	}
+
+	private final void perlin5(JButton button) {
+		SizeData size = SizeData.create(this);
+
+		DoubleArrayList list = new DoubleArrayList();
+
+		Xoroshiro128PlusPlusRandom random = new Xoroshiro128PlusPlusRandom(this.seed.getValue());
+
+		DoublePerlinNoiseSampler noise = DoublePerlinNoiseSampler.create(random, new DoublePerlinNoiseSampler.NoiseParameters(-3, 1.0, 1.0, 1.0, 0.0));
+		//DoublePerlinNoiseSampler.create(random, -4, 1);
+
+		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
+		int y = this.y.getValue();
+		for (int x = 0; x < size.size; x++) {
+			for (int z = 0; z < size.size; z++) {
+				list.add(noise.sample((x - size.d) * scale, y, (z - size.d) * scale));
+			}
+		}
+		this.perlinImage(size, list);
+	}
+
+	private final void perlin6(JButton button) {
+		SizeData size = SizeData.create(this);
+
+		DoubleArrayList list = null;
+
+		PerlinNoiseSampler perlin = new PerlinNoiseSampler(new Random(this.seed.getValue()));
+
+		double scale = BMatUtil.pow(10, this.scale.getValue() - 1) / .1;
+
+		int y = Math.max(this.y.getValue(), -63);
+		for (int i = 0; i < y + 64; i++) {
+			DoubleArrayList sub = new DoubleArrayList();
+			for (int x = 0; x < size.size; x++) {
+				for (int z = 0; z < size.size; z++) {
+					sub.add(perlin.sample((x - size.d) * scale, i, (z - size.d) * scale));
+				}
+			}
+			if (list == null) {
+				list = sub;
+			} else {
+				for (int j = 0; j < list.size(); j++) {
+					list.set(j, list.getDouble(j) + sub.getDouble(j));
+				}
+			}
+		}
+
+		this.perlinImage(size, list);
+	}
+	
+	private final void perlin7(JButton button) {
+		SizeData size = SizeData.create(this);
+
+		DoubleArrayList list = null;
+
+		{
+			for (int k = 0; k < 2; k++) {
+				Xoroshiro128PlusPlusRandom random = new Xoroshiro128PlusPlusRandom(this.seed.getValue() + k * 2);
+
+				InterpolatedNoiseSampler noise1 = new InterpolatedNoiseSampler(
+					OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-15, 10)),
+					OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-15, 10)),
+					OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-7, 0)),
+				.25, 0.125, 8.0, 160.0, 8.0);
+	
+				PerlinNoiseSampler noise2 = new PerlinNoiseSampler(random);
+				int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
+	
+				int y = Math.max(this.y.getValue(), -63);
+				for (int i = 0; i < y + 64; i++) {
+					DoubleArrayList sub = new DoubleArrayList();
+					for (int x = 0; x < size.size; x++) {
+						for (int z = 0; z < size.size; z++) {
+							sub.add(
+								noise1.sample(new InterpolatedNoiseSampler.NoisePos((x - size.d) * scale, i, (z - size.d) * scale)) 
+								//noise2.sample((x - size.d) * scale, i, (z - size.d) * scale) * 10
+							);
+						}
+					}
+					if (list == null) {
+						list = sub;
+					} else {
+						for (int j = 0; j < list.size(); j++) {
+							list.set(j, list.getDouble(j) + sub.getDouble(j));
+						}
+					}
+				}
+			}
+		}
+		this.perlinImage(size, list).getImage();
 	}
 
 	@Override

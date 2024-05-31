@@ -174,14 +174,14 @@ public class WAttributeInstance<T extends WAttribute> {
 
 	private final double calculateValue() {
 		double d = this.getBaseValue();
-		for (WAttributeModifier attributeModifier : this.getModifiersOrEmpty(Operation.ADDITION)) {
+		for (WAttributeModifier attributeModifier : this.getModifiersOrEmpty(Operation.ADD_VALUE)) {
 			d += attributeModifier.getAmount();
 		}
 		double e = d;
-		for (WAttributeModifier attributeModifier2 : this.getModifiersOrEmpty(Operation.MULTIPLY_BASE)) {
+		for (WAttributeModifier attributeModifier2 : this.getModifiersOrEmpty(Operation.ADD_MULTIPLIED_BASE)) {
 			e += d * attributeModifier2.getAmount();
 		}
-		for (WAttributeModifier attributeModifier2 : this.getModifiersOrEmpty(Operation.MULTIPLY_TOTAL)) {
+		for (WAttributeModifier attributeModifier2 : this.getModifiersOrEmpty(Operation.ADD_MULTIPLIED_TOTAL)) {
 			e *= 1.0 + attributeModifier2.getAmount();
 		}
 		return this.attribute.calculateValue(e);

@@ -1,4 +1,4 @@
-package net.w3e.base;
+package net.w3e.base.suppliers;
 
 import java.util.function.Supplier;
 

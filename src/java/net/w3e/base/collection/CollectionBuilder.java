@@ -10,6 +10,9 @@ import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableSet;
 
+import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
+import it.unimi.dsi.fastutil.doubles.DoubleList;
+
 public class CollectionBuilder<T, V extends Collection<T>> {
 
 	public static <T> CollectionBuilder<Consumer<T>, ArrayList<Consumer<T>>> listConsumer(Class<T> t) {
@@ -36,41 +39,45 @@ public class CollectionBuilder<T, V extends Collection<T>> {
 		return new CollectionBuilder<T, LinkedHashSet<T>>(new LinkedHashSet<>());
 	}
 
-	private final V collection;
+	public static DoubleCollectionBuilder<DoubleList> doubleList() {
+		return new DoubleCollectionBuilder<DoubleList>(new DoubleArrayList());
+	}
+
+	protected final V collection;
 
 	public CollectionBuilder(V collection) {
 		this.collection = collection;
 	}
 
 	public CollectionBuilder<T, V> add(T object) {
-		collection.add(object);
+		this.collection.add(object);
 		return this;
 	}
 
 	@SafeVarargs
 	public final CollectionBuilder<T, V> add(T... objects) {
 		for (T object : objects) {
-			collection.add(object);
+			this.collection.add(object);
 		}
 		return this;
 	}
 
 	public CollectionBuilder<T, V> addAll(Collection<T> object) {
-		collection.addAll(object);
+		this.collection.addAll(object);
 		return this;
 	}
 
 	@SafeVarargs
 	public final CollectionBuilder<T, V> addAll(Collection<T>... objects) {
 		for (Collection<T> object : objects) {
-			collection.addAll(object);
+			this.collection.addAll(object);
 		}
 		return this;
 	}
 
-	public CollectionBuilder<T, V> addAll(T[] object) {
+	public final CollectionBuilder<T, V> addAll(T[] object) {
 		for (T t : object) {
-			collection.add(t);
+			this.collection.add(t);
 		}
 		return this;
 	}
@@ -83,7 +90,7 @@ public class CollectionBuilder<T, V extends Collection<T>> {
 		return this;
 	}
 
-	public CollectionBuilder<T, V> remove(T objcet) {
+	public final CollectionBuilder<T, V> remove(T objcet) {
 		this.collection.remove(objcet);
 		return this;
 	}
@@ -97,11 +104,46 @@ public class CollectionBuilder<T, V extends Collection<T>> {
 	}
 
 
-	public V build() {
-		return collection;
+	public final V build() {
+		return this.collection;
 	}
 
-	public ImmutableSet<T> buildImmutableSet() {
-		return ImmutableSet.copyOf(collection);
+	public final ImmutableSet<T> buildImmutableSet() {
+		return ImmutableSet.copyOf(this.collection);
+	}
+
+	public static class DoubleCollectionBuilder<V extends Collection<Double>> extends CollectionBuilder<Double, V> {
+
+		public DoubleCollectionBuilder(V collection) {
+			super(collection);
+		}
+
+		public DoubleCollectionBuilder<V> add(double object) {
+			this.collection.add(object);
+			return this;
+		}
+	
+		@SafeVarargs
+		public final DoubleCollectionBuilder<V> add(double... objects) {
+			for (double object : objects) {
+				this.collection.add(object);
+			}
+			return this;
+		}
+	
+		public DoubleCollectionBuilder<V> addAll(double[] object) {
+			for (double t : object) {
+				this.collection.add(t);
+			}
+			return this;
+		}
+	
+		@SafeVarargs
+		public final DoubleCollectionBuilder<V> addAll(double[]... objects) {
+			for (double[] object : objects) {
+				addAll(object);
+			}
+			return this;
+		}
 	}
 }

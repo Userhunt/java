@@ -1,6 +1,5 @@
-package net.home.main;
+package net.home;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FlowLayout;
@@ -73,7 +72,7 @@ public abstract class FrameObject {
 			Component next = iterator.next();
 			JPanel panel = new JPanel();
 			panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-			panel.setBackground(Color.RED);
+			//panel.setBackground(Color.RED);
 			panel.add(next);
 			container.add(panel);
 			if (iterator.hasNext()) {

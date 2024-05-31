@@ -2,10 +2,10 @@ package net.home.oba;
 
 import java.util.List;
 
-import net.home.main.MainArgs;
-import net.home.main.MainArgs.MainArg;
-import net.home.main.MainArgs.MainBoolArg;
-import net.home.main.MainArgs.MainListEnumArg;
+import net.home.MainArgs;
+import net.home.MainArgs.MainArg;
+import net.home.MainArgs.MainBoolArg;
+import net.home.MainArgs.MainListEnumArg;
 import net.w3e.base.PackUtil;
 
 public class ObaConfig {

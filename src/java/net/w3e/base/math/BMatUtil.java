@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.function.DoubleSupplier;
 
 public class BMatUtil {
 
@@ -44,9 +45,19 @@ public class BMatUtil {
 		return (float)(value * RADIANS_TO_DEGREES);
 	}
 
+	public static final <T extends BVec3<T>> T toRadians(T vec) {
+		return vec.scale(DEGREES_TO_RADIANS);
+	}
+
+	public static final <T extends BVec3<T>> T toDegrees(T vec) {
+		return vec.scale(RADIANS_TO_DEGREES);
+	}
+
 	/* ======================== POW ======================== */
 	public static final int pow(int value, int powValue) {
-		if (powValue <= 1) {
+		if (powValue <= 0) {
+			return 1;
+		} else if (powValue == 1) {
 			return value;
 		} else {
 			return value * pow(value, powValue - 1);
@@ -231,5 +242,131 @@ public class BMatUtil {
 		for (int i = 0; i < sinTable.length; i++) {
 			sinTable[i] = (float) StrictMath.sin(2 * Math.PI * i / sinTable.length);
 		}
+	}
+
+	/* ======================== lerp ======================== */
+	public static final double lerp(double delta, double start, double end) {
+        return start + delta * (end - start);
+    }
+
+	public static final double lerp2(double deltaX, double deltaY, double x0y0, double x1y0, double x0y1, double x1y1) {
+        return lerp(deltaY, lerp(deltaX, x0y0, x1y0), lerp(deltaX, x0y1, x1y1));
+    }
+
+	public static final double lerp3(double deltaX, double deltaY, double deltaZ, double x0y0z0, double x1y0z0, double x0y1z0, double x1y1z0, double x0y0z1, double x1y0z1, double x0y1z1, double x1y1z1) {
+        return lerp(deltaZ, lerp2(deltaX, deltaY, x0y0z0, x1y0z0, x0y1z0, x1y1z0), lerp2(deltaX, deltaY, x0y0z1, x1y0z1, x0y1z1, x1y1z1));
+    }
+
+	public static final double clampedLerp(double start, double end, double delta) {
+        if (delta < 0.0) {
+            return start;
+        }
+        if (delta > 1.0) {
+            return end;
+        }
+        return BMatUtil.lerp(delta, start, end);
+    }
+
+	/* ======================== hashCode ======================== */
+	public static final long hashCode(int x, int y, int z) {
+        long l = (long)(x * 3129871) ^ (long)z * 116129781L ^ (long)y;
+        l = l * l * 42317861L + l * 11L;
+        return l >> 16;
+    }
+
+	/* ======================== sphere ======================== */
+	/**
+	 * nextDouble
+	 * @param <T>
+	 * @param random
+	 * @param radius
+	 * @param pos
+	 * @return
+	 */
+	public static final <T extends BVec3<T>> T randomPointSphereSurface(DoubleSupplier random, double radius, T pos) {
+		double x = random.getAsDouble();
+		double y = random.getAsDouble();
+		double z = random.getAsDouble();
+		if (x == 0 && y == 0 && z == 0) {
+			return pos;
+		} else {
+			x = x * 2 - 1;
+			y = y * 2 - 1;
+			z = z * 2 - 1;
+			double d = 1d/Math.sqrt(x * x + y * y + z * z) * radius;
+			x *= d;
+			y *= d;
+			z *= d;
+			return (T)pos.add(x, y, z);
+		}
+	}
+
+	/**
+	 * nextDouble
+	 * @param <T>
+	 * @param random
+	 * @param radius
+	 * @param pos
+	 * @return
+	 */
+	public static final <T extends BVec3<T>> T randomPointSphereInside(DoubleSupplier random, double radius, T pos) {
+		double x, y, z;
+		while(true) {
+			x = random.getAsDouble() * 2.0 - 1.0;
+			y = random.getAsDouble() * 2.0 - 1.0;
+			z = random.getAsDouble() * 2.0 - 1.0;
+			if (x * x + y * y + z * z < 1.0) {
+				break;
+			}
+		}
+		x *= radius;
+		y *= radius;
+		z *= radius;
+		return pos.add(x, y, z);
+	}
+
+	/**
+	 * nextDouble
+	 * @param <T>
+	 * @param random
+	 * @param radius
+	 * @param pos
+	 * @return
+	 */
+	public static final <T extends BVec3<T>> T randomPointCircleSurface(DoubleSupplier random, double radius, T pos) {
+		double x = random.getAsDouble();
+		double z = random.getAsDouble();
+		if (x == 0 && z == 0) {
+			return pos;
+		} else {
+			x = random.getAsDouble() * 2.0 - 1.0;
+			z = random.getAsDouble() * 2.0 - 1.0;
+			double d = 1d/Math.sqrt(x * x + z * z) * radius;
+			x *= d;
+			z *= d;
+			return pos.add(x, 0, z);
+		}
+	}
+
+	/**
+	 * nextDouble
+	 * @param <T>
+	 * @param random
+	 * @param radius
+	 * @param pos
+	 * @return
+	 */
+	public static final <T extends BVec3<T>> T randomPointCircleInside(DoubleSupplier random, double radius, T pos) {
+		double x, z;
+		while(true) {
+			x = random.getAsDouble() * 2.0 - 1.0;
+			z = random.getAsDouble() * 2.0 - 1.0;
+			if (x * x + z * z < 1.0) {
+				break;
+			}
+		}
+		x *= radius;
+		z *= radius;
+		return pos.add(x, 0, z);
 	}
 }
