@@ -30,8 +30,8 @@ public class FindStrInJar {
 		this.condition = condition;
 	}
 
-	public List<String> find(String dir, boolean recurse) {
-		searchDir(dir, recurse);
+	public List<String> find(String dir, boolean recurse, boolean toLowerCase) {
+		searchDir(dir, recurse, toLowerCase);
 		return this.jarFiles;
 	}
 
@@ -44,7 +44,7 @@ public class FindStrInJar {
 		return className.toString();
 	}
 
-	protected void searchDir(String dir, boolean recurse) {
+	protected void searchDir(String dir, boolean recurse, boolean toLowerCase) {
 		try {
 			File d = new File(dir);
 			if (!d.isDirectory()) {
@@ -53,7 +53,7 @@ public class FindStrInJar {
 			File[] files = d.listFiles();
 			for (int i = 0; i < files.length; i++) {
 				if (recurse && files[i].isDirectory()) {
-					searchDir(files[i].getAbsolutePath(), true);
+					searchDir(files[i].getAbsolutePath(), recurse, toLowerCase);
 				} else {
 					String filename = files[i].getAbsolutePath();
 					if (filename.endsWith(".jar") || filename.endsWith(".zip")) {
@@ -65,7 +65,7 @@ public class FindStrInJar {
 								BufferedReader r = new BufferedReader(new InputStreamReader(zip.getInputStream(entry)));
 								while (r.read() != -1) {
 									String tempStr = r.readLine();
-									if (null != tempStr && tempStr.indexOf(condition) > -1) {
+									if (null != tempStr && (toLowerCase ? tempStr.toLowerCase() : tempStr).indexOf(condition) > -1) {
 										this.jarFiles.add(thisClassName);
 										break;
 									}
@@ -83,8 +83,11 @@ public class FindStrInJar {
 	}
 
 	public static void main(String args[]) {
-		FindStrInJar findInJar = new FindStrInJar("perlin"); // String to be looking for
-		List<String> jarFiles = findInJar.find("D:\\Minecraft\\fabric\\vanilla-fabric\\.gradle\\loom-cache\\minecraftMaven\\net\\minecraft\\minecraft-merged-6af62f5924\\24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true);
+		FindStrInJar findInJar = new FindStrInJar("TEMPERATURE"); // String to be looking for
+
+		List<String> jarFiles = findInJar.find("D:\\Minecraft\\fabric\\vanilla-fabric\\.gradle\\loom-cache\\minecraftMaven\\net\\minecraft\\minecraft-merged-6af62f5924\\24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true, true);
+		//List<String> jarFiles = findInJar.find("D:\\Universal-Core\\.gradle\\loom-cache\\minecraftMaven\\net\\minecraft\\minecraft-merged-f3559f27f0\\24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true, true);
+
 		if (jarFiles.size() == 0) {
 			System.out.println("Not Found");
 		} else {
