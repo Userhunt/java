@@ -1,29 +1,16 @@
 package net.w3e.base.attribute;
 
 import java.util.Objects;
-import java.util.UUID;
-
-import net.w3e.base.math.BMatUtil;
 
 public class WAttributeModifier {
 	private double amount;
 	private final Operation operation;
 	private final String name;
-	private final UUID id;
 
-	public WAttributeModifier(String string, double amount, Operation operation) {
-		this(BMatUtil.createInsecureUUID(), string, amount, operation);
-	}
-
-	public WAttributeModifier(UUID uUID, String name, double amount, Operation operation) {
-		this.id = uUID;
+	public WAttributeModifier(String name, double amount, Operation operation) {
 		this.name = name;
 		this.amount = amount;
 		this.operation = operation;
-	}
-
-	public final UUID getId() {
-		return this.id;
 	}
 
 	public final String getName() {
@@ -53,16 +40,16 @@ public class WAttributeModifier {
 			return false;
 		}
 		WAttributeModifier attributeModifier = (WAttributeModifier)object;
-		return Objects.equals(this.id, attributeModifier.id);
+		return Objects.equals(this.name, attributeModifier.name);
 	}
 
 	public final int hashCode() {
-		return this.id.hashCode();
+		return this.name.hashCode();
 	}
 
 	public final String toString() {
 		String name = this.name != null ? ", name='" + this.name + "'" : null;
-		return "AttributeModifier{amount=" + this.amount + ", operation=" + this.operation + name + ", id=" + this.id + "}";
+		return "AttributeModifier{amount=" + this.amount + ", operation=" + this.operation + name + ", id=" + this.name + "}";
 	}
 
 	public static enum Operation {

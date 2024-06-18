@@ -48,6 +48,7 @@ public class FindStrInJar {
 		try {
 			File d = new File(dir);
 			if (!d.isDirectory()) {
+				System.err.println("not found directory");
 				return;
 			}
 			File[] files = d.listFiles();
@@ -83,10 +84,10 @@ public class FindStrInJar {
 	}
 
 	public static void main(String args[]) {
-		FindStrInJar findInJar = new FindStrInJar("TEMPERATURE"); // String to be looking for
+		FindStrInJar findInJar = new FindStrInJar("pack_format"); // String to be looking for
 
-		List<String> jarFiles = findInJar.find("D:\\Minecraft\\fabric\\vanilla-fabric\\.gradle\\loom-cache\\minecraftMaven\\net\\minecraft\\minecraft-merged-6af62f5924\\24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true, true);
-		//List<String> jarFiles = findInJar.find("D:\\Universal-Core\\.gradle\\loom-cache\\minecraftMaven\\net\\minecraft\\minecraft-merged-f3559f27f0\\24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true, true);
+		List<String> jarFiles = findInJar.find("D:/Minecraft/fabric/data-pack-mod-template-1.20.1/.gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-92f061055d/24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true, true);
+		//List<String> jarFiles = findInJar.find("D:/Universal-Core/.gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-f3559f27f0/24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true, true);
 
 		if (jarFiles.size() == 0) {
 			System.out.println("Not Found");

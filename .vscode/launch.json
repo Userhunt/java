@@ -3,6 +3,13 @@
 	"configurations": [
 		{
 			"type": "java",
+			"name": "FindStrInJar",
+			"request": "launch",
+			"mainClass": "net.api.FindStrInJar",
+			"projectName": "root"
+		},
+		{
+			"type": "java",
 			"name": "Run",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",

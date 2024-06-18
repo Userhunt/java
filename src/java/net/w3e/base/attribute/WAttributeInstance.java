@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -21,8 +20,8 @@ public class WAttributeInstance<T extends WAttribute> {
 
 	protected final T attribute;
 	private final Map<Operation, Set<WAttributeModifier>> modifiersByOperation = Maps.newEnumMap(Operation.class);
-	private final Map<UUID, WAttributeModifier> modifierById = new Object2ObjectArrayMap<UUID, WAttributeModifier>();
-	private final Set<WAttributeModifier> permanentModifiers = new ObjectArraySet<WAttributeModifier>();
+	private final Map<String, WAttributeModifier> modifierById = new Object2ObjectArrayMap<>();
+	private final Set<WAttributeModifier> permanentModifiers = new ObjectArraySet<>();
 	private final double defaultValue;
 	private double baseValue;
 	private boolean dirty = true;
@@ -89,21 +88,21 @@ public class WAttributeInstance<T extends WAttribute> {
 	}
 
 	@Nullable
-	public final WAttributeModifier getModifier(UUID uUID) {
-		return this.modifierById.get(uUID);
+	public final WAttributeModifier getModifier(String name) {
+		return this.modifierById.get(name);
 	}
 
 	public final boolean hasModifier(WAttributeModifier attributeModifier) {
-		return hasModifier(attributeModifier.getId());
+		return hasModifier(attributeModifier.getName());
 	}
 
-	public final boolean hasModifier(UUID uuid) {
-		return this.getModifier(uuid) != null;
+	public final boolean hasModifier(String name) {
+		return this.getModifier(name) != null;
 	}
 
 	private final WAttributeModifier addModifier(WAttributeModifier attributeModifier) {
-		attributeModifier = new WAttributeModifier(attributeModifier.getId(), attributeModifier.getName(), attributeModifier.getAmount(), attributeModifier.getOperation());
-		WAttributeModifier attributeModifier2 = this.modifierById.putIfAbsent(attributeModifier.getId(), attributeModifier);
+		attributeModifier = new WAttributeModifier(attributeModifier.getName(), attributeModifier.getAmount(), attributeModifier.getOperation());
+		WAttributeModifier attributeModifier2 = this.modifierById.putIfAbsent(attributeModifier.getName(), attributeModifier);
 		if (attributeModifier2 != null) {
 			throw new IllegalArgumentException("Modifier is already applied on this attribute!");
 		}
@@ -122,7 +121,7 @@ public class WAttributeInstance<T extends WAttribute> {
 	}
 
 	public final void removeModifier(WAttributeModifier attributeModifier) {
-		boolean remove = this.modifierById.remove(attributeModifier.getId()) != null;
+		boolean remove = this.modifierById.remove(attributeModifier.getName()) != null;
 		if (remove) {
 			this.getModifiers(attributeModifier.getOperation()).remove(attributeModifier);
 			this.permanentModifiers.remove(attributeModifier);
@@ -130,8 +129,8 @@ public class WAttributeInstance<T extends WAttribute> {
 		}
 	}
 
-	public final void setModifierValue(UUID uuid, double amount) {
-		this.setModifierValue(this.getModifier(uuid), amount);
+	public final void setModifierValue(String name, double amount) {
+		this.setModifierValue(this.getModifier(name), amount);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -142,15 +141,15 @@ public class WAttributeInstance<T extends WAttribute> {
 		}
 	}
 
-	public final void removeModifier(UUID uUID) {
-		WAttributeModifier attributeModifier = this.getModifier(uUID);
+	public final void removeModifier(String name) {
+		WAttributeModifier attributeModifier = this.getModifier(name);
 		if (attributeModifier != null) {
 			this.removeModifier(attributeModifier);
 		}
 	}
 
-	public final boolean removePermanentModifier(UUID uUID) {
-		WAttributeModifier attributeModifier = this.getModifier(uUID);
+	public final boolean removePermanentModifier(String name) {
+		WAttributeModifier attributeModifier = this.getModifier(name);
 		if (attributeModifier != null && this.permanentModifiers.contains(attributeModifier)) {
 			this.removeModifier(attributeModifier);
 			return true;

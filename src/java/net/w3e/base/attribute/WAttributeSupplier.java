@@ -2,7 +2,6 @@ package net.w3e.base.attribute;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.UUID;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -45,10 +44,10 @@ public abstract class WAttributeSupplier<T extends WAttribute, V extends WAttrib
 		return this.getAttributeInstance(attribute).getBaseValue();
 	}
 
-	public final double getModifierValue(T attribute, UUID uUID) {
-		WAttributeModifier attributeModifier = this.getAttributeInstance(attribute).getModifier(uUID);
+	public final double getModifierValue(T attribute, String name) {
+		WAttributeModifier attributeModifier = this.getAttributeInstance(attribute).getModifier(name);
 		if (attributeModifier == null) {
-			throw new IllegalArgumentException("Can't find modifier " + uUID + " on attribute " + attribute);
+			throw new IllegalArgumentException("Can't find modifier \"" + name + "\" on attribute " + attribute);
 		}
 		return attributeModifier.getAmount();
 	}
@@ -70,8 +69,8 @@ public abstract class WAttributeSupplier<T extends WAttribute, V extends WAttrib
 		return this.instances.containsKey(attribute);
 	}
 
-	public boolean hasModifier(T attribute, UUID uUID) {
+	public boolean hasModifier(T attribute, String name) {
 		V attributeInstance = this.instances.get(attribute);
-		return attributeInstance != null && attributeInstance.getModifier(uUID) != null;
+		return attributeInstance != null && attributeInstance.getModifier(name) != null;
 	}
 }

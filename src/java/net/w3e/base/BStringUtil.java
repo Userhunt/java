@@ -281,4 +281,8 @@ public class BStringUtil {
 	public static final String unQuote(String string) {
 		return string.substring(1, string.length() - 1).replaceAll("\\\\\"", "\"");
 	}
+
+	public static final String stringOfNChar(int count, String c) {
+		return new String(new char[count]).replaceAll("\0", c);
+	}
 }

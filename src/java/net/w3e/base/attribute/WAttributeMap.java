@@ -5,7 +5,6 @@ import com.google.common.collect.Multimap;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.UUID;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -35,9 +34,9 @@ public class WAttributeMap<T extends WAttribute, V extends WAttributeInstance<T>
 		return this.attributes.get(attribute) != null || this.supplier.hasAttribute(attribute);
 	}
 
-	public final boolean hasModifier(T attribute, UUID uUID) {
+	public final boolean hasModifier(T attribute, String name) {
 		V attributeInstance = this.attributes.get(attribute);
-		return attributeInstance != null ? attributeInstance.getModifier(uUID) != null : this.supplier.hasModifier(attribute, uUID);
+		return attributeInstance != null ? attributeInstance.getModifier(name) != null : this.supplier.hasModifier(attribute, name);
 	}
 
 	public final double getValue(T attribute) {
@@ -50,9 +49,9 @@ public class WAttributeMap<T extends WAttribute, V extends WAttributeInstance<T>
 		return attributeInstance != null ? attributeInstance.getBaseValue() : this.supplier.getBaseValue(attribute);
 	}
 
-	public final double getModifierValue(T attribute, UUID uUID) {
+	public final double getModifierValue(T attribute, String name) {
 		V attributeInstance = this.attributes.get(attribute);
-		return attributeInstance != null ? attributeInstance.getModifier(uUID).getAmount() : this.supplier.getModifierValue(attribute, uUID);
+		return attributeInstance != null ? attributeInstance.getModifier(name).getAmount() : this.supplier.getModifierValue(attribute, name);
 	}
 
 	public final void removeAttributeModifiers(Multimap<T, WAttributeModifier> multimap) {

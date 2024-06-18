@@ -36,21 +36,23 @@ import net.w3e.base.math.vector.WBox;
 import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.math.vector.WVector3;
 import net.w3e.base.noise.DoublePerlinNoiseSampler;
+import net.w3e.base.noise.DoublePerlinNoiseSampler.NoiseParameters;
 import net.w3e.base.noise.InterpolatedNoiseSampler;
 import net.w3e.base.noise.OctavePerlinNoiseSampler;
 import net.w3e.base.noise.PerlinNoiseSampler;
+import net.w3e.base.random.CheckedRandom;
 import net.w3e.base.random.Xoroshiro128PlusPlusRandom;
 
 public class RandGenScreen extends FrameObject {
 
-	public static void main(String[] args) {
+	public static final void main(String[] args) {
 		MainFrame.register(new RandGenScreen());
 		MainFrame.run(args);
 	}
 
 	private BackgroundExecutor backgroundExecutor;
 	private ImageScreen image;
-	private final JSlider size = new JSlider(0, 200);
+	private final JSlider size = new JSlider(0, 2000);
 	private final JSlider seed = new JSlider(0, 100);
 	private final JSlider y = new JSlider(-64, 320);
 	private final JSlider scale = new JSlider(1, 10);
@@ -67,6 +69,7 @@ public class RandGenScreen extends FrameObject {
 		buttons.add(this.createButton("perlin 5", this::perlin5));
 		buttons.add(this.createButton("perlin 6", this::perlin6));
 		buttons.add(this.createButton("perlin 7", this::perlin7));
+		buttons.add(this.createButton("perlin 8", this::perlin8));
 		buttons.add(new JLabel("Размер"));
 		buttons.add(this.setSettings(this.size, 15));
 		buttons.add(new JLabel("Сид"));
@@ -377,7 +380,7 @@ public class RandGenScreen extends FrameObject {
 					OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-7, 0)),
 				.25, 0.125, 8.0, 160.0, 8.0);
 	
-				PerlinNoiseSampler noise2 = new PerlinNoiseSampler(random);
+				//PerlinNoiseSampler noise2 = new PerlinNoiseSampler(random);
 				int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
 	
 				int y = Math.max(this.y.getValue(), -63);
@@ -403,6 +406,36 @@ public class RandGenScreen extends FrameObject {
 		}
 		this.perlinImage(size, list).getImage();
 	}
+
+	private final void perlin8(JButton button) {
+		SizeData size = SizeData.create(this);
+
+		DoubleArrayList list = new DoubleArrayList();
+
+		NoiseParameters param = new DoublePerlinNoiseSampler.NoiseParameters(
+			-10,
+			1.5,
+			0,
+			1,
+			0,
+			0,
+			0
+			);
+
+		System.out.println(param);
+
+		DoublePerlinNoiseSampler noise = DoublePerlinNoiseSampler.create(new CheckedRandom(this.seed.getValue()), param);
+		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
+		int y = this.y.getValue();
+		for (int x = 0; x < size.size; x++) {
+			for (int z = 0; z < size.size; z++) {
+				list.add(noise.sample((x - size.d) * scale, y, (z - size.d) * scale));
+			}
+		}
+
+		this.perlinImage(size, list).getImage();
+	}
+
 
 	@Override
 	public final String getName() {
