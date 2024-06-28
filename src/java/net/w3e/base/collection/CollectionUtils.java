@@ -167,13 +167,18 @@ public class CollectionUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, V> V[] getArray(Class<T> clazz, int size) {
-		return (V[])Array.newInstance(clazz, size);
+	public static final <T> T[] createArray(Class<T> clazz, int size) {
+		return (T[])Array.newInstance(clazz, size);
+	}
+
+	@SafeVarargs
+	public static final <T> T[] createArray(T... values) {
+		return values;
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <T, V> Supplier<V>[] getArraySupplier(Class<T> clazz, int size) {
-		return (Supplier<V>[])Array.newInstance(Supplier.class, size);
+	public static final <T> Supplier<T>[] getArraySupplier(Class<T> clazz, int size) {
+		return (Supplier<T>[])Array.newInstance(Supplier.class, size);
 	}
 
 	@SuppressWarnings("unchecked")

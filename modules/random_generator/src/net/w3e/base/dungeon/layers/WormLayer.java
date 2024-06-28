@@ -23,7 +23,7 @@ public class WormLayer<T> extends DungeonLayer<T> implements IPathLayer {
 	public final WormDungeonStepChances stepChances;
 	public final DungeonChances directionChances;
 	public final DungeonChances connectionChances;
-	private final List<DungeonPos>[] entries = CollectionUtils.getArray(ArraySetStrict.class, 2);
+	private final List<DungeonPos>[] entries = CollectionUtils.createArray(ArraySetStrict.class, 2);
 
 	public WormLayer(DungeonGenerator<T> generator, DungeonPos[] centers, WormDungeonStepChances stepChances, DungeonChances directionChances, DungeonChances connectionChances) {
 		super(generator);

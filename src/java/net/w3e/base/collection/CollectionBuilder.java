@@ -3,40 +3,42 @@ package net.w3e.base.collection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import com.google.common.collect.ImmutableSet;
 
 import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
 import it.unimi.dsi.fastutil.doubles.DoubleList;
 
-public class CollectionBuilder<T, V extends Collection<T>> {
+public class CollectionBuilder<T, V extends Collection<T>, R extends CollectionBuilder<T, V, R>> {
 
-	public static <T> CollectionBuilder<Consumer<T>, ArrayList<Consumer<T>>> listConsumer(Class<T> t) {
-		return new CollectionBuilder<Consumer<T>, ArrayList<Consumer<T>>>(new ArrayList<>());
+	public static <T> SimpleCollectionBuilder<Consumer<T>, ArrayList<Consumer<T>>> listConsumer(Class<T> t) {
+		return new SimpleCollectionBuilder<Consumer<T>, ArrayList<Consumer<T>>>(new ArrayList<>());
 	}
 
-	public static <T, V> CollectionBuilder<BiConsumer<T, V>, ArrayList<BiConsumer<T, V>>> listBiConsumer(Class<T> t, Class<V> v) {
-		return new CollectionBuilder<BiConsumer<T, V>, ArrayList<BiConsumer<T, V>>>(new ArrayList<>());
+	public static <T, V> SimpleCollectionBuilder<BiConsumer<T, V>, ArrayList<BiConsumer<T, V>>> listBiConsumer(Class<T> t, Class<V> v) {
+		return new SimpleCollectionBuilder<BiConsumer<T, V>, ArrayList<BiConsumer<T, V>>>(new ArrayList<>());
 	}
 
-	public static <T> CollectionBuilder<T, ArrayList<T>> list(Class<T> t) {
-		return new CollectionBuilder<T, ArrayList<T>>(new ArrayList<>());
+	public static <T> SimpleCollectionBuilder<T, ArrayList<T>> list(Class<T> t) {
+		return new SimpleCollectionBuilder<T, ArrayList<T>>(new ArrayList<>());
 	}
 
-	public static <T> CollectionBuilder<T, Set<T>> set(Class<T> t) {
-		return new CollectionBuilder<T, Set<T>>(new HashSet<>());
+	public static <T> SimpleCollectionBuilder<T, Set<T>> set(Class<T> t) {
+		return new SimpleCollectionBuilder<T, Set<T>>(new HashSet<>());
 	}
 
-	public static <T> CollectionBuilder<T, ArraySet<T>> arraySet(Class<T> t) {
-		return new CollectionBuilder<T, ArraySet<T>>(new ArraySet<>());
+	public static <T> SimpleCollectionBuilder<T, ArraySet<T>> arraySet(Class<T> t) {
+		return new SimpleCollectionBuilder<T, ArraySet<T>>(new ArraySet<>());
 	}
 
-	public static <T> CollectionBuilder<T, LinkedHashSet<T>> linkedSet(Class<T> t) {
-		return new CollectionBuilder<T, LinkedHashSet<T>>(new LinkedHashSet<>());
+	public static <T> SimpleCollectionBuilder<T, LinkedHashSet<T>> linkedSet(Class<T> t) {
+		return new SimpleCollectionBuilder<T, LinkedHashSet<T>>(new LinkedHashSet<>());
 	}
 
 	public static DoubleCollectionBuilder<DoubleList> doubleList() {
@@ -49,58 +51,79 @@ public class CollectionBuilder<T, V extends Collection<T>> {
 		this.collection = collection;
 	}
 
-	public CollectionBuilder<T, V> add(T object) {
+	@SuppressWarnings("unchecked")
+	protected final R cast() {
+		return (R)this;
+	}
+
+	public final R add(T object) {
 		this.collection.add(object);
-		return this;
+		return this.cast();
 	}
 
 	@SafeVarargs
-	public final CollectionBuilder<T, V> add(T... objects) {
+	public final R add(T... objects) {
 		for (T object : objects) {
 			this.collection.add(object);
 		}
-		return this;
+		return this.cast();
 	}
 
-	public CollectionBuilder<T, V> addAll(Collection<T> object) {
+	public final R addAll(Collection<T> object) {
 		this.collection.addAll(object);
-		return this;
+		return this.cast();
 	}
 
 	@SafeVarargs
-	public final CollectionBuilder<T, V> addAll(Collection<T>... objects) {
+	public final R addAll(Collection<T>... objects) {
 		for (Collection<T> object : objects) {
 			this.collection.addAll(object);
 		}
-		return this;
+		return this.cast();
 	}
 
-	public final CollectionBuilder<T, V> addAll(T[] object) {
+	public final R addAll(T[] object) {
 		for (T t : object) {
 			this.collection.add(t);
 		}
-		return this;
+		return this.cast();
 	}
 
 	@SafeVarargs
-	public final CollectionBuilder<T, V> addAll(T[]... objects) {
+	public final R addAll(T[]... objects) {
 		for (T[] object : objects) {
 			addAll(object);
 		}
-		return this;
+		return this.cast();
 	}
-
-	public final CollectionBuilder<T, V> remove(T objcet) {
-		this.collection.remove(objcet);
-		return this;
+	
+	public final R addAll(Stream<T> stream) {
+		Iterator<T> iterator = stream.iterator();
+		while (iterator.hasNext()) {
+			this.add(iterator.next());
+		}
+		return this.cast();
 	}
 
 	@SafeVarargs
-	public final CollectionBuilder<T, V> remove(T... objects) {
+	public final R addAll(Stream<T>... streams) {
+		for (Stream<T> stream : streams) {
+			this.addAll(stream);
+		}
+		return this.cast();
+	}
+
+	public final R remove(T objcet) {
+		this.collection.remove(objcet);
+		return this.cast();
+	}
+
+	@SafeVarargs
+	public final R remove(T... objects) {
 		for (T object : objects) {
 			remove(object);
 		}
-		return this;
+		return this.cast();
 	}
 
 
@@ -112,13 +135,19 @@ public class CollectionBuilder<T, V extends Collection<T>> {
 		return ImmutableSet.copyOf(this.collection);
 	}
 
-	public static class DoubleCollectionBuilder<V extends Collection<Double>> extends CollectionBuilder<Double, V> {
+	public static class SimpleCollectionBuilder<T, V extends Collection<T>> extends CollectionBuilder<T, V, SimpleCollectionBuilder<T, V>> {
+		public SimpleCollectionBuilder(V collection) {
+			super(collection);
+		}
+	}
+
+	public static class DoubleCollectionBuilder<V extends Collection<Double>> extends CollectionBuilder<Double, V, DoubleCollectionBuilder<V>> {
 
 		public DoubleCollectionBuilder(V collection) {
 			super(collection);
 		}
 
-		public DoubleCollectionBuilder<V> add(double object) {
+		public final DoubleCollectionBuilder<V> add(double object) {
 			this.collection.add(object);
 			return this;
 		}

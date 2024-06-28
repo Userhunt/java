@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 import net.w3e.base.collection.CollectionBuilder;
+import net.w3e.base.collection.CollectionBuilder.SimpleCollectionBuilder;
 import net.w3e.base.collection.MapT;
 import net.w3e.base.collection.MapT.MapTString;
 import net.w3e.base.dungeon.layers.BiomeLayer;
@@ -150,7 +151,7 @@ public class DungeonGenerator<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final CollectionBuilder<Factory<String>, ArrayList<Factory<String>>> factoryCollectionBuilder() {
+	public static final SimpleCollectionBuilder<Factory<String>, ArrayList<Factory<String>>> factoryCollectionBuilder() {
 		return CollectionBuilder.list((Class<Factory<String>>)(Object)Factory.class);
 	}
 

@@ -156,6 +156,43 @@ public class BMatUtil {
 		return dx * dx + dy * dy;
 	}
 
+	/* ======================== range ======================== */
+	public static final byte toRange(byte value, byte min, byte max) {
+		value -= min;
+		value /= max - min;
+		return value;
+	}
+
+	public static final short toRange(short value, short min, short max) {
+		value -= min;
+		value /= max - min;
+		return value;
+	}
+
+	public static final int toRange(int value, int min, int max) {
+		value -= min;
+		value /= max - min;
+		return value;
+	}
+
+	public static final long toRange(long value, long min, long max) {
+		value -= min;
+		value /= max - min;
+		return value;
+	}
+
+	public static final float toRange(float value, float min, float max) {
+		value -= min;
+		value /= max - min;
+		return value;
+	}
+
+	public static final double toRange(double value, double min, double max) {
+		value -= min;
+		value /= max - min;
+		return value;
+	}
+
 	/* ======================== clamp ======================== */
 	public static byte clamp(byte val, byte min, byte max) {
 		return (byte)Math.max(min, Math.min(max, val));
@@ -246,16 +283,16 @@ public class BMatUtil {
 
 	/* ======================== lerp ======================== */
 	public static final double lerp(double delta, double start, double end) {
-        return start + delta * (end - start);
-    }
+		return start + delta * (end - start);
+	}
 
 	public static final double lerp2(double deltaX, double deltaY, double x0y0, double x1y0, double x0y1, double x1y1) {
-        return lerp(deltaY, lerp(deltaX, x0y0, x1y0), lerp(deltaX, x0y1, x1y1));
-    }
+		return lerp(deltaY, lerp(deltaX, x0y0, x1y0), lerp(deltaX, x0y1, x1y1));
+	}
 
 	public static final double lerp3(double deltaX, double deltaY, double deltaZ, double x0y0z0, double x1y0z0, double x0y1z0, double x1y1z0, double x0y0z1, double x1y0z1, double x0y1z1, double x1y1z1) {
-        return lerp(deltaZ, lerp2(deltaX, deltaY, x0y0z0, x1y0z0, x0y1z0, x1y1z0), lerp2(deltaX, deltaY, x0y0z1, x1y0z1, x0y1z1, x1y1z1));
-    }
+		return lerp(deltaZ, lerp2(deltaX, deltaY, x0y0z0, x1y0z0, x0y1z0, x1y1z0), lerp2(deltaX, deltaY, x0y0z1, x1y0z1, x0y1z1, x1y1z1));
+	}
 
 	public static final double clampedLerp(double start, double end, double delta) {
         if (delta < 0.0) {

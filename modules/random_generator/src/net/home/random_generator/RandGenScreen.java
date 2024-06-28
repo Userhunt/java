@@ -32,6 +32,7 @@ import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.MathData;
+import net.w3e.base.math.OpenSimplex2S;
 import net.w3e.base.math.vector.WBox;
 import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.math.vector.WVector3;
@@ -39,6 +40,7 @@ import net.w3e.base.noise.DoublePerlinNoiseSampler;
 import net.w3e.base.noise.DoublePerlinNoiseSampler.NoiseParameters;
 import net.w3e.base.noise.InterpolatedNoiseSampler;
 import net.w3e.base.noise.OctavePerlinNoiseSampler;
+import net.w3e.base.noise.Perlin2D;
 import net.w3e.base.noise.PerlinNoiseSampler;
 import net.w3e.base.random.CheckedRandom;
 import net.w3e.base.random.Xoroshiro128PlusPlusRandom;
@@ -70,6 +72,8 @@ public class RandGenScreen extends FrameObject {
 		buttons.add(this.createButton("perlin 6", this::perlin6));
 		buttons.add(this.createButton("perlin 7", this::perlin7));
 		buttons.add(this.createButton("perlin 8", this::perlin8));
+		buttons.add(this.createButton("perlin 9", this::perlin9));
+		buttons.add(this.createButton("perlin 10", this::perlin10));
 		buttons.add(new JLabel("Размер"));
 		buttons.add(this.setSettings(this.size, 15));
 		buttons.add(new JLabel("Сид"));
@@ -203,6 +207,10 @@ public class RandGenScreen extends FrameObject {
 	}
 
 	private final ImageScreen perlinImage(SizeData size, DoubleList values) {
+		return this.perlinImage(size, values, Double.MAX_VALUE, Double.MIN_VALUE);
+	}
+
+	private final ImageScreen perlinImage(SizeData size, DoubleList values, double min, double max) {
 		ImageScreen image = new ImageScreen.ImageScreenBuilder().setTitle("Map").setSize(size.size).build();
 
 		MathData data = new MathData(4);
@@ -216,9 +224,12 @@ public class RandGenScreen extends FrameObject {
 
 		int s = size.size;
 
+		max = Math.max(max, data.getMax());
+		min = Math.max(min, data.getMin());
+
 		DoubleIterator iterator = values.doubleIterator();
 		while (iterator.hasNext()) {
-			image.setColor(x, y, data.toColor(iterator.nextDouble()));
+			image.setColor(x, y, data.toColor(iterator.nextDouble(), min, max));
 
 			if (!iterator.hasNext()) {
 				break;
@@ -390,7 +401,7 @@ public class RandGenScreen extends FrameObject {
 						for (int z = 0; z < size.size; z++) {
 							sub.add(
 								noise1.sample(new InterpolatedNoiseSampler.NoisePos((x - size.d) * scale, i, (z - size.d) * scale)) 
-								//noise2.sample((x - size.d) * scale, i, (z - size.d) * scale) * 10
+								//+ noise2.sample((x - size.d) * scale, i, (z - size.d) * scale) * 10
 							);
 						}
 					}
@@ -436,6 +447,73 @@ public class RandGenScreen extends FrameObject {
 		this.perlinImage(size, list).getImage();
 	}
 
+	private final void perlin9(JButton button) {
+		SizeData size = SizeData.create(this);
+
+		Perlin2D noise = new Perlin2D(this.seed.getValue());
+
+		DoubleArrayList list = new DoubleArrayList();
+
+		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
+
+		System.out.println(noise.noise(2.5f, 0.5f));
+
+		for (int x = 0; x < size.size; x++) {
+			for (int z = 0; z < size.size; z++) {
+				list.add(noise.noise((x - size.d) * scale, (z - size.d) * scale));
+			}
+		}
+
+		this.perlinImage(size, list).getImage();
+	}
+
+	private final void perlin10(JButton button) {
+		SizeData size = SizeData.create(this);
+
+		DoubleArrayList list = new DoubleArrayList();
+
+		int seed = this.seed.getValue();
+
+		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
+
+		int octave = 10;
+
+		for (int x = 0; x < size.size; x++) {
+			for (int z = 0; z < size.size; z++) {
+				float value = octave(
+					octave, 
+					(x1, y1) -> OpenSimplex2S.noise2(seed, x1, y1), 
+					(x - size.d) * scale,
+					(z - size.d) * scale,
+					.75f
+				);
+				list.add(value);
+			}
+		}
+
+		this.perlinImage(size, list, -1, 1).getImage();
+	}
+	
+	private final float octave(int octaves, INoise2 noise, int fx, int fy, float persistence) {
+		float amplitude = 1;
+		float max = 0;
+		float result = 0;
+
+		while (octaves-- > 0)
+		{
+			max += amplitude;
+			result += noise.noise(fx, fy) * amplitude;
+			amplitude *= persistence;
+			fx *= 2;
+			fy *= 2;
+		}
+
+		return result/max;
+	}
+
+	private static interface INoise2 {
+		double noise(int x, int y);
+	}
 
 	@Override
 	public final String getName() {

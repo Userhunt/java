@@ -2,10 +2,15 @@ package net.w3e.base.math;
 
 import java.awt.Color;
 
+import lombok.Getter;
+
 public class MathData {
 	private final String round;
+	@Getter
 	private double min = Double.MAX_VALUE;
+	@Getter
 	private double max = Double.MIN_VALUE;
+	@Getter
 	private double zero = Double.MAX_VALUE;
 	private double zeroValue = Double.MAX_VALUE;
 
@@ -29,9 +34,11 @@ public class MathData {
 	}
 
 	public final Color toColor(double value) {
-		value -= this.min;
-		value /= this.max - this.min;
-		int color = BMatUtil.round(value * 255);
+		return this.toColor(value, min, max);
+	}
+
+	public final Color toColor(double value, double min, double max) {
+		int color = BMatUtil.round(BMatUtil.toRange(value, min, max) * 255);
 		return new Color(color, color, color);
 	}
 

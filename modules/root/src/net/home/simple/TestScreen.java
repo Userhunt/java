@@ -60,6 +60,7 @@ public class TestScreen extends FrameObject {
 		list.add(this.addCmonentListiner(new JButton("randomCollection"), this::randomCollection));
 		list.add(this.addCmonentListiner(new JButton("ThreadList"), this::threadList));
 		list.add(this.addCmonentListiner(new JButton("Frame Location"), this::location));
+		list.add(this.addCmonentListiner(new JButton("Noise Screen"), this::noiseScreen));
 
 		this.simpleColumn(fw.getContentPane(), list);
 
@@ -405,6 +406,11 @@ public class TestScreen extends FrameObject {
 	private final void location(JButton button) {
 		System.out.println(this.getFrame().getLocation());
 	}
+
+	private final void noiseScreen(JButton button) {
+		new NoiseScreen(this.getFrame());
+	}
+
 
 	private static enum SneakType {
 		empty,

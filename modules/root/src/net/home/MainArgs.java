@@ -12,13 +12,14 @@ import com.google.gson.JsonElement;
 
 import net.api.window.FrameWin;
 import net.w3e.base.collection.CollectionBuilder;
+import net.w3e.base.collection.CollectionBuilder.SimpleCollectionBuilder;
 import net.w3e.base.json.BJsonUtil;
 
 public class MainArgs<T extends FrameObject> {
 
 	@SuppressWarnings({"unchecked","rawtypes"})
-	public static final <T extends FrameObject> CollectionBuilder<MainArg<T>, List<MainArg<T>>> builder(Class<T> t) {
-		return (CollectionBuilder<MainArg<T>, List<MainArg<T>>>)(CollectionBuilder)CollectionBuilder.list(MainArg.class);
+	public static final <T extends FrameObject> SimpleCollectionBuilder<MainArg<T>, List<MainArg<T>>> builder(Class<T> t) {
+		return (SimpleCollectionBuilder<MainArg<T>, List<MainArg<T>>>)(SimpleCollectionBuilder)CollectionBuilder.list(MainArg.class);
 	}
 
 	private static final List<MainArg<FrameObject>> ARGUENETS = builder(FrameObject.class)
