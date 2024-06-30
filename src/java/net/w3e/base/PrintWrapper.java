@@ -17,6 +17,7 @@ public class PrintWrapper extends java.io.PrintStream {
 	public static final BMessageLoggerHelper MSG_UTIL = new BMessageLoggerHelper(LOGGER);
 
 	public static void install() {
+		System.out.println("old writter");
 		System.setErr(new PrintWrapper(System.err));
 		System.setOut(new PrintWrapper(System.out));
 		PrintWrapper.SETUP.warn("writter replaced");

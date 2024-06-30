@@ -3,9 +3,9 @@ package net.w3e.base.dungeon.layers;
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonLayer;
 
-public class RoomLayer<T> extends DungeonLayer<T> {
+public class RoomLayer extends DungeonLayer {
 
-	public RoomLayer(DungeonGenerator<T> generator) {
+	public RoomLayer(DungeonGenerator generator) {
 		super(generator);
 	}
 
@@ -19,8 +19,9 @@ public class RoomLayer<T> extends DungeonLayer<T> {
 		return 100;
 	}
 
-	public static final RoomLayer<String> example(DungeonGenerator<String> generator) {
-		return new RoomLayer<>(generator);
+	@Deprecated
+	public static final RoomLayer example(DungeonGenerator generator) {
+		return new RoomLayer(generator);
 	}
 
 }

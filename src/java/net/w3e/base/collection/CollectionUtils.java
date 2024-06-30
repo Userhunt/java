@@ -47,7 +47,7 @@ public class CollectionUtils {
 
 	public static final <T> T getRandom(Collection<T> set, Random random) {
 		List<T> list = new ArrayList<>(set);
-		if (list.size() == 0) {
+		if (list.isEmpty()) {
 			return null;
 		} else if (list.size() == 1) {
 			return list.get(0);
@@ -105,7 +105,7 @@ public class CollectionUtils {
 		List<T> list = new ArrayList<>();
 		for (Entry<T, ? extends Collection<?>> e : map.entrySet()) {
 			Collection<?> value = e.getValue();
-			if (value == null || value.size() == 0) {
+			if (value == null || value.isEmpty()) {
 				list.add(e.getKey());
 			}
 		}
@@ -177,8 +177,13 @@ public class CollectionUtils {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static final <T> Supplier<T>[] getArraySupplier(Class<T> clazz, int size) {
+	public static final <T> Supplier<T>[] createArraySupplier(Class<T> clazz, int size) {
 		return (Supplier<T>[])Array.newInstance(Supplier.class, size);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static final <T> List<T>[] createArrayList(Class<T> clazz, int size) {
+		return (List<T>[])Array.newInstance(List.class, size);
 	}
 
 	@SuppressWarnings("unchecked")

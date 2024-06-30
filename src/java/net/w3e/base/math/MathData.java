@@ -34,11 +34,7 @@ public class MathData {
 	}
 
 	public final Color toColor(double value) {
-		return this.toColor(value, min, max);
-	}
-
-	public final Color toColor(double value, double min, double max) {
-		int color = BMatUtil.round(BMatUtil.toRange(value, min, max) * 255);
+		int color = BMatUtil.round(BMatUtil.toRange(value, min, max, 0, 255));
 		return new Color(color, color, color);
 	}
 

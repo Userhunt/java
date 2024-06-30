@@ -157,40 +157,37 @@ public class BMatUtil {
 	}
 
 	/* ======================== range ======================== */
-	public static final byte toRange(byte value, byte min, byte max) {
-		value -= min;
-		value /= max - min;
-		return value;
+
+	public static void main(String[] args) {
+		while (true) {
+			System.out.println(toRange(-0.5, -1d, 1d, 0, 50));
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
-	public static final short toRange(short value, short min, short max) {
-		value -= min;
-		value /= max - min;
-		return value;
+	public static final int toRange(int value, int oldMin, int oldMax, int newMin, int newMax) {
+		return BMatUtil.round(toRange((double)value, oldMin, oldMax, newMin, newMax));
 	}
 
-	public static final int toRange(int value, int min, int max) {
-		value -= min;
-		value /= max - min;
-		return value;
+	public static final long toRange(long value, long oldMin, long oldMax, long newMin, long newMax) {
+		return BMatUtil.roundLong(toRange((double)value, oldMin, oldMax, newMin, newMax));
 	}
 
-	public static final long toRange(long value, long min, long max) {
-		value -= min;
-		value /= max - min;
-		return value;
+	public static final float toRange(float value, float oldMin, float oldMax, float newMin, float newMax) {
+		return (float)toRange((double)value, oldMin, oldMax, newMin, newMax);
 	}
 
-	public static final float toRange(float value, float min, float max) {
-		value -= min;
-		value /= max - min;
-		return value;
+	public static final double toRange(double value, double oldMin, double oldMax, double newMin, double newMax) {
+		return (value - oldMin) / (oldMax - oldMin) * (newMax - newMin) + newMin;
 	}
-
-	public static final double toRange(double value, double min, double max) {
-		value -= min;
-		value /= max - min;
-		return value;
+	
+	@Deprecated
+	public static final double toRange(double value, double min, double max, double newRange) {
+		return ((value - min) / (max - min) + min) * newRange;
 	}
 
 	/* ======================== clamp ======================== */

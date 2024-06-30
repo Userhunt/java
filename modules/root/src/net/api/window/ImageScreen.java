@@ -10,7 +10,7 @@ import net.api.window.jcomponent.JImageLabel;
 
 public class ImageScreen extends AbstractFrameWin {
 
-	private final JImageLabel image;
+	protected final JImageLabel image;
 
 	public ImageScreen(String frameTitle, int width, int height, int scale, Color background) {
 		super(frameTitle);
@@ -125,5 +125,15 @@ public class ImageScreen extends AbstractFrameWin {
 			screen.setVisible(visible);
 			return screen;
 		}
+
+		public final <T extends ImageScreen> T buildWith(Factory<T> factory) {
+			T screen = factory.create(this.title, this.width, this.height, this.scale, this.background);
+			screen.setLocation(this.x, this.y);
+			return screen;
+		}
+	}
+
+	public static interface Factory<T extends ImageScreen> {
+		T create(String frameTitle, int width, int height, int scale, Color background);
 	}
 }

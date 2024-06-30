@@ -38,7 +38,7 @@ public record DungeonDirections(boolean forwad, boolean left, boolean right, boo
 		collection.add(chances.side(), 2);
 		collection.add(chances.up(), 3);
 		collection.add(chances.down(), 4);
-		for (int i = 0; i < count; i++) {
+		for (int i = 0; i < count && !collection.isEmpty(); i++) {
 			Integer id = collection.remove();
 			direction = switch(id) {
 				case 0 -> direction.withForward();

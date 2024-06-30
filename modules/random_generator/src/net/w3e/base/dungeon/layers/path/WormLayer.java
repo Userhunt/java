@@ -1,4 +1,4 @@
-package net.w3e.base.dungeon.layers;
+package net.w3e.base.dungeon.layers.path;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,15 +17,15 @@ import net.w3e.base.dungeon.direction.DungeonPos;
 import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.math.vector.WVector3;
 
-public class WormLayer<T> extends DungeonLayer<T> implements IPathLayer {
+public class WormLayer extends DungeonLayer implements IPathLayer {
 
 	public final DungeonPos[] centers;
 	public final WormDungeonStepChances stepChances;
 	public final DungeonChances directionChances;
 	public final DungeonChances connectionChances;
-	private final List<DungeonPos>[] entries = CollectionUtils.createArray(ArraySetStrict.class, 2);
+	private final List<DungeonPos>[] entries = CollectionUtils.createArrayList(DungeonPos.class, 2);
 
-	public WormLayer(DungeonGenerator<T> generator, DungeonPos[] centers, WormDungeonStepChances stepChances, DungeonChances directionChances, DungeonChances connectionChances) {
+	public WormLayer(DungeonGenerator generator, DungeonPos[] centers, WormDungeonStepChances stepChances, DungeonChances directionChances, DungeonChances connectionChances) {
 		super(generator);
 		this.centers = centers;
 		this.stepChances = stepChances;
@@ -46,7 +46,8 @@ public class WormLayer<T> extends DungeonLayer<T> implements IPathLayer {
 		this.add(pos.pos(), pos.getDirection(this.random()), true);
 	}
 
-	private final void add(WVector3 pos, WDirection direction) {
+	@Override
+	public final void add(WVector3 pos, WDirection direction) {
 		this.add(pos, direction, false);
 	}
 
@@ -67,10 +68,11 @@ public class WormLayer<T> extends DungeonLayer<T> implements IPathLayer {
 			connections.add(direction);
 			boolean success = true;
 
-			DungeonRoomCreateInfo<T> info = this.put(pos);
+			DungeonRoomCreateInfo info = this.putOrGet(pos);
+			info.room().setWall(false);
 			if (entry.enterance()) {
 				info.room().setEnterance(true);
-				if (this.get(pos.add(direction)).exists()) {
+				if (!this.get(pos.add(direction)).notExistsOrWall()) {
 					WDirection old = direction;
 					entry = new DungeonPos(pos, null, true);
 					while((direction = entry.getDirection(this.random())) == old) {}
@@ -79,7 +81,7 @@ public class WormLayer<T> extends DungeonLayer<T> implements IPathLayer {
 				}
 			}
 			info.room().setConnections(connections, true, true);
-			if (info.success() && !info.exists()) {
+			if (info.isInside() && info.notExistsOrWall()) {
 				info.room().setConnections(connections, true, true);
 			}
 			connections.add(direction.opposite());
@@ -89,11 +91,12 @@ public class WormLayer<T> extends DungeonLayer<T> implements IPathLayer {
 					connections.remove(direction);
 				}
 				pos = pos.add(direction);
-				info = this.put(pos);
+				info = this.putOrGet(pos);
+				info.room().setWall(false);
 				info.room().setConnections(this.connectionChances.generate(this.random(), direction), true, false);
-				success = info.success() && !info.exists();
+				success = info.isInside() && info.notExistsOrWall();
 				if (!success) {
-					if (info.exists() && this.get(pos.add(direction.opposite())).exists()) {
+					if (!info.notExistsOrWall() && !this.get(pos.add(direction.opposite())).notExistsOrWall()) {
 						connections.remove(direction);
 						info.room().setConnections(connections, true, true);
 					}
@@ -103,7 +106,7 @@ public class WormLayer<T> extends DungeonLayer<T> implements IPathLayer {
 			}
 			if (success) {
 				connections = this.directionChances.generate(this.random(), direction);
-				DungeonRoomInfo<T> room = info.room();
+				DungeonRoomInfo room = info.room();
 				room.setConnections(connections, true, false);
 				for (WDirection connection : connections) {
 					if (connection == WDirection.UP || connection == WDirection.DOWN) {
@@ -127,10 +130,10 @@ public class WormLayer<T> extends DungeonLayer<T> implements IPathLayer {
 		}
 	}
 
-	public static final WormLayer<String> example(DungeonGenerator<String> generator) {
-		return new WormLayer<>(
+	public static final WormLayer example(DungeonGenerator generator) {
+		return new WormLayer(
 			generator,
-			new DungeonPos[]{DungeonPos.EMPTY_ENTERANCE, DungeonPos.EMPTY_ENTERANCE, }, 
+			new DungeonPos[]{DungeonPos.EMPTY_ENTERANCE, DungeonPos.EMPTY_ENTERANCE}, 
 			new WormDungeonStepChances(1, 3), 
 			new DungeonChances(20, 15, 10, 5, 0, 0, 1, 5, 0, 0), 
 			new DungeonChances(1, 1, 1, 1, 0, 0, 1, 1, 0, 0)

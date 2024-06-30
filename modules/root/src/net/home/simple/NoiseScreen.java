@@ -147,7 +147,7 @@ public class NoiseScreen extends AbstractFrameWin {
 							this.image.setColor(x, z, green);
 							continue;
 						}
-						int color = BMatUtil.round(BMatUtil.toRange(value, min, max) * 255);
+						int color = BMatUtil.round(BMatUtil.toRange(value, min, max, 0, 255));
 						this.image.setColor(x, z, new Color(color, color, color));
 					}
 					case range -> {
@@ -159,9 +159,9 @@ public class NoiseScreen extends AbstractFrameWin {
 					}
 					case nice -> {
 						if (value < 0) {
-							this.image.setColor(x, z, new Color(0, 0, BMatUtil.round(BMatUtil.toRange(value, -1, 0) * (255 - nice) + nice)));
+							this.image.setColor(x, z, new Color(0, 0, BMatUtil.round(BMatUtil.toRange(value, -1, 0, 0, 255 - nice) + nice)));
 						} else {
-							int color = 255 - BMatUtil.round(BMatUtil.toRange(value, 0, 1) * (255 - nice));
+							int color = 255 - BMatUtil.round(BMatUtil.toRange(value, 0, 1, 0, 255 - nice));
 							this.image.setColor(x, z, new Color(0, color, 0));
 						}
 					}

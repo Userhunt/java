@@ -45,6 +45,10 @@ public class RandomCollection<T> {
 		return this.entries.size();
 	}
 
+	public final boolean isEmpty() {
+		return this.entries.isEmpty();
+	}
+
 	public final RandomCollection<T> autoSort() {
 		this.autoSort = true;
 		return this;

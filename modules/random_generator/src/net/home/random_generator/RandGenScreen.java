@@ -2,50 +2,50 @@ package net.home.random_generator;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Random;
 import java.util.function.Consumer;
-import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
-import javax.swing.JSlider;
+import javax.swing.JPanel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import it.unimi.dsi.fastutil.doubles.DoubleArrayList;
-import it.unimi.dsi.fastutil.doubles.DoubleIterator;
-import it.unimi.dsi.fastutil.doubles.DoubleList;
+import net.api.window.AbstractFrameWin;
 import net.api.window.BackgroundExecutor;
 import net.api.window.FrameWin;
+import net.api.window.IBackgroundExecutor;
 import net.api.window.ImageScreen;
 import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
 import net.home.FrameObject;
 import net.home.MainFrame;
 import net.w3e.base.dungeon.DungeonGenerator;
+import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.DungeonLayer.IPathLayer;
-import net.w3e.base.dungeon.DungeonLayer.ITemperatureLayer;
+import net.w3e.base.dungeon.layers.IListLayer;
+import net.w3e.base.dungeon.layers.terra.BiomeLayer;
+import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
+import net.w3e.base.dungeon.layers.terra.TemperatureLayer;
+import net.w3e.base.dungeon.layers.terra.TerraLayer;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.holders.number.IntHolder;
-import net.w3e.base.math.BMatUtil;
-import net.w3e.base.math.MathData;
-import net.w3e.base.math.OpenSimplex2S;
 import net.w3e.base.math.vector.WBox;
 import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.math.vector.WVector3;
-import net.w3e.base.noise.DoublePerlinNoiseSampler;
-import net.w3e.base.noise.DoublePerlinNoiseSampler.NoiseParameters;
-import net.w3e.base.noise.InterpolatedNoiseSampler;
-import net.w3e.base.noise.OctavePerlinNoiseSampler;
-import net.w3e.base.noise.Perlin2D;
-import net.w3e.base.noise.PerlinNoiseSampler;
-import net.w3e.base.random.CheckedRandom;
-import net.w3e.base.random.Xoroshiro128PlusPlusRandom;
 
 public class RandGenScreen extends FrameObject {
+
+	private final Change CHANGE = new Change();
 
 	public static final void main(String[] args) {
 		MainFrame.register(new RandGenScreen());
@@ -53,37 +53,58 @@ public class RandGenScreen extends FrameObject {
 	}
 
 	private BackgroundExecutor backgroundExecutor;
-	private ImageScreen image;
-	private final JSlider size = new JSlider(0, 2000);
-	private final JSlider seed = new JSlider(0, 100);
-	private final JSlider y = new JSlider(-64, 320);
-	private final JSlider scale = new JSlider(1, 10);
+	private ImagePainter image;
+	private JCheckBox showWall;
+	private JCheckBox showSoftPath;
+	private JCheckBox showTemperature;
+	private JCheckBox showBiome;
+	private JCheckBox fast;
 
-	protected void init(FrameWin fw, List<String> args) {
+	protected final void init(FrameWin fw, List<String> args) {
 		List<Component> buttons = new ArrayList<>();
+		List<Component> settings = new ArrayList<>();
 
 		buttons.addAll(LongStream.range(0, 5).mapToObj(seed -> this.createButton(String.valueOf(seed), btn -> exampleDungeon(btn, seed))).toList());
+		settings.addAll(LongStream.range(0, 5).mapToObj(seed -> new JCheckBox("null")).toList());
 
-		buttons.add(this.createButton("perlin 1", this::perlin1));
-		buttons.add(this.createButton("perlin 2", this::perlin2));
-		buttons.add(this.createButton("perlin 3", this::perlin3));
-		buttons.add(this.createButton("perlin 4", this::perlin4));
-		buttons.add(this.createButton("perlin 5", this::perlin5));
-		buttons.add(this.createButton("perlin 6", this::perlin6));
-		buttons.add(this.createButton("perlin 7", this::perlin7));
-		buttons.add(this.createButton("perlin 8", this::perlin8));
-		buttons.add(this.createButton("perlin 9", this::perlin9));
-		buttons.add(this.createButton("perlin 10", this::perlin10));
-		buttons.add(new JLabel("Размер"));
-		buttons.add(this.setSettings(this.size, 15));
-		buttons.add(new JLabel("Сид"));
-		buttons.add(this.setSettings(this.seed, 10));
-		buttons.add(new JLabel("Y"));
-		buttons.add(this.setSettings(this.y, 0));
-		buttons.add(new JLabel("Scale"));
-		buttons.add(this.setSettings(this.scale, 1));
+		int i = 0;
 
-		this.simpleColumn(fw, buttons);
+		this.showWall = new JCheckBox("Show Wall");
+		this.showWall.addChangeListener(CHANGE);
+		settings.set(i++, this.showWall);
+
+		this.showSoftPath = new JCheckBox("Show Soft Path");
+		this.showSoftPath.addChangeListener(CHANGE);
+		settings.set(i++, this.showSoftPath);
+
+		this.showTemperature = new JCheckBox("Show Temperature");
+		this.showTemperature.addChangeListener(CHANGE);
+		settings.set(i++, this.showTemperature);
+
+		this.showBiome = new JCheckBox("Show Biome");
+		this.showBiome.addChangeListener(CHANGE);
+		settings.set(i++, this.showBiome);
+
+		this.fast = new JCheckBox("Fast");
+		this.fast.addChangeListener(CHANGE);
+		settings.set(i++, this.fast);
+
+
+		fw.setLayout(new BoxLayout(fw.getContentPane(), BoxLayout.X_AXIS));
+
+		JPanel left = new JPanel();
+		left.setBorder(null);
+		left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
+		fw.add(left);
+
+		this.simpleColumn(left, buttons);
+		
+		JPanel right = new JPanel();
+		right.setBorder(null);
+		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
+
+		this.simpleColumn(right, settings);
+		fw.add(right);
 
 		fw.pack();
 	}
@@ -93,13 +114,6 @@ public class RandGenScreen extends FrameObject {
 		FrameWin.setSize(button, 300, 26);
 		this.addCmonentListiner(button, function);
 		return button;
-	}
-
-	private final JSlider setSettings(JSlider slider, int value) {
-		slider.setValue(value);
-		slider.setPaintTicks(true);
-		slider.setMajorTickSpacing(10);
-		return slider;
 	}
 
 	@Override
@@ -114,63 +128,164 @@ public class RandGenScreen extends FrameObject {
 		}
 	}
 
+	private final void change() {
+		if (this.image != null) {
+			this.image.refillImage();
+			this.image.update();
+		}
+	}
+
 	private final void exampleDungeon(JButton button, long seed) {
 		this.creteDungeon(button.getText(), DungeonGenerator.example(seed));
 	}
 
-	private final void creteDungeon(String name, DungeonGenerator<String> dungeon) {
+	private final void creteDungeon(String name, DungeonGenerator dungeon) {
 		this.onClose();
 		dungeon.regenerate();
 		FrameWin fw = this.getFrame();
 		WBox dimension = dungeon.dimension();
-		WVector3 min = dimension.min().inverse();
 		WVector3 size = dimension.size().add(new WVector3(1, 1, 1));
-		IntHolder holder = new IntHolder();
-		this.image = new ImageScreen.ImageScreenBuilder().setLocation(fw).setSize(size.getX() * 3, size.getZ() * 3).setScale(9).build();
-		this.backgroundExecutor = new BackgroundExecutorBuilder(name, fw).setExecute((oldProgres, executor) -> {
+		IntHolder limit = new IntHolder();
+		this.image = new ImageScreen.ImageScreenBuilder().setLocation(fw).setSize(size.getX() * 3, size.getZ() * 3).setScale(9).buildWith((frameTitle, width, height, scale, background) -> 
+			new ImagePainter(frameTitle, width, height, scale, background, dungeon)
+		);
+		this.backgroundExecutor = new BackgroundExecutorBuilder(name, fw).setExecute((oldProgres, executor) -> this.execute(oldProgres, executor, limit, dungeon)).setParentVisible(true).setUpdateParentPosition(false).build();
+		this.backgroundExecutor.setLocation(Math.max(this.image.getX() + this.image.getWidth(), fw.getX() + fw.getWidth())  - 5, fw.getY());
+		this.backgroundExecutor.setSize(new Dimension(this.backgroundExecutor.getWidth(), this.getFrame().getHeight() + this.image.getHeight()));
+
+		this.backgroundExecutor.run();
+	}
+
+	private final int execute(int oldProgres, IBackgroundExecutor executor, IntHolder limit, DungeonGenerator dungeon) {
+		if (executor.isStop()) {
+			return oldProgres;
+		}
+		sleep(1000);
+		boolean fast = RandGenScreen.this.fast.isSelected();
+		long time = System.currentTimeMillis();
+		int progress = 0;
+		if (limit.getAsInt() >= 25) {
+			System.out.println("limit reached");
+			executor.stop();
+			return oldProgres;
+		}
+		limit.add();
+
+		int count = 0;
+		while ((count == 0 || (fast && System.currentTimeMillis() - time <= 9)) && progress < 100) {
 			if (executor.isStop()) {
 				return oldProgres;
 			}
+			count++;
 
-			sleep(1000);
-			if (holder.getAsInt() >= 16) {
-				System.out.println("limit reached");
-				executor.stop();
-				return oldProgres;
+			DungeonLayer generator = dungeon.getFirst();
+			progress = dungeon.generate();
+
+			int[] data = this.image.refillImage();
+
+			if (generator instanceof IPathLayer) {
+				System.out.println(this.printString(limit, count, "path", String.format("rooms %s, connections:[%s,%s]", data[0], data[1], data[2])));
+				continue;
 			}
-
-			if (executor.isStop()) {
-				return oldProgres;
+			if (generator instanceof IListLayer list) {
+				if (list instanceof TemperatureLayer) {
+					System.out.println(this.printString(limit, count, "terra/temperature", String.format("temps %s/%s", list.size(), list.filled())));
+					continue;
+				}
+				if (list instanceof CompositeTerraLayer) {
+					System.out.println(this.printString(limit, count, "terra/composite", String.format("rooms %s/%s", list.size(), list.filled())));
+					continue;
+				}
+				if (list instanceof BiomeLayer) {
+					System.out.println(this.printString(limit, count, "terra/biome", String.format("biomes %s/%s", list.size(), list.filled())));
+					continue;
+				}
+				System.out.println(this.printString(limit, count, "terra/unhandled", generator.getClass().getSimpleName()));
+				continue;
 			}
+			System.out.println(this.printString(limit, count, "unhandled", generator.getClass().getSimpleName()));
+		}
+		System.out.println();
+		this.image.update();
 
-			DungeonLayer<String> generator = dungeon.getFirst();
-			int progress = dungeon.generate();
-			holder.add();
-			int rooms = 0;
-			int hard = 0;
-			int soft = 0;
-			this.image.setColor(Color.WHITE);
-			for (Map<WVector3, DungeonRoomInfo<String>> entry1 : dungeon.getRooms().values()) {
-				rooms += entry1.size();
-				for (Entry<WVector3, DungeonRoomInfo<String>> entry2 : entry1.entrySet()) {
+		return progress;
+	}
+
+	private final String printString(IntHolder limit, int count, String name, String args) {
+		return String.format("[%s/%s](%s) %s", limit.get(), count, name, args);
+	}
+
+	private class ImagePainter extends ImageScreen implements MouseListener {
+
+		private final int scale;
+		private final DungeonGenerator dungeon;
+		private final WVector3 min;
+		private final List<AbstractFrameWin> windows = new ArrayList<>();
+
+		private ImagePainter(String frameTitle, int width, int height, int scale, Color background, DungeonGenerator dungeon) {
+			super(frameTitle, width, height, scale, background);
+			this.scale = scale * 3;
+			this.dungeon = dungeon;
+			WBox dimension = dungeon.dimension();
+			this.min = dimension.min().inverse();
+
+			this.setVisible(true);
+			this.image.addMouseListener(this);
+		}
+
+		private final int[] refillImage() {
+			int[] data = new int[]{0,0,0};
+
+			boolean showWall = RandGenScreen.this.showWall.isSelected();
+			boolean showSoftPath = RandGenScreen.this.showSoftPath.isSelected();
+			boolean showTemperature = RandGenScreen.this.showTemperature.isSelected();
+			boolean showBiome = RandGenScreen.this.showBiome.isSelected();
+
+			this.setColor(Color.WHITE);
+			for (Map<WVector3, DungeonRoomInfo> entry1 : this.dungeon.getRooms().values()) {
+				data[0] += entry1.size();
+				for (Entry<WVector3, DungeonRoomInfo> entry2 : entry1.entrySet()) {
 					WVector3 pos = entry2.getKey();
 					int x = (pos.getX() + min.getX()) * 3 + 1;
 					int z = (pos.getZ() + min.getZ()) * 3 + 1;
 					try {
-						DungeonRoomInfo<String> value = entry2.getValue();
+						DungeonRoomInfo value = entry2.getValue();
+
+						if (showTemperature) {
+							int temp = value.data().getInt("temperature");
+							if (temp < 0) {
+								this.setColor(x - 1, z - 1, Color.BLUE);
+							} else if (temp > 0) {
+								this.setColor(x- 1, z - 1, Color.ORANGE);
+							}
+						}
+						if (showBiome) {
+							if (!value.data().get(BiomeLayer.KEY).equals("void")) {
+								this.setColor(x + 1, z - 1, Color.MAGENTA);
+							}
+						}
+
+						Color color = Color.LIGHT_GRAY;
 						if (value.isEnterance()) {
-							this.image.setColor(x, z, Color.BLUE);
+							color = Color.DARK_GRAY;
 						} else {
-							this.image.setColor(x, z, Color.BLACK);
+							if (!value.isWall()) {
+								color = Color.BLACK;
+							}
+						}
+						if (showWall || color != Color.LIGHT_GRAY) {
+							this.setColor(x, z, color);
 						}
 						for (WDirection direction : WDirection.values()) {
 							if (direction != WDirection.UP && direction != WDirection.DOWN) {
 								if (value.isConnect(direction, true)) {
-									hard++;
-									this.image.setColor(x + direction.relative.getX(), z + + direction.relative.getZ(), Color.RED);
+									data[1]++;
+									this.setColor(x + direction.relative.getX(), z + + direction.relative.getZ(), Color.RED);
 								} else if (value.isConnect(direction, false)) {
-									soft++;
-									this.image.setColor(x + direction.relative.getX(), z + + direction.relative.getZ(), Color.GREEN);
+									data[2]++;
+									if (showSoftPath) {
+										this.setColor(x + direction.relative.getX(), z + + direction.relative.getZ(), Color.GREEN);
+									}
 								}
 							}
 						}
@@ -179,340 +294,72 @@ public class RandGenScreen extends FrameObject {
 					}
 				}
 			}
-			if (generator instanceof IPathLayer) {
-				System.out.println(String.format("[%s](path) rooms %s, connections:[%s,%s]", holder.getAsInt(), rooms, hard, soft));
-			}
-			if (generator instanceof ITemperatureLayer) {
-				System.out.println(String.format("[%s](temperature) rooms %s?", holder.getAsInt(), rooms));
-			}
-			this.image.update();
-
-			return progress;
-		}).setParentVisible(true).setUpdateParentPosition(false).build();
-		this.backgroundExecutor.setLocation(Math.max(this.image.getX() + this.image.getWidth(), fw.getX() + fw.getWidth())  - 5, fw.getY());
-
-		this.backgroundExecutor.run();
-	}
-
-	private record SizeData(int size, int d) {
-		public static SizeData create(RandGenScreen screen) {
-			int size = screen.size.getValue();
-
-			if (size % 2 == 0) {
-				size++;
-			}
-			int d = size / 2;
-			return new SizeData(size, d);
-		} 
-	}
-
-	private final ImageScreen perlinImage(SizeData size, DoubleList values) {
-		return this.perlinImage(size, values, Double.MAX_VALUE, Double.MIN_VALUE);
-	}
-
-	private final ImageScreen perlinImage(SizeData size, DoubleList values, double min, double max) {
-		ImageScreen image = new ImageScreen.ImageScreenBuilder().setTitle("Map").setSize(size.size).build();
-
-		MathData data = new MathData(4);
-
-		for (double d : values.toDoubleArray()) {
-			data.calculate(d);
+			return data;
 		}
 
-		int x = 0;
-		int y = 0;
-
-		int s = size.size;
-
-		max = Math.max(max, data.getMax());
-		min = Math.max(min, data.getMin());
-
-		DoubleIterator iterator = values.doubleIterator();
-		while (iterator.hasNext()) {
-			image.setColor(x, y, data.toColor(iterator.nextDouble(), min, max));
-
-			if (!iterator.hasNext()) {
-				break;
-			}
-			x++;
-			if (x >= s) {
-				x = 0;
-				y++;
-			}
-		}
-		System.out.println(data.generateString());
-		return image;
-	}
-
-	private final void perlin1(JButton button) {
-		SizeData size = SizeData.create(this);
-
-		DoubleArrayList list = new DoubleArrayList();
-
-		PerlinNoiseSampler perlin = new PerlinNoiseSampler(new Random(this.seed.getValue()));
-
-		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
-		int y = this.y.getValue();
-		for (int x = 0; x < size.size; x++) {
-			for (int z = 0; z < size.size; z++) {
-				list.add(perlin.sample((x - size.d) * scale, y, (z - size.d) * scale));
-			}
-		}
-		this.perlinImage(size, list);
-	}
-
-	private final void perlin2(JButton button) {
-		int size = this.size.getValue() * 10;
-
-		if (size % 2 == 0) {
-			size++;
-		}
-		int d = size / 2;
-		size -= d;
-
-		PerlinNoiseSampler perlin = new PerlinNoiseSampler(new Random(this.seed.getValue()));
-		MathData data = new MathData();
-		for (int x = -d; x < size; x++) {
-			if (x % 10 == 0) {
-				System.out.println(x);
-			}
-			for (int y = -d; y < size; y++) {
-				for (int z = -d; z < size; z++) {
-					double res = perlin.sample(x, y, z);
-					data.calculate(res);
-				}
-			}
-		}
-		System.out.println(data.generateString());
-	}
-
-	private final void perlin3(JButton button) {
-		SizeData size = SizeData.create(this);
-		
-		DoubleArrayList list = new DoubleArrayList();
-
-		OctavePerlinNoiseSampler noise = OctavePerlinNoiseSampler.createLegacy(new Xoroshiro128PlusPlusRandom(this.seed.getValue()), IntStream.rangeClosed(-15, 0));
-
-		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
-		int y = this.y.getValue();
-		for (int x = 0; x < size.size; x++) {
-			for (int z = 0; z < size.size; z++) {
-				list.add(noise.sample((x - size.d) * scale, y, (z - size.d) * scale));
-			}
-		}
-		this.perlinImage(size, list);
-	}
-
-	private final void perlin4(JButton button) {
-		SizeData size = SizeData.create(this);
-
-		DoubleArrayList list = new DoubleArrayList();
-
-		Xoroshiro128PlusPlusRandom random = new Xoroshiro128PlusPlusRandom(this.seed.getValue());
-
-		InterpolatedNoiseSampler noise = new InterpolatedNoiseSampler(
-			OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-15, 0)),
-			OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-15, 0)),
-			OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-7, 0)),
-		.25, 0.125, 80.0, 160.0, 8.0);
-		//InterpolatedNoiseSampler.noise_nether(new RandomProvider(this.seed.getValue()));
-
-		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
-		int y = this.y.getValue();
-		for (int x = 0; x < size.size; x++) {
-			for (int z = 0; z < size.size; z++) {
-				list.add(noise.sample(new InterpolatedNoiseSampler.NoisePos((x - size.d) * scale, y, (z - size.d) * scale)));
-			}
-		}
-		this.perlinImage(size, list);
-	}
-
-	private final void perlin5(JButton button) {
-		SizeData size = SizeData.create(this);
-
-		DoubleArrayList list = new DoubleArrayList();
-
-		Xoroshiro128PlusPlusRandom random = new Xoroshiro128PlusPlusRandom(this.seed.getValue());
-
-		DoublePerlinNoiseSampler noise = DoublePerlinNoiseSampler.create(random, new DoublePerlinNoiseSampler.NoiseParameters(-3, 1.0, 1.0, 1.0, 0.0));
-		//DoublePerlinNoiseSampler.create(random, -4, 1);
-
-		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
-		int y = this.y.getValue();
-		for (int x = 0; x < size.size; x++) {
-			for (int z = 0; z < size.size; z++) {
-				list.add(noise.sample((x - size.d) * scale, y, (z - size.d) * scale));
-			}
-		}
-		this.perlinImage(size, list);
-	}
-
-	private final void perlin6(JButton button) {
-		SizeData size = SizeData.create(this);
-
-		DoubleArrayList list = null;
-
-		PerlinNoiseSampler perlin = new PerlinNoiseSampler(new Random(this.seed.getValue()));
-
-		double scale = BMatUtil.pow(10, this.scale.getValue() - 1) / .1;
-
-		int y = Math.max(this.y.getValue(), -63);
-		for (int i = 0; i < y + 64; i++) {
-			DoubleArrayList sub = new DoubleArrayList();
-			for (int x = 0; x < size.size; x++) {
-				for (int z = 0; z < size.size; z++) {
-					sub.add(perlin.sample((x - size.d) * scale, i, (z - size.d) * scale));
-				}
-			}
-			if (list == null) {
-				list = sub;
+		@Override
+		public void mouseClicked(MouseEvent event) {
+			int x = event.getX() / this.scale - this.min.getX();
+			int z = event.getY() / this.scale - this.min.getZ();
+			DungeonRoomCreateInfo data = this.dungeon.get(new WVector3(x, 0, z));
+			if (!data.exists()) {
+				System.err.println("not found");
 			} else {
-				for (int j = 0; j < list.size(); j++) {
-					list.set(j, list.getDouble(j) + sub.getDouble(j));
-				}
-			}
-		}
+				DungeonRoomInfo room = data.room();
 
-		this.perlinImage(size, list);
-	}
-	
-	private final void perlin7(JButton button) {
-		SizeData size = SizeData.create(this);
-
-		DoubleArrayList list = null;
-
-		{
-			for (int k = 0; k < 2; k++) {
-				Xoroshiro128PlusPlusRandom random = new Xoroshiro128PlusPlusRandom(this.seed.getValue() + k * 2);
-
-				InterpolatedNoiseSampler noise1 = new InterpolatedNoiseSampler(
-					OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-15, 10)),
-					OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-15, 10)),
-					OctavePerlinNoiseSampler.create(random, IntStream.rangeClosed(-7, 0)),
-				.25, 0.125, 8.0, 160.0, 8.0);
-	
-				//PerlinNoiseSampler noise2 = new PerlinNoiseSampler(random);
-				int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
-	
-				int y = Math.max(this.y.getValue(), -63);
-				for (int i = 0; i < y + 64; i++) {
-					DoubleArrayList sub = new DoubleArrayList();
-					for (int x = 0; x < size.size; x++) {
-						for (int z = 0; z < size.size; z++) {
-							sub.add(
-								noise1.sample(new InterpolatedNoiseSampler.NoisePos((x - size.d) * scale, i, (z - size.d) * scale)) 
-								//+ noise2.sample((x - size.d) * scale, i, (z - size.d) * scale) * 10
-							);
-						}
+				AbstractFrameWin frame = new AbstractFrameWin("Room Info") {
+					@Override
+					protected void onClose() {
+						this.setEnabled(false);
 					}
-					if (list == null) {
-						list = sub;
-					} else {
-						for (int j = 0; j < list.size(); j++) {
-							list.set(j, list.getDouble(j) + sub.getDouble(j));
-						}
-					}
+				};
+				frame.setLocation(event.getXOnScreen() - (event.getXOnScreen() % this.scale) + 9, event.getYOnScreen() - (event.getYOnScreen() % this.scale) + 9);
+
+				List<Component> list = new ArrayList<>();
+
+				list.add(new JLabel(String.format("Pos: %s", room.pos().toStringArray())));
+				list.add(new JLabel(String.format("Chunk: %s", room.chunk().toStringArray())));
+				list.add(new JLabel(String.format("Distance: %s", room.distance())));
+				list.add(new JLabel(String.format("IsWall: %s", room.isWall())));
+				list.add(new JLabel(String.format("IsEnterance: %s", room.isEnterance())));
+				list.add(new JLabel(String.format("Connections: %s", null)));
+				list.add(new JLabel(String.format("Data: %s", room.data())));
+
+				RandGenScreen.this.simpleColumn(frame, list);
+
+				frame.pack();
+				frame.setVisible(true);
+				this.windows.removeIf(e -> !e.isEnabled());
+				System.out.println(this.windows.size());
+				for (AbstractFrameWin fw : this.windows) {
+					fw.requestFocus();
 				}
+				this.windows.add(frame);
+				frame.requestFocus();
 			}
-		}
-		this.perlinImage(size, list).getImage();
-	}
 
-	private final void perlin8(JButton button) {
-		SizeData size = SizeData.create(this);
-
-		DoubleArrayList list = new DoubleArrayList();
-
-		NoiseParameters param = new DoublePerlinNoiseSampler.NoiseParameters(
-			-10,
-			1.5,
-			0,
-			1,
-			0,
-			0,
-			0
-			);
-
-		System.out.println(param);
-
-		DoublePerlinNoiseSampler noise = DoublePerlinNoiseSampler.create(new CheckedRandom(this.seed.getValue()), param);
-		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
-		int y = this.y.getValue();
-		for (int x = 0; x < size.size; x++) {
-			for (int z = 0; z < size.size; z++) {
-				list.add(noise.sample((x - size.d) * scale, y, (z - size.d) * scale));
-			}
+			//AbstractFrameWin frame = new AbstractFrameWin();
+			
 		}
 
-		this.perlinImage(size, list).getImage();
+		@Override
+		public final void mousePressed(MouseEvent e) {}
+
+		@Override
+		public final void mouseReleased(MouseEvent e) {}
+
+		@Override
+		public final void mouseEntered(MouseEvent e) {}
+
+		@Override
+		public final void mouseExited(MouseEvent e) {}
 	}
 
-	private final void perlin9(JButton button) {
-		SizeData size = SizeData.create(this);
-
-		Perlin2D noise = new Perlin2D(this.seed.getValue());
-
-		DoubleArrayList list = new DoubleArrayList();
-
-		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
-
-		System.out.println(noise.noise(2.5f, 0.5f));
-
-		for (int x = 0; x < size.size; x++) {
-			for (int z = 0; z < size.size; z++) {
-				list.add(noise.noise((x - size.d) * scale, (z - size.d) * scale));
-			}
+	private final class Change implements ChangeListener {
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			RandGenScreen.this.change();
 		}
-
-		this.perlinImage(size, list).getImage();
-	}
-
-	private final void perlin10(JButton button) {
-		SizeData size = SizeData.create(this);
-
-		DoubleArrayList list = new DoubleArrayList();
-
-		int seed = this.seed.getValue();
-
-		int scale = BMatUtil.pow(10, this.scale.getValue() - 1);
-
-		int octave = 10;
-
-		for (int x = 0; x < size.size; x++) {
-			for (int z = 0; z < size.size; z++) {
-				float value = octave(
-					octave, 
-					(x1, y1) -> OpenSimplex2S.noise2(seed, x1, y1), 
-					(x - size.d) * scale,
-					(z - size.d) * scale,
-					.75f
-				);
-				list.add(value);
-			}
-		}
-
-		this.perlinImage(size, list, -1, 1).getImage();
-	}
-	
-	private final float octave(int octaves, INoise2 noise, int fx, int fy, float persistence) {
-		float amplitude = 1;
-		float max = 0;
-		float result = 0;
-
-		while (octaves-- > 0)
-		{
-			max += amplitude;
-			result += noise.noise(fx, fy) * amplitude;
-			amplitude *= persistence;
-			fx *= 2;
-			fy *= 2;
-		}
-
-		return result/max;
-	}
-
-	private static interface INoise2 {
-		double noise(int x, int y);
 	}
 
 	@Override

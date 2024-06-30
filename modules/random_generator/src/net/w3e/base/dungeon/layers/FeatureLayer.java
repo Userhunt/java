@@ -3,9 +3,9 @@ package net.w3e.base.dungeon.layers;
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonLayer;
 
-public class FeatureLayer<T> extends DungeonLayer<T> {
+public class FeatureLayer extends DungeonLayer {
 
-	public FeatureLayer(DungeonGenerator<T> generator) {
+	public FeatureLayer(DungeonGenerator generator) {
 		super(generator);
 	}
 
@@ -19,8 +19,9 @@ public class FeatureLayer<T> extends DungeonLayer<T> {
 		return 100;
 	}
 
-	public static final FeatureLayer<String> example(DungeonGenerator<String> generator) {
-		return new FeatureLayer<>(generator);
+	@Deprecated
+	public static final FeatureLayer example(DungeonGenerator generator) {
+		return new FeatureLayer(generator);
 	}
 
 }

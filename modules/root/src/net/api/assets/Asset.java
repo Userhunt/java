@@ -154,7 +154,7 @@ public abstract class Asset<T> {
 	}
 
 	public final boolean isEmpty() {
-		return this.size() == 0;
+		return this.values.isEmpty();
 	}
 
 	public final AssetHolder<T> get() {

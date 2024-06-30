@@ -106,7 +106,7 @@ public abstract class AbstractCacheKeys<T> {
 	public abstract int size();
 
 	public final boolean isEmpty() {
-		return size() == 0;
+		return this.size() == 0;
 	}
 
 	public abstract ArraySet<T> keys();

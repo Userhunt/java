@@ -41,7 +41,7 @@ public abstract class IWVector<T extends IWVector<T>> implements Comparable<IWVe
 		return (T)this.create(this.getX(), this.getY(), i);
 	}
 
-	public final WVector2 toChunk() {
+	public final WVector3 toChunk() {
 		return toChunk(this);
 	}
 
@@ -49,18 +49,18 @@ public abstract class IWVector<T extends IWVector<T>> implements Comparable<IWVe
 		return toPos(this);
 	}
 
-	public static final WVector2 toChunk(IWVector<?> pos) {
+	public static final WVector3 toChunk(IWVector<?> pos) {
 		if (pos == null) {
-			return WVector2.EMPTY;
+			return WVector3.EMPTY;
 		}
-		return new WVector2(pos.getX() >> 4, pos.getZ() >> 4);
+		return new WVector3(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
 	}
 
 	public static final WVector3 toPos(IWVector<?> chunk) {
 		if (chunk == null) {
 			return WVector3.EMPTY;
 		}
-		return new WVector3(chunk.getX() >> 4, chunk.getX() >> 4, chunk.getZ() >> 4);
+		return new WVector3(chunk.getX() << 4, chunk.getY() << 4, chunk.getZ() << 4);
 	}
 
 	@Override
@@ -88,6 +88,10 @@ public abstract class IWVector<T extends IWVector<T>> implements Comparable<IWVe
 	@Override
 	public final String toString() {
 		return String.format("{class:\"%s\",hash:%s,x:%s,y:%s,z:%s}", this.getClass().getSimpleName(), this.hashCode(), this.getX(), this.getY(), this.getZ());
+	}
+
+	public final String toStringArray() {
+		return String.format("[%s,%s,%s]", this.getX(), this.getY(), this.getZ());
 	}
 
 	@Override

@@ -7,35 +7,38 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import net.w3e.base.collection.CollectionBuilder;
 import net.w3e.base.collection.CollectionBuilder.SimpleCollectionBuilder;
-import net.w3e.base.collection.MapT;
 import net.w3e.base.collection.MapT.MapTString;
-import net.w3e.base.dungeon.layers.BiomeLayer;
 import net.w3e.base.dungeon.layers.FeatureLayer;
+import net.w3e.base.dungeon.layers.ISetupLayer;
 import net.w3e.base.dungeon.layers.RoomLayer;
-import net.w3e.base.dungeon.layers.TemperatureLayer;
-import net.w3e.base.dungeon.layers.WormLayer;
+import net.w3e.base.dungeon.layers.path.PathRepeatLayer;
+import net.w3e.base.dungeon.layers.terra.BiomeLayer;
+import net.w3e.base.dungeon.layers.terra.TemperatureLayer;
 import net.w3e.base.holders.BoolHolder;
+import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.vector.WBox;
-import net.w3e.base.math.vector.WVector2;
 import net.w3e.base.math.vector.WVector3;
 
-public class DungeonGenerator<T> {
+public class DungeonGenerator {
 
-	private final Map<WVector2, Map<WVector3, DungeonRoomInfo<T>>> map = new HashMap<>();
+	private final Map<WVector3, Map<WVector3, DungeonRoomInfo>> map = new HashMap<>();
 
 	private final long seed;
 	private final WBox dimension;
-	private final Supplier<MapT<T>> dataFactory;
-	private final List<Factory<T>> layers = new ArrayList<>();
+	private final Supplier<MapTString> dataFactory;
+	private final List<Factory> layers = new ArrayList<>();
 
 	private Random random;
-	private final List<DungeonLayer<T>> queue = new LinkedList<>();
+	private final List<DungeonLayer> queue = new LinkedList<>();
+	private final List<ISetupLayer> setup = new LinkedList<>();
+	private boolean regenerate = true;
 
-	public DungeonGenerator(long seed, WBox dimension, Supplier<MapT<T>> dataFactory, List<Factory<T>> layers) {
+	public DungeonGenerator(long seed, WBox dimension, Supplier<MapTString> dataFactory, List<Factory> layers) {
 		this.seed = seed;
 		this.dimension = dimension;
 		this.dataFactory = dataFactory;
@@ -52,55 +55,105 @@ public class DungeonGenerator<T> {
 
 	public final void regenerate() {
 		this.map.clear();
-		this.random = new Random(this.seed);
 		this.queue.clear();
+		this.setup.clear();
+		this.random = new Random(this.seed);
 		this.queue.addAll(this.layers.stream().map(e -> e.create(this)).toList());
-		this.queue.forEach(DungeonLayer::regenerate);
+		this.regenerate = true;
+		this.queue.stream().filter(e -> e instanceof ISetupLayer).map(e -> (ISetupLayer)e).forEach(this.setup::add);
 	}
 
-	public final DungeonRoomCreateInfo<T> put(WVector3 pos) {
+	public final DungeonRoomCreateInfo putOrGet(WVector3 pos) {
 		if (!this.testDimension(pos)) {
-			return this.createFailRoom(pos);
+			return this.createFailRoom(pos, false);
 		}
-		WVector2 chunk = pos.toChunk();
+		WVector3 chunk = pos.toChunk();
 		BoolHolder exists = new BoolHolder(true);
-		DungeonRoomInfo<T> room = map.computeIfAbsent(chunk, key -> new HashMap<>()).computeIfAbsent(pos, key -> {
+		DungeonRoomInfo room = map.computeIfAbsent(chunk, key -> new HashMap<>()).computeIfAbsent(pos, key -> {
 			exists.setFalse();
 			return DungeonRoomInfo.create(pos, chunk, this.dataFactory);
 		});
+		if (!exists.getBool()) {
+			for (ISetupLayer setup : this.setup) {
+				setup.setup(room);
+			}
+		}
 		return DungeonRoomCreateInfo.success(room, exists.getBool());
 	}
 
-	public final DungeonRoomCreateInfo<T> get(WVector3 pos) {
+	public final DungeonRoomCreateInfo get(WVector3 pos) {
 		if (this.testDimension(pos)) {
-			WVector2 chunk = pos.toChunk();
+			WVector3 chunk = pos.toChunk();
 
-			Map<WVector3, DungeonRoomInfo<T>> m = map.get(chunk);
+			Map<WVector3, DungeonRoomInfo> m = this.map.get(chunk);
 			if (m != null) {
-				DungeonRoomInfo<T> room = m.get(pos);
+				DungeonRoomInfo room = m.get(pos);
 				if (room != null) {
 					return DungeonRoomCreateInfo.success(room, true);
 				}
 			}
-			return this.createFailRoom(pos, chunk);
+			return this.createFailRoom(pos, chunk, true);
 		}
-		return this.createFailRoom(pos);
+		return this.createFailRoom(pos, false);
+	}
+	
+	public final void forEach(Consumer<DungeonRoomCreateInfo> function, boolean createIfNotExists) {
+		WVector3 min = this.dimension.min();
+		WVector3 max = this.dimension.max();
+		for (int x = min.getX(); x <= max.getX(); x++) {
+			for (int y = min.getY(); y <= max.getY(); y++) {
+				for (int z = min.getZ(); z <= max.getZ(); z++) {
+					WVector3 pos = new WVector3(x, y, z);
+					DungeonRoomCreateInfo room = this.get(pos);
+					if (room.exists) {
+						function.accept(room);
+						continue;
+					}
+					if (createIfNotExists) {
+						room = this.putOrGet(pos);
+						if (!room.isInside) {
+							throw new IllegalStateException("room is not inside dungeon, but must " + pos);
+						}
+						function.accept(room);
+					}
+				}
+			}
+		}
 	}
 
-	private final DungeonRoomCreateInfo<T> createFailRoom(WVector3 pos) {
-		return createFailRoom(pos, pos.toChunk());
+	private final DungeonRoomCreateInfo createFailRoom(WVector3 pos, boolean isInside) {
+		return createFailRoom(pos, pos.toChunk(), isInside);
 	}
 
-	private final DungeonRoomCreateInfo<T> createFailRoom(WVector3 pos, WVector2 chunk) {
+	private final DungeonRoomCreateInfo createFailRoom(WVector3 pos, WVector3 chunk, boolean isInside) {
 		return DungeonRoomCreateInfo.fail(DungeonRoomInfo.create(pos, this.dataFactory));
 	}
 
-	public record DungeonRoomCreateInfo<T>(DungeonRoomInfo<T> room, boolean success, boolean exists) {
-		protected static final <T> DungeonRoomCreateInfo<T> fail(DungeonRoomInfo<T> room) {
-			return new DungeonRoomCreateInfo<>(room, false, false);
+	public record DungeonRoomCreateInfo(DungeonRoomInfo room, boolean isInside, boolean exists) {
+		private static final DungeonRoomCreateInfo fail(DungeonRoomInfo room) {
+			return new DungeonRoomCreateInfo(room, false, false);
 		}
-		protected static final <T> DungeonRoomCreateInfo<T> success(DungeonRoomInfo<T> room, boolean exists) {
-			return new DungeonRoomCreateInfo<>(room, true, exists);
+		private static final <T> DungeonRoomCreateInfo success(DungeonRoomInfo room, boolean exists) {
+			return new DungeonRoomCreateInfo(room, true, exists);
+		}
+		public final DungeonRoomCreateInfo setWall(boolean value) {
+			this.room.setWall(value);
+			return this;
+		}
+		public final DungeonRoomCreateInfo setWall() {
+			return this.setWall(true);
+		}
+		public final WVector3 pos() {
+			return this.room.pos();
+		}
+		public final WVector3 chunk() {
+			return this.room.chunk();
+		}
+		public final MapTString data() {
+			return this.room.data();
+		}
+		public final boolean notExistsOrWall() {
+			return !this.exists || this.room.isWall();
 		}
 	}
 
@@ -108,13 +161,13 @@ public class DungeonGenerator<T> {
 		return this.dimension.contains(pos);
 	}
 
-	public final DungeonGenerator<T> copy(Long seed, WBox dimension, boolean data) {
-		DungeonGenerator<T> dungeon = new DungeonGenerator<>(seed == null ? this.seed : seed, dimension == null ? this.dimension : dimension, this.dataFactory, this.layers);
+	public final DungeonGenerator copy(Long seed, WBox dimension, boolean data) {
+		DungeonGenerator dungeon = new DungeonGenerator(seed == null ? this.seed : seed, dimension == null ? this.dimension : dimension, this.dataFactory, this.layers);
 		if (data) {
-			for (Map<WVector3, DungeonRoomInfo<T>> chunk : this.map.values()) {
-				for (Entry<WVector3, DungeonRoomInfo<T>> entry : chunk.entrySet()) {
-					DungeonRoomCreateInfo<T> info = dungeon.put(entry.getKey());
-					if (info.success) {
+			for (Map<WVector3, DungeonRoomInfo> chunk : this.map.values()) {
+				for (Entry<WVector3, DungeonRoomInfo> entry : chunk.entrySet()) {
+					DungeonRoomCreateInfo info = dungeon.putOrGet(entry.getKey());
+					if (info.isInside) {
 						info.room.copyFrom(entry.getValue());
 					}
 				}
@@ -124,50 +177,61 @@ public class DungeonGenerator<T> {
 		return dungeon;
 	}
 
-	public final Map<WVector2, Map<WVector3, DungeonRoomInfo<T>>> getRooms() {
+	public final Map<WVector3, Map<WVector3, DungeonRoomInfo>> getRooms() {
 		return this.map;
 	}
 
 	public final int generate() {
 		int i = 100;
 		if (!queue.isEmpty()) {
-			DungeonLayer<T> generator = this.queue.getFirst();
-			i = generator.generate();
-			if (i == 100) {
-				i = 0;
-				this.queue.removeFirst();
+			DungeonLayer generator = this.queue.getFirst();
+			if (this.regenerate) {
+				generator.regenerate();
+				this.regenerate = false;
+				i = 1;
+			} else {
+				i = generator.generate();
+				if (i == 100) {
+					i = 0;
+					this.queue.removeFirst();
+					this.regenerate = true;
+				}
 			}
 		}
 
-		return (this.layers.size() - this.queue.size()) * 100 / this.layers.size() + i / this.layers.size();
+		float prev = (this.layers.size() - this.queue.size()) * 100f;
+
+		return BMatUtil.round((prev + i) / this.layers.size());
 	}
 
-	public final DungeonLayer<T> getFirst() {
+	public final DungeonLayer getFirst() {
 		return this.queue.isEmpty() ? null : this.queue.getFirst();
 	}
 
-	public static interface Factory<T> {
-		DungeonLayer<T> create(DungeonGenerator<T> generator);
+	public static interface Factory {
+		DungeonLayer create(DungeonGenerator generator);
 	}
 
-	@SuppressWarnings("unchecked")
-	public static final SimpleCollectionBuilder<Factory<String>, ArrayList<Factory<String>>> factoryCollectionBuilder() {
-		return CollectionBuilder.list((Class<Factory<String>>)(Object)Factory.class);
+	public static final SimpleCollectionBuilder<Factory, ArrayList<Factory>> factoryCollectionBuilder() {
+		return CollectionBuilder.list(Factory.class);
 	}
 
-	public static DungeonGenerator<String> example(long seed) {
+	public static DungeonGenerator example(long seed) {
 		int size = 12;
-		return new DungeonGenerator<>(seed, new WBox(-size - 1, 0, -size - 1, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
+		return new DungeonGenerator(seed, new WBox(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
 			// path
-			WormLayer::example,
+			PathRepeatLayer::example,
 			// temperature
 			TemperatureLayer::example,
 			// biomes
 			BiomeLayer::example,
+			// distance
+
 			// rooms
 			RoomLayer::example,
 			// features
 			FeatureLayer::example
+			//clear
 		).build());
 	}
 }
