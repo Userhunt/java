@@ -36,7 +36,6 @@ import net.w3e.base.dungeon.layers.IListLayer;
 import net.w3e.base.dungeon.layers.terra.BiomeLayer;
 import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
 import net.w3e.base.dungeon.layers.terra.TemperatureLayer;
-import net.w3e.base.dungeon.layers.terra.TerraLayer;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.math.vector.WBox;
@@ -261,7 +260,7 @@ public class RandGenScreen extends FrameObject {
 						}
 						if (showBiome) {
 							if (!value.data().get(BiomeLayer.KEY).equals("void")) {
-								this.setColor(x + 1, z - 1, Color.MAGENTA);
+								this.setColor(x + 1, z + 1, Color.MAGENTA);
 							}
 						}
 

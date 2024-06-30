@@ -31,8 +31,9 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 		}
 	}
 
+	@Deprecated
 	public static final CompositeTerraLayer example(DungeonGenerator generator) {
-		return new CompositeTerraLayer(generator, 50, TemperatureLayer.example(generator));
+		return new CompositeTerraLayer(generator, 50, TemperatureLayer.example(generator), WetLayer.example(generator));
 	}
 	
 }

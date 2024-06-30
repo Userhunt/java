@@ -18,6 +18,7 @@ import net.w3e.base.dungeon.layers.ISetupLayer;
 import net.w3e.base.dungeon.layers.RoomLayer;
 import net.w3e.base.dungeon.layers.path.PathRepeatLayer;
 import net.w3e.base.dungeon.layers.terra.BiomeLayer;
+import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
 import net.w3e.base.dungeon.layers.terra.TemperatureLayer;
 import net.w3e.base.holders.BoolHolder;
 import net.w3e.base.math.BMatUtil;
@@ -221,8 +222,9 @@ public class DungeonGenerator {
 		return new DungeonGenerator(seed, new WBox(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
 			// path
 			PathRepeatLayer::example,
-			// temperature
-			TemperatureLayer::example,
+			// temperature, wet, difficulty?
+			//
+			CompositeTerraLayer::example,
 			// biomes
 			BiomeLayer::example,
 			// distance
@@ -232,6 +234,7 @@ public class DungeonGenerator {
 			// features
 			FeatureLayer::example
 			//clear
+			
 		).build());
 	}
 }
