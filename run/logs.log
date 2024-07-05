@@ -1,2 +1,2 @@
-2024-06-30 02:28:19.012 [main] WARN  SETUP - writter replaced
-2024-06-30 02:28:19.020 [main] INFO   - [PrintWrapper{install:24}]: test replace from net.home.MainFrame.<clinit>(MainFrame.java:76)
+2024-07-03 20:37:09.963 [main] WARN  SETUP - writter replaced
+2024-07-03 20:37:09.971 [main] INFO   - [PrintWrapper{install:24}]: test replace from net.home.MainFrame.<clinit>(MainFrame.java:76)

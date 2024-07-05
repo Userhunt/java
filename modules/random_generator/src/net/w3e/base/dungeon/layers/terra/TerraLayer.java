@@ -29,8 +29,10 @@ public abstract class TerraLayer<T> extends DungeonLayer implements ISetupLayer,
 	}
 
 	@Override
-	public void regenerate() {
-		this.forEach(room -> {}, false);
+	public void regenerate(boolean composite) {
+		if (!composite) {
+			this.forEach(room -> {}, false);
+		}
 		this.filled = -1;
 		this.list.clear();
 	}

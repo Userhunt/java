@@ -31,8 +31,8 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 	}
 
 	@Override
-	public final void regenerate() {
-		this.layer.regenerate();
+	public final void regenerate(boolean composite) {
+		this.layer.regenerate(composite);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 	}
 
 	public static final PathRepeatLayer<WormLayer> example(DungeonGenerator generator) {
-		return new PathRepeatLayer<>(generator, WormLayer.example(generator), 35, 1);
+		return new PathRepeatLayer<>(generator, WormLayer.example(generator), 50, 1);
 	}
 	
 }

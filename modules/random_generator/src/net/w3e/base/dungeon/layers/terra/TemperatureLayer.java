@@ -6,16 +6,12 @@ public class TemperatureLayer extends NoiseLayer {
 
 	public static final String KEY = "temperature";
 
-	public TemperatureLayer(DungeonGenerator generator, int min, int max, double scale) {
-		super(generator, KEY, min, max, scale);
-	}
-
-	public TemperatureLayer(DungeonGenerator generator, int min, int max, double scale, int def, int stepRate) {
-		super(generator, KEY, min, max, scale, def, stepRate);
+	public TemperatureLayer(DungeonGenerator generator, NoiseData data) {
+		super(generator, data.withKey(KEY));
 	}
 
 	public static final TemperatureLayer example(DungeonGenerator generator) {
-		return new TemperatureLayer(generator, MIN, MAX, -8d);
+		return new TemperatureLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).generateDefValue().build());
 	}
 
 	public static final int MIN = -25;

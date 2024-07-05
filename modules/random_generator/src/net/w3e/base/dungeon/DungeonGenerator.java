@@ -13,13 +13,13 @@ import java.util.function.Supplier;
 import net.w3e.base.collection.CollectionBuilder;
 import net.w3e.base.collection.CollectionBuilder.SimpleCollectionBuilder;
 import net.w3e.base.collection.MapT.MapTString;
+import net.w3e.base.dungeon.layers.DistanceLayer;
 import net.w3e.base.dungeon.layers.FeatureLayer;
 import net.w3e.base.dungeon.layers.ISetupLayer;
 import net.w3e.base.dungeon.layers.RoomLayer;
 import net.w3e.base.dungeon.layers.path.PathRepeatLayer;
 import net.w3e.base.dungeon.layers.terra.BiomeLayer;
 import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
-import net.w3e.base.dungeon.layers.terra.TemperatureLayer;
 import net.w3e.base.holders.BoolHolder;
 import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.vector.WBox;
@@ -156,6 +156,12 @@ public class DungeonGenerator {
 		public final boolean notExistsOrWall() {
 			return !this.exists || this.room.isWall();
 		}
+		public final boolean isEnterance() {
+			return this.room.isEnterance();
+		}
+		public final boolean isWall() {
+			return this.room.isWall();
+		}
 	}
 
 	private final boolean testDimension(WVector3 pos) {
@@ -187,7 +193,7 @@ public class DungeonGenerator {
 		if (!queue.isEmpty()) {
 			DungeonLayer generator = this.queue.getFirst();
 			if (this.regenerate) {
-				generator.regenerate();
+				generator.regenerate(false);
 				this.regenerate = false;
 				i = 1;
 			} else {
@@ -218,20 +224,19 @@ public class DungeonGenerator {
 	}
 
 	public static DungeonGenerator example(long seed) {
-		int size = 12;
+		int size = 10;
 		return new DungeonGenerator(seed, new WBox(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
 			// path
 			PathRepeatLayer::example,
-			// temperature, wet, difficulty?
-			//
+			// distance
+			DistanceLayer::new,
+			// temperature, wet, difficulty
 			CompositeTerraLayer::example,
 			// biomes
 			BiomeLayer::example,
-			// distance
-
 			// rooms
 			RoomLayer::example,
-			// features
+			// features - spawners, chests, ?
 			FeatureLayer::example
 			//clear
 			

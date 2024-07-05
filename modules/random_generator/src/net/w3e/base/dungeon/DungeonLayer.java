@@ -15,7 +15,7 @@ public abstract class DungeonLayer {
 		this.generator = generator;
 	}
 
-	public abstract void regenerate();
+	public abstract void regenerate(boolean b);
 	public abstract int generate();
 	protected final Random random() {
 		return this.generator.random();

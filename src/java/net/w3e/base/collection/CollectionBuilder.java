@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -123,6 +124,11 @@ public class CollectionBuilder<T, V extends Collection<T>, R extends CollectionB
 		for (T object : objects) {
 			remove(object);
 		}
+		return this.cast();
+	}
+
+	public R removeNull() {
+		this.collection.removeIf(Objects::isNull);
 		return this.cast();
 	}
 

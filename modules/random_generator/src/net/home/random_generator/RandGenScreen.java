@@ -28,14 +28,15 @@ import net.api.window.ImageScreen;
 import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
 import net.home.FrameObject;
 import net.home.MainFrame;
+import net.w3e.base.collection.CollectionBuilder;
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.DungeonLayer.IPathLayer;
+import net.w3e.base.dungeon.layers.DistanceLayer;
 import net.w3e.base.dungeon.layers.IListLayer;
 import net.w3e.base.dungeon.layers.terra.BiomeLayer;
 import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
-import net.w3e.base.dungeon.layers.terra.TemperatureLayer;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.math.vector.WBox;
@@ -56,6 +57,7 @@ public class RandGenScreen extends FrameObject {
 	private JCheckBox showWall;
 	private JCheckBox showSoftPath;
 	private JCheckBox showTemperature;
+	private JCheckBox showWet;
 	private JCheckBox showBiome;
 	private JCheckBox fast;
 
@@ -63,8 +65,8 @@ public class RandGenScreen extends FrameObject {
 		List<Component> buttons = new ArrayList<>();
 		List<Component> settings = new ArrayList<>();
 
-		buttons.addAll(LongStream.range(0, 5).mapToObj(seed -> this.createButton(String.valueOf(seed), btn -> exampleDungeon(btn, seed))).toList());
-		settings.addAll(LongStream.range(0, 5).mapToObj(seed -> new JCheckBox("null")).toList());
+		buttons.addAll(LongStream.range(0, 6).mapToObj(seed -> this.createButton(String.valueOf(seed), btn -> exampleDungeon(btn, seed))).toList());
+		settings.addAll(LongStream.range(0, 6).mapToObj(seed -> new JCheckBox("null")).toList());
 
 		int i = 0;
 
@@ -79,6 +81,10 @@ public class RandGenScreen extends FrameObject {
 		this.showTemperature = new JCheckBox("Show Temperature");
 		this.showTemperature.addChangeListener(CHANGE);
 		settings.set(i++, this.showTemperature);
+
+		this.showWet = new JCheckBox("Show Wet");
+		this.showWet.addChangeListener(CHANGE);
+		settings.set(i++, this.showWet);
 
 		this.showBiome = new JCheckBox("Show Biome");
 		this.showBiome.addChangeListener(CHANGE);
@@ -145,7 +151,7 @@ public class RandGenScreen extends FrameObject {
 		WBox dimension = dungeon.dimension();
 		WVector3 size = dimension.size().add(new WVector3(1, 1, 1));
 		IntHolder limit = new IntHolder();
-		this.image = new ImageScreen.ImageScreenBuilder().setLocation(fw).setSize(size.getX() * 3, size.getZ() * 3).setScale(9).buildWith((frameTitle, width, height, scale, background) -> 
+		this.image = new ImageScreen.ImageScreenBuilder().setLocation(fw).setSize(size.getX() * 4, size.getZ() * 4).setScale(9).buildWith((frameTitle, width, height, scale, background) -> 
 			new ImagePainter(frameTitle, width, height, scale, background, dungeon)
 		);
 		this.backgroundExecutor = new BackgroundExecutorBuilder(name, fw).setExecute((oldProgres, executor) -> this.execute(oldProgres, executor, limit, dungeon)).setParentVisible(true).setUpdateParentPosition(false).build();
@@ -187,19 +193,31 @@ public class RandGenScreen extends FrameObject {
 				continue;
 			}
 			if (generator instanceof IListLayer list) {
-				if (list instanceof TemperatureLayer) {
-					System.out.println(this.printString(limit, count, "terra/temperature", String.format("temps %s/%s", list.size(), list.filled())));
-					continue;
-				}
 				if (list instanceof CompositeTerraLayer) {
+					if (list.size() == -1) {
+						System.out.println(this.printString(limit, count, "terra/composite", "setup"));
+						continue;
+					}
 					System.out.println(this.printString(limit, count, "terra/composite", String.format("rooms %s/%s", list.size(), list.filled())));
 					continue;
 				}
 				if (list instanceof BiomeLayer) {
+					if (list.size() == -1) {
+						System.out.println(this.printString(limit, count, "terra/biome", "setup"));
+						continue;
+					}
 					System.out.println(this.printString(limit, count, "terra/biome", String.format("biomes %s/%s", list.size(), list.filled())));
 					continue;
 				}
-				System.out.println(this.printString(limit, count, "terra/unhandled", generator.getClass().getSimpleName()));
+				if (list instanceof DistanceLayer) {
+					if (list.size() == -1) {
+						System.out.println(this.printString(limit, count, "distance", "setup"));
+						continue;
+					}
+					System.out.println(this.printString(limit, count, "distance", String.format("enterances %s/%s", list.size(), list.filled())));
+					continue;
+				}
+				System.out.println(this.printString(limit, count, "list/unhandled", generator.getClass().getSimpleName()));
 				continue;
 			}
 			System.out.println(this.printString(limit, count, "unhandled", generator.getClass().getSimpleName()));
@@ -218,14 +236,16 @@ public class RandGenScreen extends FrameObject {
 
 		private final int scale;
 		private final DungeonGenerator dungeon;
+		private final WVector3 size;
 		private final WVector3 min;
 		private final List<AbstractFrameWin> windows = new ArrayList<>();
 
 		private ImagePainter(String frameTitle, int width, int height, int scale, Color background, DungeonGenerator dungeon) {
 			super(frameTitle, width, height, scale, background);
-			this.scale = scale * 3;
+			this.scale = scale * 4;
 			this.dungeon = dungeon;
 			WBox dimension = dungeon.dimension();
+			this.size = dimension.size().add(new WVector3(1, 1, 1));
 			this.min = dimension.min().inverse();
 
 			this.setVisible(true);
@@ -238,15 +258,29 @@ public class RandGenScreen extends FrameObject {
 			boolean showWall = RandGenScreen.this.showWall.isSelected();
 			boolean showSoftPath = RandGenScreen.this.showSoftPath.isSelected();
 			boolean showTemperature = RandGenScreen.this.showTemperature.isSelected();
+			boolean showWet = RandGenScreen.this.showWet.isSelected();
 			boolean showBiome = RandGenScreen.this.showBiome.isSelected();
 
 			this.setColor(Color.WHITE);
+
+			for (int x = 0; x < this.size.getX(); x++) {
+				for (int z = 0; z < this.size.getZ(); z++) {
+					for (int i = 0; i < 4; i++) {
+						for (int j = 0; j < 4; j++) {
+							if (i == 0 || j == 0) {
+								this.setColor(x * 4 + i, z * 4 + j, Color.GRAY);
+							}
+						}
+					}
+				}
+			}
+
 			for (Map<WVector3, DungeonRoomInfo> entry1 : this.dungeon.getRooms().values()) {
 				data[0] += entry1.size();
 				for (Entry<WVector3, DungeonRoomInfo> entry2 : entry1.entrySet()) {
 					WVector3 pos = entry2.getKey();
-					int x = (pos.getX() + min.getX()) * 3 + 1;
-					int z = (pos.getZ() + min.getZ()) * 3 + 1;
+					int x = (pos.getX() + min.getX()) * 4 + 2;
+					int z = (pos.getZ() + min.getZ()) * 4 + 2;
 					try {
 						DungeonRoomInfo value = entry2.getValue();
 
@@ -258,9 +292,23 @@ public class RandGenScreen extends FrameObject {
 								this.setColor(x- 1, z - 1, Color.ORANGE);
 							}
 						}
+						if (showWet) {
+							int wet = value.data().getInt("wet");
+							if (wet < 50) {
+								this.setColor(x + 1, z - 1, Color.CYAN);
+							} else if (wet > 0) {
+								this.setColor(x + 1, z - 1, Color.YELLOW);
+							}
+						}
 						if (showBiome) {
-							if (!value.data().get(BiomeLayer.KEY).equals("void")) {
-								this.setColor(x + 1, z + 1, Color.MAGENTA);
+							try {
+								if (!value.data().get(BiomeLayer.KEY).equals("void")) {
+									this.setColor(x + 1, z + 1, Color.MAGENTA);
+								}
+							} catch (Exception e) {
+								e.printStackTrace();
+								showBiome = false;
+								RandGenScreen.this.showBiome.setSelected(false);
 							}
 						}
 
@@ -297,7 +345,7 @@ public class RandGenScreen extends FrameObject {
 		}
 
 		@Override
-		public void mouseClicked(MouseEvent event) {
+		public final void mouseClicked(MouseEvent event) {
 			int x = event.getX() / this.scale - this.min.getX();
 			int z = event.getY() / this.scale - this.min.getZ();
 			DungeonRoomCreateInfo data = this.dungeon.get(new WVector3(x, 0, z));
@@ -312,16 +360,23 @@ public class RandGenScreen extends FrameObject {
 						this.setEnabled(false);
 					}
 				};
-				frame.setLocation(event.getXOnScreen() - (event.getXOnScreen() % this.scale) + 9, event.getYOnScreen() - (event.getYOnScreen() % this.scale) + 9);
+				frame.setLocation(event.getXOnScreen() - (event.getXOnScreen() % this.scale) + 18, event.getYOnScreen() - (event.getYOnScreen() % this.scale) + 18);
 
 				List<Component> list = new ArrayList<>();
 
 				list.add(new JLabel(String.format("Pos: %s", room.pos().toStringArray())));
 				list.add(new JLabel(String.format("Chunk: %s", room.chunk().toStringArray())));
-				list.add(new JLabel(String.format("Distance: %s", room.distance())));
+				list.add(new JLabel(String.format("Distance: %s", room.getDistance())));
 				list.add(new JLabel(String.format("IsWall: %s", room.isWall())));
 				list.add(new JLabel(String.format("IsEnterance: %s", room.isEnterance())));
-				list.add(new JLabel(String.format("Connections: %s", null)));
+				list.add(new JLabel(String.format("Connections: %s", CollectionBuilder.list(String.class)
+					.add(room.isConnect(WDirection.UP) ? WDirection.UP.name() : null)
+					.add(room.isConnect(WDirection.DOWN) ? WDirection.DOWN.name() : null)
+					.add(room.isConnect(WDirection.NORTH) ? WDirection.NORTH.name() : null)
+					.add(room.isConnect(WDirection.SOUTH) ? WDirection.SOUTH.name() : null)
+					.add(room.isConnect(WDirection.WEST) ? WDirection.WEST.name() : null)
+					.add(room.isConnect(WDirection.EAST) ? WDirection.EAST.name() : null)
+				.removeNull().build())));
 				list.add(new JLabel(String.format("Data: %s", room.data())));
 
 				RandGenScreen.this.simpleColumn(frame, list);
@@ -329,16 +384,12 @@ public class RandGenScreen extends FrameObject {
 				frame.pack();
 				frame.setVisible(true);
 				this.windows.removeIf(e -> !e.isEnabled());
-				System.out.println(this.windows.size());
 				for (AbstractFrameWin fw : this.windows) {
 					fw.requestFocus();
 				}
 				this.windows.add(frame);
 				frame.requestFocus();
 			}
-
-			//AbstractFrameWin frame = new AbstractFrameWin();
-			
 		}
 
 		@Override

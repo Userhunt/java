@@ -10,7 +10,7 @@ public class FeatureLayer extends DungeonLayer {
 	}
 
 	@Override
-	public void regenerate() {
+	public void regenerate(boolean composite) {
 
 	}
 

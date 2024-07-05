@@ -23,8 +23,13 @@ public record DungeonRoomInfo(WVector3 pos, WVector3 chunk, int[] flags, MapTStr
 		return new int[]{this.flags[0], this.flags[1]};
 	}
 
-	public final int distance() {
+	public final int getDistance() {
 		return this.flags[0];
+	}
+
+	public final DungeonRoomInfo setDistance(int distance) {
+		this.flags[0] = distance;
+		return this;
 	}
 
 	public final boolean isWall() {

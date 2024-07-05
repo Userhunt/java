@@ -12,8 +12,11 @@ import net.w3e.base.collection.MapT.MapTString;
 import net.w3e.base.collection.RandomCollection;
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
+import net.w3e.base.dungeon.layers.BaseLayerRange;
+import net.w3e.base.dungeon.layers.BaseLayerRange.BaseLayerRangeRoomValues;
 import net.w3e.base.dungeon.layers.IListLayer;
 import net.w3e.base.dungeon.layers.ISetupLayer;
+import net.w3e.base.dungeon.layers.LayerRange;
 import net.w3e.base.holders.ObjectHolder;
 import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.DungeonRoomInfo;
@@ -45,7 +48,6 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 		this.percent = percent;
 		this.biomeList.addAll(biomes);
 		this.biomeList.removeIf(BiomeInfo::notValid);
-		Collections.sort(this.biomeList);
 	}
 
 	@Override
@@ -54,43 +56,49 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 	}
 
 	@Override
-	public final void regenerate() {
+	public final void regenerate(boolean composite) {
 		this.list.clear();
 		this.workList.clear();
 		this.filled = -1;
-		this.progress = Progress.createPoint;
-		List<WVector3> poses = new ArrayList<>();
-		this.forEach(room -> {
-			poses.add(room.pos());
-		}, false);
-		int size = poses.size();
-		this.filled = 0;
-		while (this.filled * 10f * 100 / size <= this.percent) {
-			this.list.add(new BiomePoint<>(poses.remove(this.random().nextInt(size - this.filled))));
-			this.filled++;
-		}
+		this.progress = Progress.createArray;
+
 		this.biomeList.stream().map(BiomeInfo::copy).forEach(this.workList::add);
 	}
 
 	@Override
-	public int generate() {
+	public final int generate() {
 		Progress prevProgress = this.progress;
 		float i = 0;
-		if (this.progress == Progress.createPoint) {
+
+		if (this.progress == Progress.createArray) {
+			List<WVector3> poses = new ArrayList<>();
+			this.forEach(room -> {
+				poses.add(room.pos());
+			}, false);
+			int size = poses.size();
+			this.filled = 0;
+			while (this.filled * 10f * 100 / size <= this.percent) {
+				this.list.add(new BiomePoint<>(poses.remove(this.random().nextInt(size - this.filled))));
+				this.filled++;
+			}
+			this.progress = Progress.createPoint;
+			i = 100;
+		} else if (this.progress == Progress.createPoint) {
 			Iterator<BiomePoint<T>> iterator = this.list.iterator();
 			while (iterator.hasNext()) {
 				BiomePoint<T> point = iterator.next();
 				DungeonRoomCreateInfo room = this.putOrGet(point.pos);
-				int temperature = room.data().getInt(TemperatureLayer.KEY);
+				MapTString data = room.data();
+				BaseLayerRangeRoomValues values = new BaseLayerRangeRoomValues(room.room());
 				RandomCollection<BiomeInfo<T>> random = new RandomCollection<>(this.random());
 				for (BiomeInfo<T> biomeData : this.workList) {
-					if (biomeData.testTemp(temperature)) {
+					if (biomeData.test(values)) {
 						random.add(biomeData.weight, biomeData);
 					}
 				}
 				if (!random.isEmpty()) {
 					BiomeInfo<T> info = random.getRandom();
-					room.data().put(KEY, info.value());
+					data.put(KEY, info.value());
 					point.info.set(info);
 					if (info.substract()) {
 						this.workList.remove(info);
@@ -131,6 +139,7 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 	}
 
 	private enum Progress {
+		createArray,
 		createPoint,
 		spread
 		;
@@ -151,12 +160,13 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 		private BiomePoint(WVector3 pos) {
 			this(pos, new ObjectHolder<>(), new ArrayList<>());
 		}
+
 		public final boolean fill(BiomeLayer<T> layer) {
 			BiomeInfo<T> info = this.info.get();
 			Random random = layer.random();
 			Collections.shuffle(this.rooms, random);
 
-			int impulse = info.temp.random(random);
+			int impulse = info.impulse.random(random);
 			for (int i = 0; i < impulse; i++) {
 				DungeonRoomInfo room = this.rooms.get(random.nextInt(this.rooms.size()));
 				WVector3 pos = room.pos();
@@ -193,37 +203,22 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 		}
 	}
 
-	public record BiomeData(int min, int max) {
-		public final boolean notValid() {
-			return this.max < this.min;
+	public static record BiomeInfo<T>(int weight, BaseLayerRange baseLayerRange, LayerRange impulse, T value, int[] count) {
+
+		public BiomeInfo(int weight, BaseLayerRange baseLayerRange, LayerRange impulse, T value, int count) {
+			this(weight, baseLayerRange, impulse, value, new int[]{count});
 		}
 
-		public final int range() {
-			return this.max - min;
-		}
-
-		public final int random(Random random) {
-			return random.nextInt(this.range()) + this.min;
-		}
-	}
-
-	public static record BiomeInfo<T>(int weight, BiomeData temp, BiomeData impulse, T value, int[] count) implements Comparable<BiomeInfo<T>> {
-
-		public BiomeInfo(int weight, BiomeData temp, BiomeData impulse, T value, int count) {
-			this(weight, temp, impulse, value, new int[]{count});
-		}
-
-		@Override
-		public final int compareTo(BiomeInfo<T> o) {
-			return Integer.compare(this.temp.min, o.temp.min);
+		public BiomeInfo(int weight, BaseLayerRange baseLayerRange, LayerRange impulse, T value) {
+			this(weight, baseLayerRange, impulse, value, -1);
 		}
 
 		public final boolean notValid() {
-			return this.temp.notValid() || this.impulse.notValid() || (this.impulse.min == 0 && this.impulse.range() == 0);
+			return this.value == null || this.baseLayerRange.notValid() || this.impulse.notValid() || (this.impulse.min() == 0 && this.impulse.range() == 0);
 		}
 
-		public final boolean testTemp(int temperature) {
-			return temperature >= this.temp.min && temperature <= this.temp.max;
+		public final boolean test(BaseLayerRangeRoomValues values) {
+			return this.baseLayerRange.test(values);
 		}
 
 		public final boolean substract() {
@@ -231,7 +226,7 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 		}
 
 		public final BiomeInfo<T> copy() {
-			return this.count[0] <= -1 ? this : new BiomeInfo<T>(this.weight, this.temp, this.impulse, this.value, new int[]{this.count[0]});
+			return this.count[0] <= -1 ? this : new BiomeInfo<T>(this.weight, this.baseLayerRange, this.impulse, this.value, new int[]{this.count[0]});
 		}
 	}
 
@@ -242,14 +237,19 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 		for (int i = 0; i < range; i++) {
 			for (int j = 1; j < 3; j++) {
 				int name = i * 5 + TemperatureLayer.MIN;
+
 				int minTemp = name;
 				int maxTemp = minTemp + 5;
 				int weight = random.nextInt(10) + 5;
 				minTemp += random.nextInt(5) - 2;
 				maxTemp += random.nextInt(5) - 2;
+
 				int minImpulse = random.nextInt(4);
 				int maxImpulse = random.nextInt(6);
-				biomes.add(new BiomeInfo<String>(weight, new BiomeData(minTemp, maxTemp), new BiomeData(minImpulse, maxImpulse), String.format("%s-%s", name, j), 1 + random.nextInt(3)));
+
+				int minWet = random.nextInt(25) + 26;
+				int maxWet = random.nextInt(25) + 51;
+				biomes.add(new BiomeInfo<String>(weight, new BaseLayerRange(new LayerRange(minTemp, maxTemp), random.nextBoolean() ? new LayerRange(minWet, maxWet) : null, null, null), new LayerRange(minImpulse, maxImpulse), String.format("%s-%s", name, j), 1 + random.nextInt(3)));
 			}
 		}
 

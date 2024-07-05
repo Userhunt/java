@@ -20,8 +20,11 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 	}
 
 	@Override
-	public final void regenerate() {
-		super.regenerate();
+	public final void regenerate(boolean composite) {
+		super.regenerate(composite);
+		for (TerraLayer<?> layer : this.layers) {
+			layer.regenerate(true);
+		}
 	}
 
 	@Override
@@ -31,9 +34,8 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 		}
 	}
 
-	@Deprecated
 	public static final CompositeTerraLayer example(DungeonGenerator generator) {
-		return new CompositeTerraLayer(generator, 50, TemperatureLayer.example(generator), WetLayer.example(generator));
+		return new CompositeTerraLayer(generator, 50, TemperatureLayer.example(generator), WetLayer.example(generator), DifficultyLayer.example(generator));
 	}
 	
 }
