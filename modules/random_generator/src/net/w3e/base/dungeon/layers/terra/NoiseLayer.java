@@ -4,7 +4,7 @@ import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.OpenSimplex2S;
-import net.w3e.base.math.vector.WVector3;
+import net.w3e.base.math.vector.i.WVector3I;
 
 public class NoiseLayer extends TerraLayer<Integer> {
 
@@ -33,11 +33,11 @@ public class NoiseLayer extends TerraLayer<Integer> {
 
 	@Override
 	public final void generate(DungeonRoomInfo room) {
-		WVector3 pos = room.pos();
+		WVector3I pos = room.pos();
 		double scale = this.data.scale();
-		double x = pos.getX() * scale;
-		double y = pos.getY() * scale;
-		double z = pos.getZ() * scale;
+		double x = pos.getXI() * scale;
+		double y = pos.getYI() * scale;
+		double z = pos.getZI() * scale;
 		float noise = OpenSimplex2S.noise3_ImproveXZ(this.seed, x, y, z);
 		noise = this.data.toRange(noise);
 		noise = this.modify(noise);

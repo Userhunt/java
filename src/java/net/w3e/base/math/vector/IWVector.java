@@ -1,67 +1,65 @@
 package net.w3e.base.math.vector;
 
-public abstract class IWVector<T extends IWVector<T>> implements Comparable<IWVector<T>> {
+import net.w3e.base.math.vector.i.IWVectorNI;
 
-	public abstract int getX();
-	public abstract int getY();
-	public abstract int getZ();
+public abstract class IWVector<T extends IWVector<T>> implements Comparable<T> {
 
-	protected abstract IWVector<T> create(int x, int y, int z);
+	public abstract int getXI();
+	public abstract int getYI();
+	public abstract int getZI();
+	
+	public abstract double getXD();
+	public abstract double getYD();
+	public abstract double getZD();
 
+	protected abstract T create(double x, double y, double z);
+	
 	public final T add(WDirection direction) {
 		return this.add(direction.relative);
 	}
-
-	@SuppressWarnings("unchecked")
+	public final T add(IWVectorNI<?> vector) {
+		return this.add(vector.getXI(), vector.getYI(), vector.getZI());
+	}
 	public final T add(IWVector<?> vector) {
-		return (T)this.create(this.getX() + vector.getX(), this.getY() + vector.getY(), this.getZ() + vector.getZ());
+		return this.add(vector.getXD(), vector.getYD(), vector.getZD());
+	}
+	public final T add(double x, double y, double z) {
+		return this.create(this.getXD() + x, this.getYD() + y, this.getZD() + z);
+	}
+
+	public final T substract(WDirection direction) {
+		return this.substract(direction.relative);
+	}
+	public final T substract(IWVectorNI<?> vector) {
+		return this.substract(vector.getXI(), vector.getYI(), vector.getZI());
+	}
+	public final T substract(IWVector<?> vector) {
+		return this.substract(vector.getXD(), vector.getYD(), vector.getZD());
+	}
+	public final T substract(double x, double y, double z) {
+		return this.create(this.getXD() - x, this.getYD() - y, this.getZD() - z);
 	}
 
 	public final T inverse() {
 		return this.scale(-1);
 	}
-
-	@SuppressWarnings("unchecked")
-	public final T scale(int i) {
-		return (T)this.create(this.getX() * i, this.getY() * i, this.getZ() * i);
+	public final T scale(double i) {
+		return this.create(this.getXD() * i, this.getYD() * i, this.getZD() * i);
 	}
 
-	@SuppressWarnings("unchecked")
-	public final T withX(int i) {
-		return (T)this.create(i, this.getY(), this.getZ());
+	public final T withX(double i) {
+		return this.create(i, this.getYD(), this.getZD());
 	}
 
-	@SuppressWarnings("unchecked")
-	public final T withY(int i) {
-		return (T)this.create(this.getX(), i, this.getZ());
+	public final T withY(double i) {
+		return this.create(this.getXD(), i, this.getZD());
 	}
 
-	@SuppressWarnings("unchecked")
-	public final T withZ(int i) {
-		return (T)this.create(this.getX(), this.getY(), i);
+	public final T withZ(double i) {
+		return this.create(this.getXD(), this.getYD(), i);
 	}
 
-	public final WVector3 toChunk() {
-		return toChunk(this);
-	}
-
-	public final WVector3 toPos() {
-		return toPos(this);
-	}
-
-	public static final WVector3 toChunk(IWVector<?> pos) {
-		if (pos == null) {
-			return WVector3.EMPTY;
-		}
-		return new WVector3(pos.getX() >> 4, pos.getY() >> 4, pos.getZ() >> 4);
-	}
-
-	public static final WVector3 toPos(IWVector<?> chunk) {
-		if (chunk == null) {
-			return WVector3.EMPTY;
-		}
-		return new WVector3(chunk.getX() << 4, chunk.getY() << 4, chunk.getZ() << 4);
-	}
+	public abstract String toStringArray();
 
 	@Override
 	public final boolean equals(Object object) {
@@ -71,37 +69,17 @@ public abstract class IWVector<T extends IWVector<T>> implements Comparable<IWVe
 		if (!(object instanceof IWVector<?> vector)) {
 			return false;
 		}
-		if (this.getX() != vector.getX()) {
+		if (this.getXD() != vector.getXD()) {
 			return false;
 		}
-		if (this.getY() != vector.getY()) {
+		if (this.getYD() != vector.getYD()) {
 			return false;
 		}
-		return this.getZ() == vector.getZ();
+		return this.getZD() == vector.getZD();
 	}
 
 	@Override
 	public final int hashCode() {
-		return (this.getY() + this.getZ() * 31) * 31 + this.getX();
-	}
-
-	@Override
-	public final String toString() {
-		return String.format("{class:\"%s\",hash:%s,x:%s,y:%s,z:%s}", this.getClass().getSimpleName(), this.hashCode(), this.getX(), this.getY(), this.getZ());
-	}
-
-	public final String toStringArray() {
-		return String.format("[%s,%s,%s]", this.getX(), this.getY(), this.getZ());
-	}
-
-	@Override
-	public final int compareTo(IWVector<T> vector) {
-		if (this.getX() == vector.getY()) {
-			if (this.getZ() == vector.getZ()) {
-				return this.getX() - vector.getX();
-			}
-			return this.getZ() - vector.getZ();
-		}
-		return this.getY() - vector.getY();
+		return (this.getYI() + this.getZI() * 31) * 31 + this.getXI();
 	}
 }

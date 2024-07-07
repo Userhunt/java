@@ -1,11 +1,14 @@
 package net.api.window;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.IntSupplier;
+import java.util.stream.Stream;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -17,7 +20,9 @@ import org.jetbrains.annotations.Nullable;
 import net.api.CustomOutputStream;
 import net.api.window.jcomponent.JConsole;
 import net.w3e.base.BooleanEnum;
+import net.w3e.base.holders.ObjectHolder;
 import net.w3e.base.holders.number.IntHolder;
+import net.w3e.base.math.BMatUtil;
 
 public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor {
 
@@ -61,9 +66,9 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 		return this.updateParentPosition;
 	}
 
-	public final void run() {
+	public final IntHolder run() {
 		if (!this.timer.isStop()) {
-			return;
+			return null;
 		}
 		this.stop = false;
 		IntHolder progress = new IntHolder();
@@ -109,8 +114,10 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 				}
 			}
 		}, 10, false);
+		return progress;
 	}
 
+	@Override
 	public final void print(Runnable runnable) {
 		this.printStream.print(runnable);
 	}
@@ -161,8 +168,8 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 			return this;
 		}
 
-		public final void run() {
-			this.build().run();
+		public final IntHolder run() {
+			return this.build().run();
 		}
 
 		public final void runThread(Consumer<BackgroundExecutor> execute, IntSupplier progress) {
@@ -176,6 +183,39 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 			}, this.done, !this.parentVisible, this.updateParentPosition);
 			exe.run();
 			thread.execute(() -> execute.accept(exe));
+		}
+
+		public final BackgroundExecutor multiple(int tickRate, BackgroundExecutor... executors) {
+			if (executors.length == 0) {
+				return null;
+			}
+			int size = executors.length;
+			List<BackgroundExecutor> list = new ArrayList<>(Stream.of(executors).toList());
+			for (BackgroundExecutor executor : list) {
+				executor.setVisible(false);
+			}
+
+			ObjectHolder<IntHolder> holder = new ObjectHolder<>();
+
+			BackgroundExecutor exe = new BackgroundExecutor(this.frameTitle, this.parent, (oldProgress, executor) -> {
+				IntHolder progress = holder.get();
+				if ((progress == null || progress.get() >= 100) && !list.isEmpty()) {
+					BackgroundExecutor frame = list.remove(0);
+					frame.setVisible(true);
+					progress = frame.run();
+					holder.set(progress);
+				}
+				int p1 = BMatUtil.round((size - list.size()) * 100d / size);
+				int p2 = progress.getAsInt();
+				int p3 = BMatUtil.round(((double)p2) / size);
+				executor.print(() -> {
+					System.out.println(String.format("Stage: %s. Progress of stage: %s. Progress: %s", p1, p2, p3));
+				});
+				Inputs.sleep(tickRate);
+				return p1 + p3;
+			}, this.done, !this.parentVisible, this.updateParentPosition);
+			
+			return exe;
 		}
 
 		public final BackgroundExecutor build() {

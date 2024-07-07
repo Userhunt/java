@@ -34,14 +34,14 @@ import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.DungeonLayer.IPathLayer;
 import net.w3e.base.dungeon.layers.DistanceLayer;
-import net.w3e.base.dungeon.layers.IListLayer;
+import net.w3e.base.dungeon.layers.ListLayer;
 import net.w3e.base.dungeon.layers.terra.BiomeLayer;
 import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.holders.number.IntHolder;
-import net.w3e.base.math.vector.WBox;
 import net.w3e.base.math.vector.WDirection;
-import net.w3e.base.math.vector.WVector3;
+import net.w3e.base.math.vector.i.WBoxI;
+import net.w3e.base.math.vector.i.WVector3I;
 
 public class RandGenScreen extends FrameObject {
 
@@ -148,10 +148,10 @@ public class RandGenScreen extends FrameObject {
 		this.onClose();
 		dungeon.regenerate();
 		FrameWin fw = this.getFrame();
-		WBox dimension = dungeon.dimension();
-		WVector3 size = dimension.size().add(new WVector3(1, 1, 1));
+		WBoxI dimension = dungeon.dimension();
+		WVector3I size = dimension.size().add(new WVector3I(1, 1, 1));
 		IntHolder limit = new IntHolder();
-		this.image = new ImageScreen.ImageScreenBuilder().setLocation(fw).setSize(size.getX() * 4, size.getZ() * 4).setScale(9).buildWith((frameTitle, width, height, scale, background) -> 
+		this.image = new ImageScreen.ImageScreenBuilder().setLocation(fw).setSize(size.getXI() * 4, size.getZI() * 4).setScale(9).buildWith((frameTitle, width, height, scale, background) -> 
 			new ImagePainter(frameTitle, width, height, scale, background, dungeon)
 		);
 		this.backgroundExecutor = new BackgroundExecutorBuilder(name, fw).setExecute((oldProgres, executor) -> this.execute(oldProgres, executor, limit, dungeon)).setParentVisible(true).setUpdateParentPosition(false).build();
@@ -192,7 +192,7 @@ public class RandGenScreen extends FrameObject {
 				System.out.println(this.printString(limit, count, "path", String.format("rooms %s, connections:[%s,%s]", data[0], data[1], data[2])));
 				continue;
 			}
-			if (generator instanceof IListLayer list) {
+			if (generator instanceof ListLayer list) {
 				if (list instanceof CompositeTerraLayer) {
 					if (list.size() == -1) {
 						System.out.println(this.printString(limit, count, "terra/composite", "setup"));
@@ -201,14 +201,14 @@ public class RandGenScreen extends FrameObject {
 					System.out.println(this.printString(limit, count, "terra/composite", String.format("rooms %s/%s", list.size(), list.filled())));
 					continue;
 				}
-				if (list instanceof BiomeLayer) {
+				/*if (list instanceof BiomeLayer) {
 					if (list.size() == -1) {
 						System.out.println(this.printString(limit, count, "terra/biome", "setup"));
 						continue;
 					}
 					System.out.println(this.printString(limit, count, "terra/biome", String.format("biomes %s/%s", list.size(), list.filled())));
 					continue;
-				}
+				}*/
 				if (list instanceof DistanceLayer) {
 					if (list.size() == -1) {
 						System.out.println(this.printString(limit, count, "distance", "setup"));
@@ -236,16 +236,16 @@ public class RandGenScreen extends FrameObject {
 
 		private final int scale;
 		private final DungeonGenerator dungeon;
-		private final WVector3 size;
-		private final WVector3 min;
+		private final WVector3I size;
+		private final WVector3I min;
 		private final List<AbstractFrameWin> windows = new ArrayList<>();
 
 		private ImagePainter(String frameTitle, int width, int height, int scale, Color background, DungeonGenerator dungeon) {
 			super(frameTitle, width, height, scale, background);
 			this.scale = scale * 4;
 			this.dungeon = dungeon;
-			WBox dimension = dungeon.dimension();
-			this.size = dimension.size().add(new WVector3(1, 1, 1));
+			WBoxI dimension = dungeon.dimension();
+			this.size = dimension.size().add(new WVector3I(1, 1, 1));
 			this.min = dimension.min().inverse();
 
 			this.setVisible(true);
@@ -263,8 +263,8 @@ public class RandGenScreen extends FrameObject {
 
 			this.setColor(Color.WHITE);
 
-			for (int x = 0; x < this.size.getX(); x++) {
-				for (int z = 0; z < this.size.getZ(); z++) {
+			for (int x = 0; x < this.size.getXI(); x++) {
+				for (int z = 0; z < this.size.getZI(); z++) {
 					for (int i = 0; i < 4; i++) {
 						for (int j = 0; j < 4; j++) {
 							if (i == 0 || j == 0) {
@@ -275,12 +275,12 @@ public class RandGenScreen extends FrameObject {
 				}
 			}
 
-			for (Map<WVector3, DungeonRoomInfo> entry1 : this.dungeon.getRooms().values()) {
+			for (Map<WVector3I, DungeonRoomInfo> entry1 : this.dungeon.getRooms().values()) {
 				data[0] += entry1.size();
-				for (Entry<WVector3, DungeonRoomInfo> entry2 : entry1.entrySet()) {
-					WVector3 pos = entry2.getKey();
-					int x = (pos.getX() + min.getX()) * 4 + 2;
-					int z = (pos.getZ() + min.getZ()) * 4 + 2;
+				for (Entry<WVector3I, DungeonRoomInfo> entry2 : entry1.entrySet()) {
+					WVector3I pos = entry2.getKey();
+					int x = (pos.getXI() + min.getXI()) * 4 + 2;
+					int z = (pos.getZI() + min.getZI()) * 4 + 2;
 					try {
 						DungeonRoomInfo value = entry2.getValue();
 
@@ -327,11 +327,11 @@ public class RandGenScreen extends FrameObject {
 							if (direction != WDirection.UP && direction != WDirection.DOWN) {
 								if (value.isConnect(direction, true)) {
 									data[1]++;
-									this.setColor(x + direction.relative.getX(), z + + direction.relative.getZ(), Color.RED);
+									this.setColor(x + direction.relative.getXI(), z + + direction.relative.getZI(), Color.RED);
 								} else if (value.isConnect(direction, false)) {
 									data[2]++;
 									if (showSoftPath) {
-										this.setColor(x + direction.relative.getX(), z + + direction.relative.getZ(), Color.GREEN);
+										this.setColor(x + direction.relative.getXI(), z + + direction.relative.getZI(), Color.GREEN);
 									}
 								}
 							}
@@ -346,9 +346,9 @@ public class RandGenScreen extends FrameObject {
 
 		@Override
 		public final void mouseClicked(MouseEvent event) {
-			int x = event.getX() / this.scale - this.min.getX();
-			int z = event.getY() / this.scale - this.min.getZ();
-			DungeonRoomCreateInfo data = this.dungeon.get(new WVector3(x, 0, z));
+			int x = event.getX() / this.scale - this.min.getXI();
+			int z = event.getY() / this.scale - this.min.getZI();
+			DungeonRoomCreateInfo data = this.dungeon.get(new WVector3I(x, 0, z));
 			if (!data.exists()) {
 				System.err.println("not found");
 			} else {

@@ -1,4 +1,4 @@
-package net.home.simple;
+package net.home.example;
 
 import java.awt.Component;
 import java.nio.file.Path;
@@ -34,6 +34,7 @@ import net.w3e.base.collection.RandomCollection;
 import net.w3e.base.collection.ModifiedQueue.QueueTask;
 import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.jar.JarUtil;
+import net.w3e.base.math.BMatUtil;
 
 public class TestScreen extends FrameObject {
 
@@ -59,8 +60,10 @@ public class TestScreen extends FrameObject {
 		list.add(this.addCmonentListiner(new JButton("sneak"), this::sneakDisplay));
 		list.add(this.addCmonentListiner(new JButton("randomCollection"), this::randomCollection));
 		list.add(this.addCmonentListiner(new JButton("ThreadList"), this::threadList));
+		list.add(this.addCmonentListiner(new JButton("cast"), this::cast));
 		list.add(this.addCmonentListiner(new JButton("Frame Location"), this::location));
 		list.add(this.addCmonentListiner(new JButton("Noise Screen"), this::noiseScreen));
+		list.add(this.addCmonentListiner(new JButton("Bezier Screen"), this::bezierScreen));
 
 		this.simpleColumn(fw.getContentPane(), list);
 
@@ -362,7 +365,7 @@ public class TestScreen extends FrameObject {
 
 		long time = System.currentTimeMillis();
 
-		new BackgroundExecutor.BackgroundExecutorBuilder("Title", this.getFrame()).runThread((executor) -> {
+		new BackgroundExecutor.BackgroundExecutorBuilder("Random collection", this.getFrame()).runThread((executor) -> {
 			boolean stop = false;
 			try {
 				while(intTuple.getAsInt() > 0) {
@@ -403,11 +406,65 @@ public class TestScreen extends FrameObject {
 		System.out.println(Thread.getAllStackTraces().keySet());
 	}
 
+	private final void cast(JButton button) {
+		int iteration = 100_000_000;
+		int size = 100;
+		IntHolder intTuple = new IntHolder();
+
+		int[] a = new int[size];
+		int[] b = new int[size];
+		for (int i = 0; i < a.length; i++) {
+			a[i] = i;
+		}
+
+		BackgroundExecutor exe1 = new BackgroundExecutor.BackgroundExecutorBuilder("Normal Mode", this.getFrame()).setParentVisible(true).setExecute((oldProgress, executor) -> {
+			long time = System.currentTimeMillis();
+			while (System.currentTimeMillis() - time <= 50 && intTuple.get() > 0) {
+				for (int i = 0; i < a.length; i++) {
+					b[i] = a[i];
+				}
+				intTuple.remove();
+			}
+			System.out.println(intTuple.getAsInt());
+			return (iteration - intTuple.getAsInt()) * 100 / iteration;
+		}).build();
+
+		BackgroundExecutor exe2 = new BackgroundExecutor.BackgroundExecutorBuilder("Cast Mode", this.getFrame()).setParentVisible(true).setExecute((oldProgress, executor) -> {
+			long time = System.currentTimeMillis();
+			while (System.currentTimeMillis() - time <= 50 && intTuple.get() > 0) {
+				for (int i = 0; i < a.length; i++) {
+					b[i] = (int)(double)a[i];
+				}
+				intTuple.remove();
+			}
+			System.out.println(intTuple.getAsInt());
+			return (iteration - intTuple.getAsInt()) * 100 / iteration;
+		}).build();
+
+		BackgroundExecutor exe3 = new BackgroundExecutor.BackgroundExecutorBuilder("Round Mode", this.getFrame()).setParentVisible(true).setExecute((oldProgress, executor) -> {
+			long time = System.currentTimeMillis();
+			while (System.currentTimeMillis() - time <= 50 && intTuple.get() > 0) {
+				for (int i = 0; i < a.length; i++) {
+					b[i] = BMatUtil.round((double)a[i]);
+				}
+				intTuple.remove();
+			}
+			System.out.println(intTuple.getAsInt());
+			return (iteration - intTuple.getAsInt()) * 100 / iteration;
+		}).build();
+	
+		BackgroundExecutor multiple = new BackgroundExecutor.BackgroundExecutorBuilder("Global Mode", this.getFrame()).multiple(100, exe1, exe2, exe3);
+	}
+
 	private final void location(JButton button) {
 		System.out.println(this.getFrame().getLocation());
 	}
 
 	private final void noiseScreen(JButton button) {
+		new NoiseScreen(this.getFrame());
+	}
+
+	private final void bezierScreen(JButton button) {
 		new NoiseScreen(this.getFrame());
 	}
 

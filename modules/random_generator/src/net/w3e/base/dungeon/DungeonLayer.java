@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 
 import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.base.math.vector.WDirection;
-import net.w3e.base.math.vector.WVector3;
+import net.w3e.base.math.vector.i.WVector3I;
 
 public abstract class DungeonLayer {
 
@@ -20,20 +20,23 @@ public abstract class DungeonLayer {
 	protected final Random random() {
 		return this.generator.random();
 	}
-	protected final DungeonRoomCreateInfo putOrGet(WVector3 pos) {
+	protected final DungeonRoomCreateInfo putOrGet(WVector3I pos) {
 		return this.generator.putOrGet(pos);
 	}
-	protected final DungeonRoomCreateInfo get(WVector3 pos) {
+	protected final DungeonRoomCreateInfo get(WVector3I pos) {
 		return this.generator.get(pos);
+	}
+	protected final void forEach(Consumer<DungeonRoomCreateInfo> function) {
+		this.forEach(function, false);
 	}
 	protected final void forEach(Consumer<DungeonRoomCreateInfo> function, boolean createIfNotExists) {
 		this.generator.forEach(function, createIfNotExists);
 	}
-	protected final WVector3 dungeonSize() {
+	protected final WVector3I dungeonSize() {
 		return this.generator.dimension().size();
 	}
 
 	public static interface IPathLayer {
-		void add(WVector3 pos, WDirection direction);
+		void add(WVector3I pos, WDirection direction);
 	}
 }

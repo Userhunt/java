@@ -5,4 +5,5 @@ public interface IBackgroundExecutor {
 	Runnable stopAndClose();
 	boolean isStop();
 	void clear();
+	void print(Runnable runnable);
 }

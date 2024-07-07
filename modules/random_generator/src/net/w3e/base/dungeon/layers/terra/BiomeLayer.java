@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.w3e.base.collection.MapT.MapTString;
+import net.w3e.base.collection.CollectionBuilder;
 import net.w3e.base.collection.RandomCollection;
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
@@ -22,8 +23,9 @@ import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.vector.WDirection;
-import net.w3e.base.math.vector.WVector3;
+import net.w3e.base.math.vector.i.WVector3I;
 
+@Deprecated
 public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLayer {
 
 	public static final String KEY = "biome";
@@ -58,10 +60,11 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 	@Override
 	public final void regenerate(boolean composite) {
 		this.list.clear();
-		this.workList.clear();
 		this.filled = -1;
+
 		this.progress = Progress.createArray;
 
+		this.workList.clear();
 		this.biomeList.stream().map(BiomeInfo::copy).forEach(this.workList::add);
 	}
 
@@ -71,10 +74,10 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 		float i = 0;
 
 		if (this.progress == Progress.createArray) {
-			List<WVector3> poses = new ArrayList<>();
+			List<DungeonRoomInfo> poses = new ArrayList<>();
 			this.forEach(room -> {
-				poses.add(room.pos());
-			}, false);
+				poses.add(room.room());
+			});
 			int size = poses.size();
 			this.filled = 0;
 			while (this.filled * 10f * 100 / size <= this.percent) {
@@ -87,9 +90,8 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 			Iterator<BiomePoint<T>> iterator = this.list.iterator();
 			while (iterator.hasNext()) {
 				BiomePoint<T> point = iterator.next();
-				DungeonRoomCreateInfo room = this.putOrGet(point.pos);
-				MapTString data = room.data();
-				BaseLayerRangeRoomValues values = new BaseLayerRangeRoomValues(room.room());
+				MapTString data = point.room.data();
+				BaseLayerRangeRoomValues values = new BaseLayerRangeRoomValues(point.room);
 				RandomCollection<BiomeInfo<T>> random = new RandomCollection<>(this.random());
 				for (BiomeInfo<T> biomeData : this.workList) {
 					if (biomeData.test(values)) {
@@ -115,10 +117,6 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 			Iterator<BiomePoint<T>> iterator = this.list.iterator();
 			while (iterator.hasNext()) {
 				BiomePoint<T> point = iterator.next();
-				DungeonRoomCreateInfo room = this.putOrGet(point.pos);
-				if (point.rooms.isEmpty()) {
-					point.rooms.add(room.room());
-				}
 				if (point.fill(this)) {
 					iterator.remove();
 				}
@@ -155,10 +153,10 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 		return this.filled;
 	}
 
-	private record BiomePoint<T>(WVector3 pos, ObjectHolder<BiomeInfo<T>> info, List<DungeonRoomInfo> rooms) {
+	private record BiomePoint<T>(DungeonRoomInfo room, ObjectHolder<BiomeInfo<T>> info, List<DungeonRoomInfo> rooms) {
 
-		private BiomePoint(WVector3 pos) {
-			this(pos, new ObjectHolder<>(), new ArrayList<>());
+		private BiomePoint(DungeonRoomInfo room) {
+			this(room, new ObjectHolder<>(), CollectionBuilder.list(DungeonRoomInfo.class).add(room).build());
 		}
 
 		public final boolean fill(BiomeLayer<T> layer) {
@@ -169,7 +167,7 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 			int impulse = info.impulse.random(random);
 			for (int i = 0; i < impulse; i++) {
 				DungeonRoomInfo room = this.rooms.get(random.nextInt(this.rooms.size()));
-				WVector3 pos = room.pos();
+				WVector3I pos = room.pos();
 
 				for (WDirection direction : WDirection.values()) {
 					if (random.nextInt(3) != 0) {
@@ -186,7 +184,7 @@ public class BiomeLayer<T> extends DungeonLayer implements ISetupLayer, IListLay
 			Iterator<DungeonRoomInfo> iterator = this.rooms.iterator();
 			while (iterator.hasNext()) {
 				DungeonRoomInfo next = iterator.next();
-				WVector3 pos = next.pos();
+				WVector3I pos = next.pos();
 				boolean found = false;
 				for (WDirection direction : WDirection.values()) {
 					DungeonRoomCreateInfo target = layer.putOrGet(pos.add(direction.relative));

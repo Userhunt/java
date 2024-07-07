@@ -19,7 +19,7 @@ public class RoomLayer<T> extends DungeonLayer implements IListLayer, ISetupLaye
 
 	private final List<RoomInfo<T>> roomList = new ArrayList<>();
 	private final List<RoomInfo<T>> workList = new ArrayList<>();
-	private final List<RoomData<T>> list = new ArrayList<>();
+	private final List<RoomPoint<T>> list = new ArrayList<>();
 	private int filled = -1;
 	private Progress progress;
 
@@ -39,13 +39,15 @@ public class RoomLayer<T> extends DungeonLayer implements IListLayer, ISetupLaye
 		room.data().put(KEY, null);
 	}
 
+	@Deprecated
 	@Override
 	public final void regenerate(boolean composite) {
 		this.list.clear();
-		this.workList.clear();
 		this.filled = -1;
+
 		this.progress = Progress.createArray;
 
+		this.workList.clear();
 		this.roomList.stream().map(RoomInfo::copy).forEach(this.workList::add);
 	}
 
@@ -55,7 +57,15 @@ public class RoomLayer<T> extends DungeonLayer implements IListLayer, ISetupLaye
 		Progress prevProgress = this.progress;
 		float i = 0;
 		if (this.progress == Progress.createArray) {
-			this.forEach(room -> {}, false);
+			this.filled = 0;
+			this.forEach(room -> {
+				if (!room.isWall()) {
+					if (room.isEnterance()) {
+						this.list.add(new RoomPoint<>(room.room()));
+					}
+					this.filled++;
+				}
+			});
 			this.progress = Progress.fillRooms;
 			i = 100;
 		} else if (this.progress == Progress.fillRooms) {
@@ -88,8 +98,8 @@ public class RoomLayer<T> extends DungeonLayer implements IListLayer, ISetupLaye
 		return this.filled;
 	}
 
-	public record RoomData<T>(DungeonRoomInfo room, List<RoomInfo<T>> variants) {
-		public RoomData(DungeonRoomInfo room) {
+	public record RoomPoint<T>(DungeonRoomInfo room, List<RoomInfo<T>> variants) {
+		public RoomPoint(DungeonRoomInfo room) {
 			this(room, new ArrayList<>());
 		}
 	}
@@ -101,13 +111,13 @@ public class RoomLayer<T> extends DungeonLayer implements IListLayer, ISetupLaye
 		return new RoomLayer<>(generator);
 	}
 
-	public record RoomInfo<T>(Object2BooleanArrayMap<WDirection> directions, BaseLayerRange baseLayerRange, T value, int[] count) {
+	public record RoomInfo<T>(Object2BooleanArrayMap<WDirection> directions, BaseLayerRange baseLayerRange, T value, boolean enterance, int[] count) {
 
-		public RoomInfo(Object2BooleanArrayMap<WDirection> directions, BaseLayerRange baseLayerRange, T value, int count) {
-			this(directions, baseLayerRange, value, new int[]{count});
+		public RoomInfo(Object2BooleanArrayMap<WDirection> directions, BaseLayerRange baseLayerRange, T value, boolean enterance, int count) {
+			this(directions, baseLayerRange, value, enterance, new int[]{count});
 		}
-		public RoomInfo(Object2BooleanArrayMap<WDirection> directions, BaseLayerRange baseLayerRange, T value) {
-			this(directions, baseLayerRange, value, -1);
+		public RoomInfo(Object2BooleanArrayMap<WDirection> directions, BaseLayerRange baseLayerRange, boolean enterance, T value) {
+			this(directions, baseLayerRange, value, enterance, -1);
 		}
 
 		public final boolean notValid() {
@@ -123,7 +133,7 @@ public class RoomLayer<T> extends DungeonLayer implements IListLayer, ISetupLaye
 		}
 
 		public final RoomInfo<T> copy() {
-			return new RoomInfo<T>(this.directions, this.baseLayerRange, this.value, this.count[0]);
+			return new RoomInfo<T>(this.directions, this.baseLayerRange, this.value, enterance, this.count[0]);
 		}
 	}
 }

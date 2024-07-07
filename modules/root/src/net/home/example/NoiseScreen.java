@@ -1,4 +1,4 @@
-package net.home.simple;
+package net.home.example;
 
 import java.awt.Color;
 import java.awt.Dimension;

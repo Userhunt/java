@@ -5,12 +5,12 @@ import java.util.List;
 
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonLayer;
+import net.w3e.base.dungeon.DungeonPos;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.dungeon.DungeonLayer.IPathLayer;
-import net.w3e.base.dungeon.direction.DungeonPos;
 import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.vector.WDirection;
-import net.w3e.base.math.vector.WVector3;
+import net.w3e.base.math.vector.i.WVector3I;
 
 public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends DungeonLayer implements IPathLayer {
 
@@ -26,7 +26,7 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 	}
 
 	@Override
-	public final void add(WVector3 pos, WDirection direction) {
+	public final void add(WVector3I pos, WDirection direction) {
 		this.layer.add(pos, direction);
 	}
 
@@ -44,9 +44,9 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 				if (!room.room().isWall()) {
 					rooms.add(room.room());
 				}
-			}, false);
-			WVector3 size = this.dungeonSize().add(new WVector3(1, 1, 1));
-			int s = size.getX() * size.getY() * size.getZ();
+			});
+			WVector3I size = this.dungeonSize().add(new WVector3I(1, 1, 1));
+			int s = size.getXI() * size.getYI() * size.getZI();
 			int p = BMatUtil.round(rooms.size() * 1000f / s);
 			if (p <= this.minumum) {
 				int i = this.count;

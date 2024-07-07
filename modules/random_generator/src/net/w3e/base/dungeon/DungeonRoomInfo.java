@@ -6,16 +6,16 @@ import java.util.function.Supplier;
 import net.w3e.base.PackUtil;
 import net.w3e.base.collection.MapT.MapTString;
 import net.w3e.base.math.vector.WDirection;
-import net.w3e.base.math.vector.WVector3;
+import net.w3e.base.math.vector.i.WVector3I;
 
-public record DungeonRoomInfo(WVector3 pos, WVector3 chunk, int[] flags, MapTString data) {
+public record DungeonRoomInfo(WVector3I pos, WVector3I chunk, int[] flags, MapTString data) {
 
-	public static final DungeonRoomInfo create(WVector3 pos, Supplier<MapTString> factory) {
-		return create(pos, pos.toChunk(), factory);
+	public static final DungeonRoomInfo create(WVector3I pos, Supplier<MapTString> factory) {
+		return create(pos, pos.pos2Chunk(), factory);
 	}
 
-	public static final DungeonRoomInfo create(WVector3 pos, WVector3 chunk, Supplier<MapTString> factory) {
-		return new DungeonRoomInfo(pos, pos.toChunk(), new int[]{-1, 0}, factory.get()).setWall(true);
+	public static final DungeonRoomInfo create(WVector3I pos, WVector3I chunk, Supplier<MapTString> factory) {
+		return new DungeonRoomInfo(pos, pos.pos2Chunk(), new int[]{-1, 0}, factory.get()).setWall(true);
 	}
 
 	@Deprecated

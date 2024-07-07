@@ -22,15 +22,15 @@ import net.w3e.base.dungeon.layers.terra.BiomeLayer;
 import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
 import net.w3e.base.holders.BoolHolder;
 import net.w3e.base.math.BMatUtil;
-import net.w3e.base.math.vector.WBox;
-import net.w3e.base.math.vector.WVector3;
+import net.w3e.base.math.vector.i.WBoxI;
+import net.w3e.base.math.vector.i.WVector3I;
 
 public class DungeonGenerator {
 
-	private final Map<WVector3, Map<WVector3, DungeonRoomInfo>> map = new HashMap<>();
+	private final Map<WVector3I, Map<WVector3I, DungeonRoomInfo>> map = new HashMap<>();
 
 	private final long seed;
-	private final WBox dimension;
+	private final WBoxI dimension;
 	private final Supplier<MapTString> dataFactory;
 	private final List<Factory> layers = new ArrayList<>();
 
@@ -39,7 +39,7 @@ public class DungeonGenerator {
 	private final List<ISetupLayer> setup = new LinkedList<>();
 	private boolean regenerate = true;
 
-	public DungeonGenerator(long seed, WBox dimension, Supplier<MapTString> dataFactory, List<Factory> layers) {
+	public DungeonGenerator(long seed, WBoxI dimension, Supplier<MapTString> dataFactory, List<Factory> layers) {
 		this.seed = seed;
 		this.dimension = dimension;
 		this.dataFactory = dataFactory;
@@ -50,7 +50,7 @@ public class DungeonGenerator {
 		return this.random;
 	}
 
-	public final WBox dimension() {
+	public final WBoxI dimension() {
 		return this.dimension;
 	}
 
@@ -64,11 +64,11 @@ public class DungeonGenerator {
 		this.queue.stream().filter(e -> e instanceof ISetupLayer).map(e -> (ISetupLayer)e).forEach(this.setup::add);
 	}
 
-	public final DungeonRoomCreateInfo putOrGet(WVector3 pos) {
+	public final DungeonRoomCreateInfo putOrGet(WVector3I pos) {
 		if (!this.testDimension(pos)) {
 			return this.createFailRoom(pos, false);
 		}
-		WVector3 chunk = pos.toChunk();
+		WVector3I chunk = pos.pos2Chunk();
 		BoolHolder exists = new BoolHolder(true);
 		DungeonRoomInfo room = map.computeIfAbsent(chunk, key -> new HashMap<>()).computeIfAbsent(pos, key -> {
 			exists.setFalse();
@@ -82,11 +82,11 @@ public class DungeonGenerator {
 		return DungeonRoomCreateInfo.success(room, exists.getBool());
 	}
 
-	public final DungeonRoomCreateInfo get(WVector3 pos) {
+	public final DungeonRoomCreateInfo get(WVector3I pos) {
 		if (this.testDimension(pos)) {
-			WVector3 chunk = pos.toChunk();
+			WVector3I chunk = pos.pos2Chunk();
 
-			Map<WVector3, DungeonRoomInfo> m = this.map.get(chunk);
+			Map<WVector3I, DungeonRoomInfo> m = this.map.get(chunk);
 			if (m != null) {
 				DungeonRoomInfo room = m.get(pos);
 				if (room != null) {
@@ -99,12 +99,12 @@ public class DungeonGenerator {
 	}
 	
 	public final void forEach(Consumer<DungeonRoomCreateInfo> function, boolean createIfNotExists) {
-		WVector3 min = this.dimension.min();
-		WVector3 max = this.dimension.max();
-		for (int x = min.getX(); x <= max.getX(); x++) {
-			for (int y = min.getY(); y <= max.getY(); y++) {
-				for (int z = min.getZ(); z <= max.getZ(); z++) {
-					WVector3 pos = new WVector3(x, y, z);
+		WVector3I min = this.dimension.min();
+		WVector3I max = this.dimension.max();
+		for (int x = min.getXI(); x <= max.getXI(); x++) {
+			for (int y = min.getYI(); y <= max.getYI(); y++) {
+				for (int z = min.getZI(); z <= max.getZI(); z++) {
+					WVector3I pos = new WVector3I(x, y, z);
 					DungeonRoomCreateInfo room = this.get(pos);
 					if (room.exists) {
 						function.accept(room);
@@ -122,11 +122,11 @@ public class DungeonGenerator {
 		}
 	}
 
-	private final DungeonRoomCreateInfo createFailRoom(WVector3 pos, boolean isInside) {
-		return createFailRoom(pos, pos.toChunk(), isInside);
+	private final DungeonRoomCreateInfo createFailRoom(WVector3I pos, boolean isInside) {
+		return createFailRoom(pos, pos.pos2Chunk(), isInside);
 	}
 
-	private final DungeonRoomCreateInfo createFailRoom(WVector3 pos, WVector3 chunk, boolean isInside) {
+	private final DungeonRoomCreateInfo createFailRoom(WVector3I pos, WVector3I chunk, boolean isInside) {
 		return DungeonRoomCreateInfo.fail(DungeonRoomInfo.create(pos, this.dataFactory));
 	}
 
@@ -144,10 +144,10 @@ public class DungeonGenerator {
 		public final DungeonRoomCreateInfo setWall() {
 			return this.setWall(true);
 		}
-		public final WVector3 pos() {
+		public final WVector3I pos() {
 			return this.room.pos();
 		}
-		public final WVector3 chunk() {
+		public final WVector3I chunk() {
 			return this.room.chunk();
 		}
 		public final MapTString data() {
@@ -164,15 +164,15 @@ public class DungeonGenerator {
 		}
 	}
 
-	private final boolean testDimension(WVector3 pos) {
+	private final boolean testDimension(WVector3I pos) {
 		return this.dimension.contains(pos);
 	}
 
-	public final DungeonGenerator copy(Long seed, WBox dimension, boolean data) {
+	public final DungeonGenerator copy(Long seed, WBoxI dimension, boolean data) {
 		DungeonGenerator dungeon = new DungeonGenerator(seed == null ? this.seed : seed, dimension == null ? this.dimension : dimension, this.dataFactory, this.layers);
 		if (data) {
-			for (Map<WVector3, DungeonRoomInfo> chunk : this.map.values()) {
-				for (Entry<WVector3, DungeonRoomInfo> entry : chunk.entrySet()) {
+			for (Map<WVector3I, DungeonRoomInfo> chunk : this.map.values()) {
+				for (Entry<WVector3I, DungeonRoomInfo> entry : chunk.entrySet()) {
 					DungeonRoomCreateInfo info = dungeon.putOrGet(entry.getKey());
 					if (info.isInside) {
 						info.room.copyFrom(entry.getValue());
@@ -184,7 +184,7 @@ public class DungeonGenerator {
 		return dungeon;
 	}
 
-	public final Map<WVector3, Map<WVector3, DungeonRoomInfo>> getRooms() {
+	public final Map<WVector3I, Map<WVector3I, DungeonRoomInfo>> getRooms() {
 		return this.map;
 	}
 
@@ -225,7 +225,7 @@ public class DungeonGenerator {
 
 	public static DungeonGenerator example(long seed) {
 		int size = 10;
-		return new DungeonGenerator(seed, new WBox(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
+		return new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
 			// path
 			PathRepeatLayer::example,
 			// distance

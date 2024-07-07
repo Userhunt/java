@@ -1,23 +1,23 @@
-package net.w3e.base.dungeon.direction;
+package net.w3e.base.dungeon;
 
 import java.util.Random;
 
 import net.w3e.base.math.vector.WDirection;
-import net.w3e.base.math.vector.WVector3;
+import net.w3e.base.math.vector.i.WVector3I;
 
-public record DungeonPos(WVector3 pos, WDirection direction, boolean enterance) {
+public record DungeonPos(WVector3I pos, WDirection direction, boolean enterance) {
 	public static final DungeonPos EMPTY_POS = new DungeonPos();
-	public static final DungeonPos EMPTY_ENTERANCE = new DungeonPos(WVector3.EMPTY, true);
+	public static final DungeonPos EMPTY_ENTERANCE = new DungeonPos(WVector3I.EMPTY, true);
 
 	public DungeonPos() {
-		this(WVector3.EMPTY);
+		this(WVector3I.EMPTY);
 	}
 
-	public DungeonPos(WVector3 pos) {
+	public DungeonPos(WVector3I pos) {
 		this(pos, false);
 	}
 
-	public DungeonPos(WVector3 pos, boolean enterance) {
+	public DungeonPos(WVector3I pos, boolean enterance) {
 		this(pos, null, false);
 	}
 

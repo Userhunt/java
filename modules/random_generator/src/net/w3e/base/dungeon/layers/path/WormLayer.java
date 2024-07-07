@@ -11,11 +11,11 @@ import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.base.dungeon.DungeonLayer.IPathLayer;
 import net.w3e.base.dungeon.DungeonLayer;
+import net.w3e.base.dungeon.DungeonPos;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.dungeon.direction.DungeonChances;
-import net.w3e.base.dungeon.direction.DungeonPos;
 import net.w3e.base.math.vector.WDirection;
-import net.w3e.base.math.vector.WVector3;
+import net.w3e.base.math.vector.i.WVector3I;
 
 public class WormLayer extends DungeonLayer implements IPathLayer {
 
@@ -47,11 +47,11 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 	}
 
 	@Override
-	public final void add(WVector3 pos, WDirection direction) {
+	public final void add(WVector3I pos, WDirection direction) {
 		this.add(pos, direction, false);
 	}
 
-	private final void add(WVector3 pos, WDirection direction, boolean enterance) {
+	private final void add(WVector3I pos, WDirection direction, boolean enterance) {
 		this.entries[1].add(new DungeonPos(pos, direction, enterance));
 	}
 
@@ -60,7 +60,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		this.entries[0] = this.entries[1];
 		this.entries[1] = new ArraySetStrict<>();
 		for (DungeonPos entry : this.entries[0]) {
-			WVector3 pos = entry.pos();
+			WVector3I pos = entry.pos();
 
 			int d = this.stepChances.get(this.random());
 			WDirection direction = entry.getDirection(this.random());

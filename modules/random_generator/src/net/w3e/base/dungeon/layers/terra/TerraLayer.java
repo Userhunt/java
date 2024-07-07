@@ -1,21 +1,14 @@
 package net.w3e.base.dungeon.layers.terra;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.w3e.base.dungeon.DungeonGenerator;
-import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.DungeonRoomInfo;
-import net.w3e.base.dungeon.layers.IListLayer;
 import net.w3e.base.dungeon.layers.ISetupLayer;
-import net.w3e.base.math.BMatUtil;
+import net.w3e.base.dungeon.layers.ListLayer;
 
-public abstract class TerraLayer<T> extends DungeonLayer implements ISetupLayer, IListLayer {
+public abstract class TerraLayer<T> extends ListLayer<DungeonRoomInfo> implements ISetupLayer {
 
 	protected final String defKey;
 	protected final T defValue;
-	private final List<DungeonRoomInfo> list = new ArrayList<>();
-	protected int filled = -1;
 
 	public TerraLayer(DungeonGenerator generator, String defKey, T defValue, int stepRate) {
 		super(generator);
@@ -29,38 +22,23 @@ public abstract class TerraLayer<T> extends DungeonLayer implements ISetupLayer,
 	}
 
 	@Override
-	public void regenerate(boolean composite) {
-		if (!composite) {
-			this.forEach(room -> {}, false);
-		}
-		this.filled = -1;
-		this.list.clear();
-	}
-
-	@Override
 	public final int generate() {
 		if (filled == -1) {
-			this.forEach(room -> {
-				this.list.add(room.room());
+			this.generateList(room -> {
+				return GenerateListHolder.success(room.room());
 			}, true);
-			this.filled = this.list.size();
+			return 1;
 		}
+
 		for (int i = 0; i < 50; i++) {
 			if (!this.list.isEmpty()) {
 				generate(this.list.remove(0));
+				continue;
 			}
+			break;
 		}
-		return BMatUtil.round(this.size() * 100f / this.filled);
-	}
 
-	@Override
-	public final int size() {
-		return this.filled - this.list.size();
-	}
-
-	@Override
-	public final int filled() {
-		return this.filled;
+		return this.progress();
 	}
 
 	protected abstract void generate(DungeonRoomInfo room);
