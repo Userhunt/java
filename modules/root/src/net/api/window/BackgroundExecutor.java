@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +23,7 @@ import net.api.window.jcomponent.JConsole;
 import net.w3e.base.BooleanEnum;
 import net.w3e.base.holders.ObjectHolder;
 import net.w3e.base.holders.number.IntHolder;
+import net.w3e.base.holders.number.LongHolder;
 import net.w3e.base.math.BMatUtil;
 
 public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor {
@@ -123,7 +125,12 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 	}
 
 	@Override
-	protected final void onCloseIns() {
+	public final void print(Object object) {
+		this.printStream.print(object);
+	}
+
+	@Override
+	protected void onCloseIns() {
 		this.timer.stop();
 		BackgroundExecutor.this.printStream.disable();
 		stopTick();
@@ -189,7 +196,7 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 			if (executors.length == 0) {
 				return null;
 			}
-			int size = executors.length;
+			double size = executors.length;
 			List<BackgroundExecutor> list = new ArrayList<>(Stream.of(executors).toList());
 			for (BackgroundExecutor executor : list) {
 				executor.setVisible(false);
@@ -197,23 +204,49 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 
 			ObjectHolder<IntHolder> holder = new ObjectHolder<>();
 
+			ObjectHolder<BackgroundExecutor> frame = new ObjectHolder<>();
+			LongHolder time = new LongHolder(-1);
+
+			Consumer<IBackgroundExecutor> printTime = (executor) -> {
+				BackgroundExecutor old = frame.get();
+				if (old != null) {
+					old.setState(JFrame.ICONIFIED);
+					executor.print(() -> {
+						System.out.println(String.format("Time of stage %s: %s", ((int)size) - list.size(), System.currentTimeMillis() - time.get()));
+					});
+				}
+			};
+
 			BackgroundExecutor exe = new BackgroundExecutor(this.frameTitle, this.parent, (oldProgress, executor) -> {
 				IntHolder progress = holder.get();
 				if ((progress == null || progress.get() >= 100) && !list.isEmpty()) {
-					BackgroundExecutor frame = list.remove(0);
-					frame.setVisible(true);
-					progress = frame.run();
+					printTime.accept(executor);
+					frame.set(list.remove(0));
+					frame.get().setVisible(true);
+					time.set(System.currentTimeMillis());
+					progress = frame.get().run();
 					holder.set(progress);
+				} else if (list.isEmpty()) {
+					printTime.accept(executor);
 				}
-				int p1 = BMatUtil.round((size - list.size()) * 100d / size);
-				int p2 = progress.getAsInt();
-				int p3 = BMatUtil.round(((double)p2) / size);
+
+				int p1 = progress.getAsInt();
+				int p2 = BMatUtil.round((size - list.size() - 1) * 100d / size) + BMatUtil.round(p1 / size);
 				executor.print(() -> {
-					System.out.println(String.format("Stage: %s. Progress of stage: %s. Progress: %s", p1, p2, p3));
+					System.out.println(String.format("Stage: %s. Progress of stage: %s. Progress: %s", ((int)size) - list.size(), p1, p2));
 				});
+	
 				Inputs.sleep(tickRate);
-				return p1 + p3;
-			}, this.done, !this.parentVisible, this.updateParentPosition);
+				return p2;
+			}, this.done, !this.parentVisible, this.updateParentPosition) {
+				@Override
+				protected final void onCloseIns() {
+					super.onCloseIns();
+					for (BackgroundExecutor executor : executors) {
+						executor.close();
+					}
+				}
+			};
 			
 			return exe;
 		}

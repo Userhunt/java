@@ -1,19 +1,23 @@
 package net.api;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JTextArea;
 
 import net.w3e.base.PrintWrapper;
 
 public class CustomOutputStream extends OutputStream {
+
+	private static final PrintStream OUT = System.out;
+	private static final PrintStream ERR = System.err;
+
 	private final JTextArea textArea;
 	private final PrintStream printStream;
-	private boolean enabled;
-	private PrintStream out = System.out;
-	private PrintStream err = System.err;
+	private Queue<PrintStream> out = new ConcurrentLinkedQueue<>();
+	private Queue<PrintStream> err = new ConcurrentLinkedQueue<>();
 
 	public CustomOutputStream(JTextArea textArea) {
 		this(textArea, true);
@@ -32,38 +36,40 @@ public class CustomOutputStream extends OutputStream {
 	}
 
 	public final void enable() {
-		if (this.enabled) {
-			return;
-		}
-		out = System.out;
-		err = System.err;
-		this.enabled = true;
+		this.out.add(System.out);
+		this.err.add(System.err);
 		System.setOut(this.printStream);
 		System.setErr(this.printStream);
 	}
 
 	public final void disable() {
-		if (!this.enabled) {
-			return;
+		PrintStream out = CustomOutputStream.OUT;
+		PrintStream err = CustomOutputStream.ERR;
+		if (this.out.size() > 0) {
+			out = this.out.remove();
 		}
-		this.enabled = false;
-		System.setOut(this.out);
-		System.setErr(this.err);
+		if (this.err.size() > 0) {
+			err = this.err.remove();
+		}
+		System.setOut(out);
+		System.setErr(err);
 	}
 
 	public final void print(Runnable runnable) {
-		boolean enabled = this.enabled;
-		if (!enabled) {
-			this.enable();
-		}
+		this.enable();
 		runnable.run();
-		if (!enabled) {
-			this.disable();
+		this.disable();
+	}
+
+	public final void print(Object object) {
+		if (object == null) {
+			object = "null";
 		}
+		this.printStream.println(object);
 	}
 
 	@Override
-	public void write(int b) throws IOException {
+	public final void write(int b) {
 		// redirects data to the text area
 		textArea.append(String.valueOf((char)b));
 		// scrolls the text area to the end of data
