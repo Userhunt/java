@@ -197,10 +197,6 @@ public class TestScreen extends FrameObject {
 		System.out.println(registry.dynamic());
 	}
 
-	/*private final void rgba(YPos y) {
-		y.add(new RGBAPanel().create(this.getFrame(), 5, y.get(), true, true));
-	}*/
-
 	private final void collectionOfCollections(JButton btn) {
 		Collection<Integer> collection = CollectionOfCollections.newCollection(Arrays.asList(1, 4, 5), Arrays.asList(4, 3, 10), Arrays.asList(50, 123, 51, 51, 6, 43));
 		IntList list = new IntArrayList();
@@ -407,7 +403,7 @@ public class TestScreen extends FrameObject {
 	}
 
 	private final void cast(JButton button) {
-		int iteration = 100_000_000;
+		long iteration = 1_000_000_000L;
 		int size = 100;
 		IntHolder intTuple = new IntHolder();
 
@@ -421,39 +417,44 @@ public class TestScreen extends FrameObject {
 			long time = System.currentTimeMillis();
 			while (System.currentTimeMillis() - time <= 50 && intTuple.get() > 0) {
 				for (int i = 0; i < a.length; i++) {
-					b[i] = a[i];
+					int v1 = a[i];
+					v1 += 0;
+					b[i] = v1;
 				}
 				intTuple.remove();
 			}
-			System.out.println(intTuple.getAsInt());
-			return (iteration - intTuple.getAsInt()) * 100 / iteration;
-		}).build();
+			return (int)((iteration - intTuple.getAsInt()) * 100 / iteration);
+		}).setUpdateParentPosition(false).build();
 
 		BackgroundExecutor exe2 = new BackgroundExecutor.BackgroundExecutorBuilder("Cast Mode", this.getFrame()).setParentVisible(true).setExecute((oldProgress, executor) -> {
 			long time = System.currentTimeMillis();
 			while (System.currentTimeMillis() - time <= 50 && intTuple.get() > 0) {
 				for (int i = 0; i < a.length; i++) {
-					b[i] = (int)(double)a[i];
+					double v1 = a[i];
+					v1 += 0;
+					b[i] = (int)v1;
 				}
 				intTuple.remove();
 			}
-			System.out.println(intTuple.getAsInt());
-			return (iteration - intTuple.getAsInt()) * 100 / iteration;
-		}).build();
+			return (int)((iteration - intTuple.getAsInt()) * 100 / iteration);
+		}).setUpdateParentPosition(false).build();
 
 		BackgroundExecutor exe3 = new BackgroundExecutor.BackgroundExecutorBuilder("Round Mode", this.getFrame()).setParentVisible(true).setExecute((oldProgress, executor) -> {
 			long time = System.currentTimeMillis();
 			while (System.currentTimeMillis() - time <= 50 && intTuple.get() > 0) {
 				for (int i = 0; i < a.length; i++) {
-					b[i] = BMatUtil.round((double)a[i]);
+					double v1 = a[i];
+					v1 += 0;
+					b[i] = BMatUtil.round(v1);
 				}
 				intTuple.remove();
 			}
-			System.out.println(intTuple.getAsInt());
-			return (iteration - intTuple.getAsInt()) * 100 / iteration;
-		}).build();
+			return (int)((iteration - intTuple.getAsInt()) * 100 / iteration);
+		}).setUpdateParentPosition(false).build();
 	
 		BackgroundExecutor multiple = new BackgroundExecutor.BackgroundExecutorBuilder("Global Mode", this.getFrame()).multiple(100, exe1, exe2, exe3);
+
+		multiple.run();
 	}
 
 	private final void location(JButton button) {
@@ -465,7 +466,7 @@ public class TestScreen extends FrameObject {
 	}
 
 	private final void bezierScreen(JButton button) {
-		new NoiseScreen(this.getFrame());
+		new BezierScreen(this.getFrame());
 	}
 
 

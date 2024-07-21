@@ -70,7 +70,7 @@ public class RGBAPanel extends JPanel {
 			panel.setLayout(null);
 			panel.setBackground(Color.BLACK);
 
-			width = ((width + 22) * 4 + 5 * 3);
+			width = ((width + 22) * 4 + 6 * 3);
 
 			FrameWin.setSize(panel, width, RGBAPanel.HEIGHT + 10);
 

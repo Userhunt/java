@@ -2,7 +2,6 @@ package net.home.example;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import javax.swing.Box;
@@ -77,8 +76,7 @@ public class NoiseScreen extends AbstractFrameWin {
 		this.change();
 
 		this.pack();
-		Point location = frameWin.getLocation();
-		this.setLocation((int)location.getX() + frameWin.getSize().width + 5, (int)location.getY());
+		this.atRightPosition(frameWin);
 		this.setVisible(true);
 	}
 

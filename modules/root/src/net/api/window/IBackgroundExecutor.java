@@ -6,4 +6,5 @@ public interface IBackgroundExecutor {
 	boolean isStop();
 	void clear();
 	void print(Runnable runnable);
+	void print(Object object);
 }

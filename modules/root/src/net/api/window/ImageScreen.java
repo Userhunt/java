@@ -15,7 +15,7 @@ public class ImageScreen extends AbstractFrameWin {
 	public ImageScreen(String frameTitle, int width, int height, int scale, Color background) {
 		super(frameTitle);
 
-		this.getRootPane().setBorder(BorderFactory.createEmptyBorder(1 * scale, 1 * scale, 1 * scale, 1 * scale));
+		this.getRootPane().setBorder(BorderFactory.createEmptyBorder(scale, scale, scale, scale));
 		this.getRootPane().setBackground(background);
 
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);

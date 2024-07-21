@@ -19,7 +19,7 @@ public class BezierCurve {
 	}
 
 	/**
-	 * (1-t)^2*P0 + 2t(t-1)P1 + t^2*P2
+	 * (1-t)^2*P0 + 2t(1 - t)P1 + t^2*P2
 	 * @param <T>
 	 * @param t
 	 * @param start
@@ -29,16 +29,15 @@ public class BezierCurve {
 	 */
 	public static final <T extends IWVector<T>> WVector3D curve3(float t, T start, T point1, T end) {
 		float a = 1f - t;
-		a *= a;
 		return new WVector3D(
-			start.scale(a)
-			.add(point1.scale(2 * t * (t - 1)))
+			start.scale(a * a)
+			.add(point1.scale(2 * t * a))
 			.add(end.scale(t * t))
 		);
 	}
 
 	/**
-	 * (1-t)^3*P0 + 3t(t-1)^2*P1 + 3t^2*(t-1)*P2 + t^3*P3
+	 * (1-t)^3*P0 + 3t(1 - t)^2*P1 + 3t^2*(1 - t)*P2 + t^3*P3
 	 * 
 	 * @param <T>
 	 * @param t
@@ -49,13 +48,10 @@ public class BezierCurve {
 	 */
 	public static final <T extends IWVector<T>> WVector3D curve4(float t, T start, T point1, T point2, T end) {
 		float a = 1f - t;
-		a *= a * a;
-		float b = t - 1;
-		b *= b;
 		return new WVector3D(
-			start.scale(a)
-			.add(point1.scale(3 *  t * b))
-			.add(point2.scale(3 * t * t * (t - 1)))
+			start.scale(a * a * a)
+			.add(point1.scale(3 *  t * a * a))
+			.add(point2.scale(3 * t * t * a))
 			.add(end.scale(t * t * t))
 		);
 	}

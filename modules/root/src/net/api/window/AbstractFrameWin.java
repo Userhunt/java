@@ -3,6 +3,7 @@ package net.api.window;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -107,6 +108,11 @@ public abstract class AbstractFrameWin extends JFrame {
 		component.setPreferredSize(new Dimension(width, height));
 		component.setMinimumSize(new Dimension(width, height));
 		component.setMaximumSize(new Dimension(width, height));
+	}
+
+	protected final void atRightPosition(JFrame frame) {
+		Point location = frame.getLocation();
+		this.setLocation((int)location.getX() + frame.getSize().width + 5, (int)location.getY());
 	}
 
 	public static final HorisontalPanelBuilder horisontalPanelBuilder() {
@@ -236,6 +242,5 @@ public abstract class AbstractFrameWin extends JFrame {
 
 			return panel;
 		}
-
 	}
 }
