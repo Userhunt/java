@@ -5,7 +5,7 @@ dependencies {
 jar {
 	manifest {
 		attributes(
-			'Main-Class': 'net.home.main.Main'
+			'Main-Class': 'net.home.infinitode.Infinitode'
 		)
 	}
 }

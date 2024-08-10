@@ -13,8 +13,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -48,7 +51,7 @@ public class Tf2 extends FrameObject {
 	public static final Gson GSON = BJsonUtil.GSON().registerTypeAdapter(Tf2RegistryObject.class, new Tf2RegistryObject.Tf2Deserializer()).create();
 
 	private final Map<String, List<Tf2RegistryObject>> GROUPS = new LinkedHashMap<>();
-	private final List<Component> BUTTONS = new ArrayList<>();
+	private final List<JCheckBox> BUTTONS = new ArrayList<>();
 	private final Map<Tf2RegistryObject, Tf2Price> PRICES = new LinkedHashMap<>();
 
 	private float dollar;
@@ -115,76 +118,75 @@ public class Tf2 extends FrameObject {
 		}
 	}
 
-	@Deprecated
 	private final void initButtons(FrameWin fw) {
 		fw.setLayout(null);
 		fw.setSize(fw.getWidth(), GROUPS.size() / 2 * 20);
+		fw.setLayout(new BoxLayout(fw.getContentPane(), BoxLayout.X_AXIS));
+		List<Component> BUTTONS1 = new ArrayList<>();
+		List<Component> BUTTONS2 = new ArrayList<>();
 
-		for (Component component : BUTTONS) {
-			fw.remove(component);
-		}
 		this.BUTTONS.clear();
 
-		boolean bl = false;
-		int y = 0;
+		boolean bl = true;
 
 		for (Entry<String, List<Tf2RegistryObject>> entry : GROUPS.entrySet()) {
 			JCheckBox button = new JCheckBox(entry.getKey());
-			button.setBounds(10 + (bl ? 135 : 0), y, 100, 26);
+			button.setSize(100, 26);
 
 			if (bl) {
-				y += 30;
+				BUTTONS1.add(button);
+			} else {
+				BUTTONS2.add(button);
 			}
 			bl = !bl;
 
 			BUTTONS.add(button);
 		}
 
-		if (bl) {
-			y += 30;
-		}
-
 		{
 			JButton button = new JButton("Calculate");
-			button.setBounds(10, y, 130, 26);
+			button.setSize(130, 26);
 			button.addActionListener(FrameWin.onClick(() -> this.calculate(fw)));
-			BUTTONS.add(button);
+			BUTTONS1.add(button);
 		}
 		{
 			JButton button = this.addCmonentListiner(new JButton("Generate"), e -> this.generate());
-			button.setBounds(145, y, 130, 26);
+			button.setSize(130, 26);
 			button.addActionListener(FrameWin.onClick(this::generate));
-			BUTTONS.add(button);
+			BUTTONS2.add(button);
 		}
-
-		y += 30;
-
 		{
 			JButton button = new JButton("Browse Calc");
-			button.setBounds(10, y, 130, 26);
+			button.setSize(130, 26);
 			button.addActionListener(FrameWin.onClick(() -> this.browse(CALCULATED)));
-			BUTTONS.add(button);
+			BUTTONS1.add(button);
 		}
 		{
 			JButton button = new JButton("Browse Gen");
-			button.setBounds(145, y, 130, 26);
+			button.setSize(130, 26);
 			button.addActionListener(FrameWin.onClick(() -> this.browse(GENERATED)));
-			BUTTONS.add(button);
+			BUTTONS2.add(button);
 		}
 
-		y += 30;
+		JPanel panelLeft = new JPanel();
+		panelLeft.setLayout(new BoxLayout(panelLeft, BoxLayout.Y_AXIS));
+		this.simpleColumn(panelLeft, BUTTONS1);
+		fw.add(panelLeft);
 
-		for (Component component : BUTTONS) {
-			fw.add(component);
-		}
+		fw.add(Box.createHorizontalStrut(10));
+		
+		JPanel panelRight = new JPanel();
+		panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
+		this.simpleColumn(panelRight, BUTTONS2);
+		fw.add(panelRight);
 
-		fw.setSize(300, y + 40);
+		fw.pack();
 	}
 
 	private final Map<String, List<Tf2RegistryObject>> fillMap() {
 		Map<String, List<Tf2RegistryObject>> list = new LinkedHashMap<>();
-		for (Component component : BUTTONS) {
-			if (component instanceof JCheckBox box && box.isSelected() && GROUPS.keySet().contains(box.getText())) {
+		for (JCheckBox box : BUTTONS) {
+			if (box.isSelected() && GROUPS.keySet().contains(box.getText())) {
 				String text = box.getText();
 				list.put(text, GROUPS.get(text));
 			}

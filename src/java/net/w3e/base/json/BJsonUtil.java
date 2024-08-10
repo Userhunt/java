@@ -20,7 +20,6 @@ import java.util.Map.Entry;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
@@ -1239,7 +1238,7 @@ public class BJsonUtil {
 		return array;
 	}
 
-	public static final int[] toArray(int[] base, BJsonHelper helper, JsonObject jsonObject, String key, JsonDeserializationContext context) {
+	/*public static final int[] toArray(int[] base, BJsonHelper helper, JsonObject jsonObject, String key, JsonDeserializationContext context) {
 		return toArray(base, helper.readList(jsonObject, key, new Integer[0], context, false));
 	}
 
@@ -1255,7 +1254,7 @@ public class BJsonUtil {
 			return base;
 		}
 		return Arrays.copyOf(base, base.length);
-	}
+	}*/
 
 	/*
 	public static boolean isStringValue(JsonObject p_13814_, String p_13815_) {

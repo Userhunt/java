@@ -44,7 +44,10 @@ public abstract class IWVector<T extends IWVector<T>> implements Comparable<T> {
 		return this.scale(-1);
 	}
 	public final T scale(double i) {
-		return this.create(this.getXD() * i, this.getYD() * i, this.getZD() * i);
+		return this.scale(i, i, i);
+	}
+	public final T scale(double x, double y, double z) {
+		return this.create(this.getXD() * x, this.getYD() * y, this.getZD() * z);
 	}
 
 	public final T withX(double i) {

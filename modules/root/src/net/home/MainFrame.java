@@ -94,6 +94,7 @@ public class MainFrame {
 	}
 
 	private static void run(String[] args, boolean clear, Object fake) {
+		System.out.println("launch");
 		if (clear) {
 			FRAMES.clear();
 		}
@@ -107,7 +108,7 @@ public class MainFrame {
 			button.addActionListener(FrameWin.onClick(() -> {
 				frame.run(FRAME, Collections.emptyList(), fake);
 			}));
-			FrameWin.setSize(button, 150, 26);
+			FrameWin.setSize(button, 200, 26);
 			button.setAlignmentX(Component.CENTER_ALIGNMENT);
 			FRAME.add(button);
 			if (iterator.hasNext()) {
@@ -127,14 +128,21 @@ public class MainFrame {
 	private static void load() {
 		if (!JarUtil.isDebug()) {
 			try {
-				for (File file : new File("mods").listFiles()) {
+				File[] files = new File("libs").listFiles();
+				if (files == null) {
+					return;
+				}
+				System.out.println("load libs");
+				JarUtil.printClassPath();
+				for (File file : files) {
 					if (file.getName().endsWith(".jar")) {
+						System.out.println(file);
 						ZipFile zipFile = new ZipFile(file.toString());
 						ZipEntry entry = zipFile.getEntry("META-INF/MANIFEST.MF");
 						String[] array = new String(zipFile.getInputStream(entry).readAllBytes()).split("\n");
 						for (String string : array) {
 							if (string.startsWith("Main-Class: ")) {
-								string = string.substring(13, string.length() - 2);
+								string = string.substring(12, string.length() - 1);
 								LOGGER.info("init " + string);
 								try {
 									Class<?> clazz = Class.forName(string);

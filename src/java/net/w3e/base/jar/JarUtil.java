@@ -1,5 +1,6 @@
 package net.w3e.base.jar;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
@@ -9,6 +10,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -88,5 +90,11 @@ public class JarUtil {
 				return null;
 			}
 		}
+	}
+
+	public static final void printClassPath() {
+		String classpath = System.getProperty("java.class.path");
+		String[] classPathValues = classpath.split(File.pathSeparator);
+		System.out.println("ClassPath: " + Arrays.toString(classPathValues));
 	}
 }

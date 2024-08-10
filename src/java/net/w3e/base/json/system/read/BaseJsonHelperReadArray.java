@@ -1,13 +1,14 @@
 package net.w3e.base.json.system.read;
 
-import com.google.gson.JsonDeserializationContext;
+import java.util.function.BiFunction;
+
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import net.w3e.base.json.BJsonHelper;
 import net.w3e.base.json.BJsonUtil;
 import net.w3e.base.json.system.BaseJsonHelper;
 
-public interface BaseJsonHelperReadPrimitiveArray extends BaseJsonHelper {
+public interface BaseJsonHelperReadArray extends BaseJsonHelper {
 
 	static double[] readDoubleArrayUnsetSize(JsonObject j, String name, int length) {
 		return BJsonUtil.readDoubleArrayUnsetSize(j, name, length, true);
@@ -65,7 +66,19 @@ public interface BaseJsonHelperReadPrimitiveArray extends BaseJsonHelper {
 		return BJsonUtil.readFloatArray(logger(), j, name, length, log);
 	}
 
-	default int[] toArray(int[] base, JsonObject jsonObject, String key, JsonDeserializationContext context) {
-		return BJsonUtil.toArray(base, (BJsonHelper)this, jsonObject, key, context);
+	default <T> T[] readArray(JsonObject j, String name, Class<T> clazz, BiFunction<JsonElement, String, T> function) {
+		return this.readArray(j, name, clazz, function, null);
 	}
+
+	default <T> T[] readArray(JsonObject j, String name, Class<T> clazz, BiFunction<JsonElement, String, T> function, T[] def) {
+		return this.readArray(j, name, clazz, function, def, true);
+	}
+
+	default <T> T[] readArray(JsonObject j, String name, Class<T> clazz, BiFunction<JsonElement, String, T> function, T[] def, boolean log) {
+		return BJsonUtil.readArray(this.logger(), j, name, clazz, def, function, log);
+	}
+
+	/*default int[] toArray(int[] base, JsonObject jsonObject, String key, JsonDeserializationContext context) {
+		return BJsonUtil.toArray(base, (BJsonHelper)this, jsonObject, key, context);
+	}*/
 }

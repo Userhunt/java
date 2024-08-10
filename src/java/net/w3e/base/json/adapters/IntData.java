@@ -1,4 +1,4 @@
-package net.w3e.base.json;
+package net.w3e.base.json.adapters;
 
 import java.lang.reflect.Type;
 
@@ -6,6 +6,8 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+
+import net.w3e.base.json.BJsonUtil;
 
 public class IntData {
 
@@ -22,7 +24,7 @@ public class IntData {
 		return String.format("{min:%s,max:%s}", min, max);
 	}
 
-	public static class IntSerializer extends W3EJsonSerializer<IntData> {
+	public static class IntSerializer extends WJsonAdapter<IntData> {
 		public IntData deserialize(JsonElement json, Type p_deserialize_2_, JsonDeserializationContext p_deserialize_3_) throws JsonParseException {
 			try {
 				int value = BJsonUtil.convertToInt(json, "<int>");

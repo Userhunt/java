@@ -9,13 +9,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 import net.w3e.base.json.BJsonUtil;
-import net.w3e.base.json.W3EJsonSerializer;
+import net.w3e.base.json.adapters.WJsonAdapter;
 
 public record Tf2RegistryObject(String id, String link, String image, String[] group) implements Tf2IconImpl {
 
 	private static final String[] GROUP = new String[]{"all"};
 
-	public static class Tf2Deserializer extends W3EJsonSerializer<Tf2RegistryObject> {
+	public static class Tf2Deserializer extends WJsonAdapter<Tf2RegistryObject> {
 
 		@Override
 		public Tf2RegistryObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

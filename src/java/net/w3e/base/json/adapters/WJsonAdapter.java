@@ -1,4 +1,4 @@
-package net.w3e.base.json;
+package net.w3e.base.json.adapters;
 
 import java.lang.reflect.Type;
 
@@ -10,9 +10,10 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import net.w3e.base.json.BJsonHelper;
 import net.w3e.base.message.MessageUtil;
 
-public abstract class W3EJsonSerializer<T> implements JsonDeserializer<T>, JsonSerializer<T> {
+public abstract class WJsonAdapter<T> implements JsonDeserializer<T>, JsonSerializer<T> {
 
 	@Override
 	public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {

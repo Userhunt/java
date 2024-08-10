@@ -24,7 +24,9 @@ import net.api.window.AbstractFrameWin;
 import net.api.window.FrameWin;
 import net.api.window.jcomponent.JButtonGroup;
 import net.api.window.jcomponent.JImageLabel;
+import net.home.MainFrame;
 import net.w3e.base.collection.IdentityLinkedHashMap;
+import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.BezierCurve;
 import net.w3e.base.math.vector.IWVector;
 import net.w3e.base.math.vector.d.WVector3D;
@@ -54,7 +56,7 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 		JPanel radio = new JPanel();
 		radio.setLayout(new BoxLayout(radio, BoxLayout.X_AXIS));
 		for (JRadioButton button : this.buttons) {
-			button.addChangeListener(e -> this.update());
+			button.addChangeListener(e -> this.update(false));
 			group.add(button);
 			radio.add(button);
 		}
@@ -71,8 +73,7 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 		imagePanel.add(this.image);
 		this.add(imagePanel);
 
-		this.points.add(null);
-		this.update();
+		this.update(true);
 		
 		this.pack();
 		this.atRightPosition(frameWin);
@@ -85,9 +86,9 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 		return new WVector2I(x, z);
 	}
 
-	private final void update() {
+	private final void update(boolean force) {
 		int i = 0;
-		boolean find = false;
+		boolean find = force;
 		for (JRadioButton jRadioButton : this.buttons) {
 			if (jRadioButton.isSelected()) {
 				find = true;
@@ -95,7 +96,7 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 			}
 			i++;
 		}
-		if (!find || this.points.size() == i) {
+		if (!find) {
 			return;
 		}
 		while (this.points.size() != i) {
@@ -124,14 +125,25 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 			function = (t) -> BezierCurve.curve4(t, this.first, this.points.get(0), this.points.get(1), this.second);
 		}
 
-		for (int j = 0; j <= 200; j++) {
-			Float t = (j / 200f);
+		long time = System.currentTimeMillis();
+		for (int j = 0; j <= 10000; j++) {
+			Float t = (j / 10000f);
 			WVector2I point = this.transform(function.apply(t));
 			int x = point.getXI();
 			int z = point.getZI();
-			if (x >= 0 && x < SIZE && z >= 0 && z < SIZE) {
-				this.image.setColor(x, z, Color.black);
+			for (int k1 = 0; k1 < 2; k1++) {
+				for (int k2 = 0; k2 < 2; k2++) {
+					int x1 = x + k1;
+					int z1 = z + k2;
+					if (x1 >= 0 && x1 < SIZE && z1 >= 0 && z1 < SIZE) {
+						this.image.setColor(x1, z1, Color.black);
+					}
+				}
 			}
+		}
+		time = System.currentTimeMillis() - time;
+		if (time > 2) {
+			System.out.println(time);
 		}
 
 		i = 0;
@@ -146,30 +158,37 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 	}
 
 	private final void paintPoint(Graphics2D g, WVector2I point, String text) {
-		point = this.transform(point);
-		int x = point.getXI();
-		int z = point.getZI();
-		this.image.setColor(x, z, Color.black);
+		try {
+			point = this.transform(point);
+			int x = point.getXI();
+			int z = point.getZI();
+			this.image.setColor(x, z, Color.black);
+	
+			g.setColor(Color.green);
+			g.drawString(text, x - FONT.getSize() / 3, z - FONT.getSize() / 3);
+			g.setColor(Color.black);
+	
+			int size = 6;
+			int s = size / 2;
+			g.drawArc(x - s, z - s, size, size, 0, 360);
+			size -= 2;
+			s = size / 2;
+			g.drawArc(x - s, z - s, size, size, 0, 360);
+		} catch (Exception e) {
+			MainFrame.LOGGER.warn(text);
+			MainFrame.LOGGER.warn(point);
+			e.printStackTrace();
+		}
 
-		g.setColor(Color.green);
-		g.drawString(text, x - FONT.getSize() / 3, z - FONT.getSize() / 3);
-		g.setColor(Color.black);
-
-		int size = 6;
-		int s = size / 2;
-		g.drawArc(x - s, z - s, size, size, 0, 360);
-		size -= 2;
-		s = size / 2;
-		g.drawArc(x - s, z - s, size, size, 0, 360);
 	}
 
 	@Override
 	public final void mousePressed(MouseEvent e) {
 		Map<WVector2I, SelectedPoint> map = new IdentityLinkedHashMap<>();
-		if (this.points.size() == 1) {
+		if (this.points.size() >= 1) {
 			map.put(this.points.get(0), SelectedPoint.LIST_0);
 		}
-		if (this.points.size() == 2) {
+		if (this.points.size() >= 2) {
 			map.put(this.points.get(1), SelectedPoint.LIST_1);
 		}
 		map.put(this.first, SelectedPoint.FIRST);
@@ -180,6 +199,7 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 		for (Entry<WVector2I, SelectedPoint> entry : map.entrySet()) {
 			if (this.isAround(entry.getKey(), mouse)) {
 				this.selected = entry.getValue();
+				break;
 			}
 		}
 	}
@@ -197,7 +217,19 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (this.selected != null) {
-			System.out.println("drag " + this.selected);
+			Point mousePoint = e.getPoint();
+
+			WVector2I mouse = new WVector2I(mousePoint.x, mousePoint.y).scale(.5, 0, -.5).add(-HALF, 0, HALF);
+			mouse = new WVector2I(BMatUtil.clamp(mouse.getXI(), -HALF, HALF - 1), BMatUtil.clamp(mouse.getZI(), -HALF + 1, HALF));
+
+			switch (this.selected) {
+				case FIRST -> this.first = mouse;
+				case SECOND -> this.second = mouse;
+				case LIST_0 -> this.points.set(0, mouse);
+				case LIST_1 -> this.points.set(1, mouse);
+			}
+			
+			this.update(true);
 		}
 	}
 

@@ -2,3 +2,11 @@ dependencies {
 	implementation project(":root")
 	implementation group: 'org.jsoup', name: 'jsoup', version:'1.17.2'
 }
+
+jar {
+	manifest {
+		attributes(
+			'Main-Class': 'net.home.tf2.Tf2'
+		)
+	}
+}

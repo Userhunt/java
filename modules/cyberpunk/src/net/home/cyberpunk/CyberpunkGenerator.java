@@ -5,26 +5,36 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.w3e.base.PrintWrapper;
+import net.api.window.FrameWin;
+import net.home.FrameObject;
+import net.home.MainFrame;
 import net.w3e.base.json.FileUtil;
 
-public class CyberpunkGenerator {
+public class CyberpunkGenerator extends FrameObject {
 
 	public static void main(String[] args) {
-		PrintWrapper.install();
-		CyberpunkGenerator generator = new CyberpunkGenerator();
-		new CyberwareGenerator(generator);
-		new ShardsGenerator(generator);
-		new QuickhackGenerator(generator);
-
-		generator.save();
+		MainFrame.register(new CyberpunkGenerator());
+		MainFrame.run(args);
 	}
 
 	private final Map<String, ShopPage> items = new LinkedHashMap<>();
+	private boolean init = false;
+
+	@Override
+	protected final void init(FrameWin fw, List<String> args) {
+		if (!init) {
+			new CyberwareGenerator(this);
+			new ShardsGenerator(this);
+			new QuickhackGenerator(this);
+		}
+		this.save();
+		this.getFrame().close();
+	}
 
 	public final ShopPage push(String key) {
 		return this.items.computeIfAbsent(key, ShopPage::new);
@@ -111,5 +121,15 @@ public class CyberpunkGenerator {
 				e1.printStackTrace();
 			}
 		}
+	}
+
+	@Override
+	public final String getName() {
+		return this.getClass().getSimpleName();
+	}
+
+	@Override
+	public final int[] version() {
+		return new int[]{1,0,0};
 	}
 }

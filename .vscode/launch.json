@@ -9,18 +9,7 @@
 			"console": "internalConsole",
 			"stopOnEntry": false,
 			"mainClass": "net.home.main.MainFrame",
-			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\""
-		},
-		{
-			"type": "java",
-			"name": "Tf2",
-			"request": "launch",
-			"cwd": "${workspaceFolder}/run",
-			"console": "internalConsole",
-			"stopOnEntry": false,
-			"mainClass": "net.home.tf2.Tf2",
-			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
-			"args": "key=TF2"
+			"vmArgs": "\"-Xmx1G\" \"-Xdebug\""
 		},
 		{
 			"type": "java",
@@ -30,7 +19,7 @@
 			"console": "internalConsole",
 			"stopOnEntry": false,
 			"mainClass": "net.home.oba.OneBitAdventure",
-			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
 			"args": "key=OBA display=[map,path,reward,base,step] play=false"
 		},
 		{
@@ -41,7 +30,7 @@
 			"console": "internalConsole",
 			"stopOnEntry": false,
 			"mainClass": "net.home.oba2.OneBitAdventure",
-			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
 			"args": "key=OBA"
 		},
 		{
@@ -52,19 +41,19 @@
 			"console": "internalConsole",
 			"stopOnEntry": false,
 			"mainClass": "net.home.random_generator.RandGenScreen",
-			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
 			"args": "key=rand_gen x=3593"
 		},
 		{
 			"type": "java",
-			"name": "CyberpunkGenerator",
+			"name": "Inf",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",
 			"console": "internalConsole",
 			"stopOnEntry": false,
-			"mainClass": "net.home.cyberpunk.CyberpunkGenerator",
-			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
-			"args": "key=cyberpunk x=3593"
+			"mainClass": "net.home.infinitode.Infinitode",
+			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
+			"args": "x=1675"
 		},
 		{
 			"type": "java",
@@ -74,7 +63,7 @@
 			"console": "internalConsole",
 			"stopOnEntry": false,
 			"mainClass": "net.home.MainFrame",
-			"vmArgs": "\"-Xmx1G\" \"-XX:+UseSerialGC\"",
+			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
 			"args": "key=test x=1675"
 		}
 	]
