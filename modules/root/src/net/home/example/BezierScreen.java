@@ -19,18 +19,19 @@ import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import it.unimi.dsi.fastutil.floats.Float2ObjectFunction;
-import net.api.window.AbstractFrameWin;
-import net.api.window.FrameWin;
-import net.api.window.jcomponent.JButtonGroup;
-import net.api.window.jcomponent.JImageLabel;
-import net.home.MainFrame;
 import net.w3e.base.collection.IdentityLinkedHashMap;
 import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.BezierCurve;
 import net.w3e.base.math.vector.IWVector;
 import net.w3e.base.math.vector.d.WVector3D;
 import net.w3e.base.math.vector.i.WVector2I;
+
+import it.unimi.dsi.fastutil.floats.Float2ObjectFunction;
+import net.api.window.AbstractFrameWin;
+import net.api.window.FrameWin;
+import net.api.window.jcomponent.JButtonGroup;
+import net.api.window.jcomponent.JImageLabel;
+import net.home.MainFrame;
 
 public class BezierScreen extends AbstractFrameWin implements MouseListener, MouseMotionListener {
 

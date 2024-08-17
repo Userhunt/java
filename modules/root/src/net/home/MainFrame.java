@@ -19,6 +19,9 @@ import javax.swing.JFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import net.w3e.base.ReflectionUtils;
+import net.w3e.base.jar.JarUtil;
+
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntListIterator;
@@ -26,8 +29,6 @@ import net.api.ApiJsonHelper;
 import net.api.window.FrameWin;
 import net.api.window.Inputs;
 import net.home.example.TestScreen;
-import net.w3e.base.ReflectionUtils;
-import net.w3e.base.jar.JarUtil;
 
 public class MainFrame {
 

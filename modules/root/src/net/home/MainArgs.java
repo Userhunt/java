@@ -9,11 +9,11 @@ import java.util.function.Supplier;
 import com.google.common.base.Strings;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-
-import net.api.window.FrameWin;
 import net.w3e.base.collection.CollectionBuilder;
 import net.w3e.base.collection.CollectionBuilder.SimpleCollectionBuilder;
 import net.w3e.base.json.BJsonUtil;
+
+import net.api.window.FrameWin;
 
 public class MainArgs<T extends FrameObject> {
 

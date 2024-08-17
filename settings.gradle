@@ -6,6 +6,7 @@ include(
 	//':oba',
 	//':oba2',
 	':random_generator',
+	':infinitode',
 	//':cyberpunk'
 )
 

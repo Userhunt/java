@@ -20,6 +20,26 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.w3e.base.collection.CollectionBuilder;
+import net.w3e.base.dungeon.DungeonException;
+import net.w3e.base.dungeon.DungeonGenerator;
+import net.w3e.base.dungeon.DungeonLayer;
+import net.w3e.base.dungeon.DungeonRoomInfo;
+import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
+import net.w3e.base.dungeon.DungeonLayer.IPathLayer;
+import net.w3e.base.dungeon.layers.ClearLayer;
+import net.w3e.base.dungeon.layers.DistanceLayer;
+import net.w3e.base.dungeon.layers.FeatureLayer;
+import net.w3e.base.dungeon.layers.ListLayer;
+import net.w3e.base.dungeon.layers.RoomLayer;
+import net.w3e.base.dungeon.layers.terra.BiomeLayer;
+import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
+import net.w3e.base.holders.number.IntHolder;
+import net.w3e.base.math.BMatUtil;
+import net.w3e.base.math.vector.WDirection;
+import net.w3e.base.math.vector.i.WBoxI;
+import net.w3e.base.math.vector.i.WVector3I;
+
 import net.api.window.AbstractFrameWin;
 import net.api.window.BackgroundExecutor;
 import net.api.window.FrameWin;
@@ -28,20 +48,6 @@ import net.api.window.ImageScreen;
 import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
 import net.home.FrameObject;
 import net.home.MainFrame;
-import net.w3e.base.collection.CollectionBuilder;
-import net.w3e.base.dungeon.DungeonGenerator;
-import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
-import net.w3e.base.dungeon.DungeonLayer;
-import net.w3e.base.dungeon.DungeonLayer.IPathLayer;
-import net.w3e.base.dungeon.layers.DistanceLayer;
-import net.w3e.base.dungeon.layers.ListLayer;
-import net.w3e.base.dungeon.layers.terra.BiomeLayer;
-import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
-import net.w3e.base.dungeon.DungeonRoomInfo;
-import net.w3e.base.holders.number.IntHolder;
-import net.w3e.base.math.vector.WDirection;
-import net.w3e.base.math.vector.i.WBoxI;
-import net.w3e.base.math.vector.i.WVector3I;
 
 public class RandGenScreen extends FrameObject {
 
@@ -60,40 +66,41 @@ public class RandGenScreen extends FrameObject {
 	private JCheckBox showWet;
 	private JCheckBox showBiome;
 	private JCheckBox fast;
+	private JCheckBox print;
 
 	protected final void init(FrameWin fw, List<String> args) {
 		List<Component> buttons = new ArrayList<>();
 		List<Component> settings = new ArrayList<>();
 
-		buttons.addAll(LongStream.range(0, 6).mapToObj(seed -> this.createButton(String.valueOf(seed), btn -> exampleDungeon(btn, seed))).toList());
-		settings.addAll(LongStream.range(0, 6).mapToObj(seed -> new JCheckBox("null")).toList());
-
-		int i = 0;
-
 		this.showWall = new JCheckBox("Show Wall");
 		this.showWall.addChangeListener(CHANGE);
-		settings.set(i++, this.showWall);
+		settings.add(this.showWall);
 
 		this.showSoftPath = new JCheckBox("Show Soft Path");
 		this.showSoftPath.addChangeListener(CHANGE);
-		settings.set(i++, this.showSoftPath);
+		settings.add(this.showSoftPath);
 
 		this.showTemperature = new JCheckBox("Show Temperature");
 		this.showTemperature.addChangeListener(CHANGE);
-		settings.set(i++, this.showTemperature);
+		settings.add(this.showTemperature);
 
 		this.showWet = new JCheckBox("Show Wet");
 		this.showWet.addChangeListener(CHANGE);
-		settings.set(i++, this.showWet);
+		settings.add(this.showWet);
 
 		this.showBiome = new JCheckBox("Show Biome");
 		this.showBiome.addChangeListener(CHANGE);
-		settings.set(i++, this.showBiome);
+		settings.add(this.showBiome);
 
 		this.fast = new JCheckBox("Fast");
 		this.fast.addChangeListener(CHANGE);
-		settings.set(i++, this.fast);
+		settings.add(this.fast);
 
+		this.print = new JCheckBox("Print", true);
+		this.print.addChangeListener(CHANGE);
+		settings.add(this.print);
+
+		buttons.addAll(LongStream.range(0, settings.size()).mapToObj(seed -> this.createButton(String.valueOf(seed), btn -> exampleDungeon(btn, seed))).toList());
 
 		fw.setLayout(new BoxLayout(fw.getContentPane(), BoxLayout.X_AXIS));
 
@@ -103,7 +110,7 @@ public class RandGenScreen extends FrameObject {
 		fw.add(left);
 
 		this.simpleColumn(left, buttons);
-		
+
 		JPanel right = new JPanel();
 		right.setBorder(null);
 		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
@@ -128,7 +135,7 @@ public class RandGenScreen extends FrameObject {
 			this.image = null;
 		}
 		if (this.backgroundExecutor != null) {
-			this.backgroundExecutor.stopAndClose().run();
+			this.backgroundExecutor.stopAndClose(false).run();
 			this.backgroundExecutor = null;
 		}
 	}
@@ -155,8 +162,9 @@ public class RandGenScreen extends FrameObject {
 			new ImagePainter(frameTitle, width, height, scale, background, dungeon)
 		);
 		this.backgroundExecutor = new BackgroundExecutorBuilder(name, fw).setExecute((oldProgres, executor) -> this.execute(oldProgres, executor, limit, dungeon)).setParentVisible(true).setUpdateParentPosition(false).build();
-		this.backgroundExecutor.setLocation(Math.max(this.image.getX() + this.image.getWidth(), fw.getX() + fw.getWidth())  - 5, fw.getY());
-		this.backgroundExecutor.setSize(new Dimension(this.backgroundExecutor.getWidth(), this.getFrame().getHeight() + this.image.getHeight()));
+		int x = fw.getX() + fw.getWidth();
+		this.backgroundExecutor.setLocation(BMatUtil.clamp(this.image.getX() + this.image.getWidth(), x, x + 2000) - 5, fw.getY());
+		this.backgroundExecutor.setSize(new Dimension(this.backgroundExecutor.getWidth(), Math.min(this.getFrame().getHeight() + this.image.getHeight(), 1650)));
 
 		this.backgroundExecutor.run();
 	}
@@ -167,7 +175,7 @@ public class RandGenScreen extends FrameObject {
 		}
 		sleep(1000);
 		boolean fast = RandGenScreen.this.fast.isSelected();
-		long time = System.currentTimeMillis();
+
 		int progress = 0;
 		if (limit.getAsInt() >= 25) {
 			System.out.println("limit reached");
@@ -177,50 +185,77 @@ public class RandGenScreen extends FrameObject {
 		limit.add();
 
 		int count = 0;
-		while ((count == 0 || (fast && System.currentTimeMillis() - time <= 9)) && progress < 100) {
+		long time = System.currentTimeMillis();
+		boolean next = true;
+		boolean print = this.print.isSelected();
+		while (next) {
 			if (executor.isStop()) {
 				return oldProgres;
 			}
 			count++;
 
-			DungeonLayer generator = dungeon.getFirst();
-			progress = dungeon.generate();
+			DungeonLayer layer = dungeon.getFirst();
+			try {
+				progress = dungeon.generate();
+			} catch (DungeonException e) {
+				e.printStackTrace();
+				executor.stop();
+				return oldProgres;
+			}
 
 			int[] data = this.image.refillImage();
 
-			if (generator instanceof IPathLayer) {
-				System.out.println(this.printString(limit, count, "path", String.format("rooms %s, connections:[%s,%s]", data[0], data[1], data[2])));
-				continue;
-			}
-			if (generator instanceof ListLayer list) {
-				if (list instanceof CompositeTerraLayer) {
-					if (list.size() == -1) {
-						System.out.println(this.printString(limit, count, "terra/composite", "setup"));
-						continue;
-					}
-					System.out.println(this.printString(limit, count, "terra/composite", String.format("rooms %s/%s", list.size(), list.filled())));
+			next = (count == 0 || (fast && System.currentTimeMillis() - time <= 25)) && progress < 100;
+			if (!print) {
+				if (count != 1 && next) {
 					continue;
 				}
-				/*if (list instanceof BiomeLayer) {
-					if (list.size() == -1) {
-						System.out.println(this.printString(limit, count, "terra/biome", "setup"));
-						continue;
-					}
-					System.out.println(this.printString(limit, count, "terra/biome", String.format("biomes %s/%s", list.size(), list.filled())));
-					continue;
-				}*/
+			}
+
+			if (layer instanceof IPathLayer) {
+				System.out.println(this.printString(limit, count, "path", String.format("paths %s, connections:[%s,%s]", data[0], data[1], data[2])));
+				continue;
+			}
+			if (layer instanceof ListLayer list) {
+				String listProgress = String.format(" %s/%s", list.size(), list.filled());
+				String roomsProgress = "rooms" + listProgress;
+
+				String layerName = null;
+				String arg = roomsProgress;
+
 				if (list instanceof DistanceLayer) {
+					layerName = "distance";
+					arg = "enterances" + listProgress;
+				}
+				if (list instanceof BiomeLayer) {
+					layerName = "terra/biome";
+					arg = "biomes" + listProgress;
+				}
+				if (list instanceof CompositeTerraLayer) {
+					layerName = "terra/composite";
+				}
+				if (list instanceof RoomLayer) {
+					layerName = "room";
+				}
+				if (list instanceof FeatureLayer) {
+					layerName = "feature";
+				}
+				if (layerName != null) {
 					if (list.size() == -1) {
-						System.out.println(this.printString(limit, count, "distance", "setup"));
-						continue;
+						System.out.println(this.printString(limit, count, layerName, "setup"));
+					} else {
+						System.out.println(this.printString(limit, count, layerName, arg));
 					}
-					System.out.println(this.printString(limit, count, "distance", String.format("enterances %s/%s", list.size(), list.filled())));
 					continue;
 				}
-				System.out.println(this.printString(limit, count, "list/unhandled", generator.getClass().getSimpleName()));
+				System.out.println(this.printString(limit, count, "list/unhandled", layer.getClass().getSimpleName()));
 				continue;
 			}
-			System.out.println(this.printString(limit, count, "unhandled", generator.getClass().getSimpleName()));
+			if (layer instanceof ClearLayer) {
+				System.out.println(this.printString(limit, count, "clear walls", layer.getClass().getSimpleName()));
+				continue;
+			}
+			System.out.println(this.printString(limit, count, "unhandled", layer.getClass().getSimpleName()));
 		}
 		System.out.println();
 		this.image.update();
@@ -327,11 +362,11 @@ public class RandGenScreen extends FrameObject {
 							if (direction != WDirection.UP && direction != WDirection.DOWN) {
 								if (value.isConnect(direction, true)) {
 									data[1]++;
-									this.setColor(x + direction.relative.getXI(), z + + direction.relative.getZI(), Color.RED);
+									this.setColor(x + direction.getRelative().getXI(), z + + direction.getRelative().getZI(), Color.RED);
 								} else if (value.isConnect(direction, false)) {
 									data[2]++;
 									if (showSoftPath) {
-										this.setColor(x + direction.relative.getXI(), z + + direction.relative.getZI(), Color.GREEN);
+										this.setColor(x + direction.getRelative().getXI(), z + + direction.getRelative().getZI(), Color.GREEN);
 									}
 								}
 							}

@@ -17,15 +17,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
-import net.api.registry.DynamicRegistry;
-import net.api.registry.DynamicRegistry.CacheDynamicRegistry;
-import net.api.window.BackgroundExecutor;
-import net.api.window.FrameWin;
-import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
-import net.home.FrameObject;
-import net.home.MainFrame;
 import net.w3e.base.BStringUtil;
 import net.w3e.base.collection.ArraySet;
 import net.w3e.base.collection.CollectionOfCollections;
@@ -35,6 +26,16 @@ import net.w3e.base.collection.ModifiedQueue.QueueTask;
 import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.jar.JarUtil;
 import net.w3e.base.math.BMatUtil;
+
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+import net.api.registry.DynamicRegistry;
+import net.api.registry.DynamicRegistry.CacheDynamicRegistry;
+import net.api.window.BackgroundExecutor;
+import net.api.window.FrameWin;
+import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
+import net.home.FrameObject;
+import net.home.MainFrame;
 
 public class TestScreen extends FrameObject {
 

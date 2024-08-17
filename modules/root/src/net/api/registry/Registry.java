@@ -5,11 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.ImmutableList;
-
-import net.api.registry.RegistryEntryIns.RegistryValue;
 import net.w3e.base.collection.IdentityLinkedHashMap;
 import net.w3e.base.collection.cache.CacheKeys;
 import net.w3e.base.collection.cache.CacheKeys.CacheKeysEmpty;
+
+import net.api.registry.RegistryEntryIns.RegistryValue;
 
 public class Registry<T> {
 

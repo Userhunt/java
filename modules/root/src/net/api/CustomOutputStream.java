@@ -26,7 +26,8 @@ public class CustomOutputStream extends OutputStream {
 	public CustomOutputStream(JTextArea textArea, boolean custom) {
 		this.textArea = textArea;
 		this.printStream = custom ? new PrintWrapper(this) {
-			protected void info(String string) {
+			@Override
+			protected final void info(String string) {
 				JTextArea area = CustomOutputStream.this.textArea;
 				area.append(string + "\n");
 				area.setCaretPosition(area.getDocument().getLength());

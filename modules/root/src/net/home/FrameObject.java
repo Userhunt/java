@@ -14,8 +14,9 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import net.api.window.FrameWin;
 import net.w3e.base.holders.number.IntHolder;
+
+import net.api.window.FrameWin;
 
 public abstract class FrameObject {
 

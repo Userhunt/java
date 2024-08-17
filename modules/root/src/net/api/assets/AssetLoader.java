@@ -11,11 +11,12 @@ import java.util.function.Function;
 
 import org.apache.logging.log4j.LogManager;
 
-import net.api.assets.type.PngAsset;
-import net.api.assets.type.TxtAsset;
 import net.w3e.base.PrintWrapper;
 import net.w3e.base.message.BMessageLoggerHelper;
 import net.w3e.base.message.MessageUtil;
+
+import net.api.assets.type.PngAsset;
+import net.api.assets.type.TxtAsset;
 
 public class AssetLoader {
 	public static final AssetLoader INSTANCE = new AssetLoader(AssetCollector.folder("", null));

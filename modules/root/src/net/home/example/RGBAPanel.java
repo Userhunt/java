@@ -10,13 +10,14 @@ import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import net.w3e.base.RGBA;
+import net.w3e.base.RGBA.RGBAFlag;
+import net.w3e.base.math.BMatUtil;
+
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import net.api.window.FrameWin;
 import net.api.window.jcomponent.JNumberTextField;
-import net.w3e.base.RGBA;
-import net.w3e.base.RGBA.RGBAFlag;
-import net.w3e.base.math.BMatUtil;
 
 public class RGBAPanel extends JPanel {
 

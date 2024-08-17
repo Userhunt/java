@@ -73,28 +73,14 @@ public class Infinitode extends FrameObject {
 			priceStrings.add(price);
 		}
 
-		IntList whens1 = new IntArrayList();
-		IntList whens2 = new IntArrayList();
-
 		int i = 0;
 
 		for (int price : prices) {
-			int a = this.calculate(2.0f, 60, i, price);
-			int b = this.calculate(2.1f, 63, i, price);
-			if (b > a) {
-				b = a;
-			}
-			whens1.add(a);
-			whens2.add(b);
+			int[] a = this.calculate(2.0f, 60, i, price);
+			int[] b = this.calculate(2.3f, 65, i, price);
+			whenStrings1.add(String.format("%s, (%s)", a[0], a[1]));
+			whenStrings2.add(String.format("%s, (%s)", b[0], b[1]));
 			i++;
-		}
-
-		for (int price : whens1) {
-			whenStrings1.add(String.valueOf(price));
-		}
-
-		for (int price : whens2) {
-			whenStrings2.add(String.valueOf(price));
 		}
 
 		this.display.getValueAt(1, 1);
@@ -108,9 +94,9 @@ public class Infinitode extends FrameObject {
 		this.display.getModel().addTableModelListener(e -> calculate());
 	}
 
-	private final int calculate(float percent, int max, int count, int price) {
+	private final int[] calculate(float percent, int max, int count, int price) {
 		if (count == 0) {
-			return price;
+			return new int[]{price, 0};
 		} else {
 			float d = 100 / percent;
 			percent /= 100;
@@ -129,7 +115,7 @@ public class Infinitode extends FrameObject {
 				v1 *= count;
 				v2 *= count + 1;
 				if (v1 <= v2) {
-					return (int)Math.ceil(value);
+					return new int[]{(int)Math.ceil(value), v2};
 				}
 			}
 		}

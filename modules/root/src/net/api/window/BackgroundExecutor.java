@@ -18,13 +18,14 @@ import javax.swing.JProgressBar;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import net.api.CustomOutputStream;
-import net.api.window.jcomponent.JConsole;
 import net.w3e.base.BooleanEnum;
 import net.w3e.base.holders.ObjectHolder;
 import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.holders.number.LongHolder;
 import net.w3e.base.math.BMatUtil;
+
+import net.api.CustomOutputStream;
+import net.api.window.jcomponent.JConsole;
 
 public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor {
 
@@ -50,11 +51,17 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 
 		this.bar.setStringPainted(true);
 
-		JButton button = new JButton("Stop");
-		FrameWin.setSize(button, 60, 26);
-		button.addActionListener(FrameWin.onClick(() -> this.stop = true));
+		JButton stop = new JButton("Stop");
+		FrameWin.setSize(stop, 60, 26);
+		stop.addActionListener(FrameWin.onClick(this::stop));
 
-		this.add(FrameWin.horisontalPanelBuilder().add(this.bar, button).setWidth(1100).setMinWidth(1100).build());
+		JButton interrupt = new JButton("Interrupt");
+		FrameWin.setSize(interrupt, 85, 26);
+		interrupt.addActionListener(FrameWin.onClick(() -> {
+			this.stopAndClose(true).run();
+		}));
+
+		this.add(FrameWin.horisontalPanelBuilder().add(this.bar, stop, interrupt).setWidth(1100).setMinWidth(1100).build());
 
 		this.add(Box.createVerticalStrut(10));
 
@@ -110,10 +117,10 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 				if (this.done != null) {
 					this.done.done(this);
 				}
-				this.close = BooleanEnum.FALSE;
 				if (this.close == BooleanEnum.TRUE) {
 					this.onClose();
 				}
+				this.close = BooleanEnum.FALSE;
 			}
 		}, 10, false);
 		return progress;
@@ -235,7 +242,7 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 				executor.print(() -> {
 					System.out.println(String.format("Stage: %s. Progress of stage: %s. Progress: %s", ((int)size) - list.size(), p1, p2));
 				});
-	
+
 				Inputs.sleep(tickRate);
 				return p2;
 			}, this.done, !this.parentVisible, this.updateParentPosition) {
@@ -247,7 +254,7 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 					}
 				}
 			};
-			
+
 			return exe;
 		}
 
@@ -271,11 +278,15 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 	}
 
 	@Override
-	public final Runnable stopAndClose() {
-		if (close == BooleanEnum.FALSE) {
-			return () -> {
-				this.dispose();
-			};
+	public final Runnable stopAndClose(boolean kill) {
+		if (this.close == BooleanEnum.FALSE) {
+			if (kill) {
+				return () -> {};
+			} else {
+				return () -> {
+					this.dispose();
+				};
+			}
 		}
 		this.stop();
 		this.close = BooleanEnum.TRUE;
@@ -286,13 +297,20 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 					Inputs.sleep(100);
 				}
 			});
+			if (kill) {
+				this.close = BooleanEnum.FALSE;
+				this.timer.stop();
+			}
 			es.shutdown();
 			try {
-				es.awaitTermination(1, TimeUnit.MINUTES);
+				es.awaitTermination(1, kill ? TimeUnit.SECONDS : TimeUnit.MINUTES);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			this.dispose();
+
+			if (!kill) {
+				this.dispose();
+			}
 		};
 	}
 

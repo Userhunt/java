@@ -13,11 +13,12 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.w3e.base.math.BMatUtil;
+import net.w3e.base.math.OpenSimplex2S;
+
 import net.api.window.AbstractFrameWin;
 import net.api.window.jcomponent.JButtonGroup;
 import net.api.window.jcomponent.JImageLabel;
-import net.w3e.base.math.BMatUtil;
-import net.w3e.base.math.OpenSimplex2S;
 
 public class NoiseScreen extends AbstractFrameWin {
 
