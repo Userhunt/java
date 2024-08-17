@@ -8,6 +8,8 @@ public abstract class AbstractObjectHolder<T> {
 
 	public abstract void set(T t);
 
+	public abstract AbstractObjectHolder<T> copy();
+
 	@Override
 	public final boolean equals(Object object) {
 		if (object == null) {

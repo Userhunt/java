@@ -15,7 +15,7 @@ public abstract class IWVector<T extends IWVector<T>> implements Comparable<T> {
 	protected abstract T create(double x, double y, double z);
 	
 	public final T add(WDirection direction) {
-		return this.add(direction.relative);
+		return this.add(direction.getRelative());
 	}
 	public final T add(IWVectorNI<?> vector) {
 		return this.add(vector.getXI(), vector.getYI(), vector.getZI());
@@ -28,7 +28,7 @@ public abstract class IWVector<T extends IWVector<T>> implements Comparable<T> {
 	}
 
 	public final T substract(WDirection direction) {
-		return this.substract(direction.relative);
+		return this.substract(direction.getRelative());
 	}
 	public final T substract(IWVectorNI<?> vector) {
 		return this.substract(vector.getXI(), vector.getYI(), vector.getZI());

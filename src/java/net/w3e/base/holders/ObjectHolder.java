@@ -10,6 +10,10 @@ public class ObjectHolder<T> extends AbstractObjectHolder<T> {
 		this.t = t;
 	}
 
+	public ObjectHolder(AbstractObjectHolder<T> holder) {
+		this(holder.get());
+	}
+
 	@Override
 	public final T get() {
 		return t;
@@ -18,5 +22,10 @@ public class ObjectHolder<T> extends AbstractObjectHolder<T> {
 	@Override
 	public final void set(T t) {
 		this.t = t;
+	}
+
+	@Override
+	public final ObjectHolder<T> copy() {
+		return new ObjectHolder<>(this);
 	}
 }

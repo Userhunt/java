@@ -1,6 +1,6 @@
 package net.w3e.base.holders.number;
 
-public class LongHolder extends NumberHolder<Long> {
+public class LongHolder extends NumberHolder<Long, LongHolder> {
 
 	private long value;
 
@@ -8,6 +8,10 @@ public class LongHolder extends NumberHolder<Long> {
 
 	public LongHolder(long value) {
 		this.value = value;
+	}
+
+	public LongHolder(NumberHolder<?, ?> holder) {
+		this(holder.getAsLong());
 	}
 
 	@Override
@@ -24,20 +28,30 @@ public class LongHolder extends NumberHolder<Long> {
 		this.value = value;
 	}
 
-	public final void add() {
+	@Override
+	public final LongHolder add() {
 		this.value += 1;
+		return this.add(1);
 	}
 
-	public final void add(long value) {
+	public final LongHolder add(long value) {
 		this.value += value;
+		return this;
 	}
 
-	public final void remove() {
-		this.value -= 1;
+	@Override
+	public final LongHolder remove() {
+		return this.remove(-1);
 	}
 
-	public final void remove(long value) {
+	public final LongHolder remove(long value) {
 		this.value += value;
+		return this;
+	}
+
+	@Override
+	public LongHolder copy() {
+		return new LongHolder(this);
 	}
 
 	@Override

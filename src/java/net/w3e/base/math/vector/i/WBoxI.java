@@ -137,4 +137,9 @@ public class WBoxI {
 		}
 		return this;
 	}
+
+	@Override
+	public final String toString() {
+		return String.format("{min:[%s,%s,%s],max:[%s,%s,%s]}", this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
+	}
 }

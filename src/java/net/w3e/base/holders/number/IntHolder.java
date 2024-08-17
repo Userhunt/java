@@ -1,6 +1,6 @@
 package net.w3e.base.holders.number;
 
-public class IntHolder extends NumberHolder<Integer> {
+public class IntHolder extends NumberHolder<Integer, IntHolder> {
 
 	private int value;
 
@@ -8,6 +8,10 @@ public class IntHolder extends NumberHolder<Integer> {
 
 	public IntHolder(int value) {
 		this.value = value;
+	}
+	
+	public IntHolder(NumberHolder<?, ?> holder) {
+		this(holder.getAsInt());
 	}
 
 	@Override
@@ -24,20 +28,29 @@ public class IntHolder extends NumberHolder<Integer> {
 		this.value = value;
 	}
 
-	public final void add() {
-		this.value += 1;
+	@Override
+	public final IntHolder add() {
+		return this.add(1);
 	}
 
-	public final void add(int value) {
+	public final IntHolder add(int value) {
 		this.value += value;
+		return this;
 	}
 
-	public final void remove() {
-		this.value -= 1;
+	@Override
+	public final IntHolder remove() {
+		return this.remove(-1);
 	}
 
-	public final void remove(int value) {
+	public final IntHolder remove(int value) {
 		this.value += value;
+		return this;
+	}
+
+	@Override
+	public IntHolder copy() {
+		return new IntHolder(this);
 	}
 
 	@Override

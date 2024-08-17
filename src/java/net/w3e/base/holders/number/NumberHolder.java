@@ -7,7 +7,13 @@ import java.util.function.LongSupplier;
 import net.w3e.base.collection.RandomCollection.FloatSupplier;
 import net.w3e.base.holders.AbstractObjectHolder;
 
-public abstract class NumberHolder<T extends Number> extends AbstractObjectHolder<T> implements IntSupplier, LongSupplier, FloatSupplier, DoubleSupplier {
+public abstract class NumberHolder<T extends Number, V extends NumberHolder<T, V>> extends AbstractObjectHolder<T> implements IntSupplier, LongSupplier, FloatSupplier, DoubleSupplier {
+
+	public abstract V add();
+	public abstract V remove();
+
+	@Override
+	public abstract V copy();
 
 	public byte getAsByte() {
 		return get().byteValue();

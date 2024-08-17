@@ -10,6 +10,10 @@ public class BoolHolder extends AbstractObjectHolder<Boolean> {
 		this.value = value;
 	}
 
+	public BoolHolder(BoolHolder value) {
+		this(value.value);
+	}
+
 	@Override
 	public final Boolean get() {
 		return this.value;
@@ -34,5 +38,10 @@ public class BoolHolder extends AbstractObjectHolder<Boolean> {
 
 	public final void setFalse() {
 		this.value = false;
+	}
+
+	@Override
+	public BoolHolder copy() {
+		return new BoolHolder(this);
 	}
 }

@@ -3,6 +3,7 @@ package net.w3e.base.json.adapters;
 import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import com.google.gson.JsonDeserializationContext;
@@ -15,10 +16,18 @@ import net.w3e.base.message.MessageUtil;
 
 public abstract class WTypedJsonAdapter<K, V> extends WJsonAdapter<V> {
 
-	private final Map<K, AdapterFactory<V>> MAP = new HashMap<>();
+	protected final Map<K, SimpleJsonAdapter<K, V>> map = new HashMap<>();
 
-	public static interface AdapterFactory<V> {
-		V apply(JsonObject json) throws Exception;
+	public static interface SimpleJsonAdapter<K, V> {
+		V apply(K key, JsonObject json, JsonDeserializationContext context) throws Exception;
+	}
+
+	public static interface JsonAdapterA<K, V, A> {
+		V apply(K key, JsonObject json, A a, JsonDeserializationContext context) throws Exception;
+	}
+
+	public static interface JsonAdapterB<K, V, A, B> {
+		V apply(K key, JsonObject json, A a, B b, JsonDeserializationContext context) throws Exception;
 	}
 
 	protected String getName() {
@@ -30,12 +39,20 @@ public abstract class WTypedJsonAdapter<K, V> extends WJsonAdapter<V> {
 	}
 
 	@Override
-	public V deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+	public final V deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 		JsonObject jsonObject = BJsonUtil.convertToJsonObject(json, this.getName());
 		try {
-			AdapterFactory<V> factory = this.MAP.get(this.parseKey(jsonObject.get("type").getAsString()));
+			K key = this.parseKey(jsonObject.get("type").getAsString());
+			SimpleJsonAdapter<K, V> factory = null;
+			for (Entry<K, SimpleJsonAdapter<K, V>> entry : this.map.entrySet()) {
+				if (entry.getKey().equals(key)) {
+					key = entry.getKey();
+					factory = entry.getValue();
+					break;
+				}
+			}
 			if (factory != null) {
-				return factory.apply(jsonObject);
+				return factory.apply(key, jsonObject, context);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -43,15 +60,58 @@ public abstract class WTypedJsonAdapter<K, V> extends WJsonAdapter<V> {
 		return this.defValue();
 	}
 
-	public final void register(K key, AdapterFactory<V> factory) {
-		if (this.MAP.containsKey(key)) {
-			throw new IllegalStateException(MessageUtil.KEY_DUPLICATE.createMsg(this.MAP.keySet(), key));
+	public final void register(K key, SimpleJsonAdapter<K, V> factory) {
+		if (this.canReplace(key) && this.map.containsKey(key)) {
+			throw new IllegalStateException(MessageUtil.KEY_DUPLICATE.createMsg(this.map.keySet(), key));
 		} else {
-			this.MAP.put(key, factory);
+			this.map.put(key, factory);
 		}
 	}
 
+	public final void register(K key, Class<?> clazz) {
+		this.register(key, (k, json, context) -> {
+			return context.deserialize(json, clazz);
+		});
+	}
+
+	public final <A> void register(K key, Class<A> dataA, JsonAdapterA<K, V, A> factory) {
+		this.register(key, (k, json, context) -> {
+			A a = context.deserialize(json, dataA);
+			return factory.apply(key, json, a, context);
+		});
+	}
+
+	
+	public final <A, B> void register(K key, Class<A> dataA, Class<B> dataB, JsonAdapterB<K, V, A, B> factory) {
+		this.register(key, (k, json, context) -> {
+			A a = context.deserialize(json, dataA);
+			B b = context.deserialize(json, dataB);
+			return factory.apply(key, json, a, b, context);
+		});
+	}
+
 	public final Set<K> keySet() {
-		return this.MAP.keySet();
+		return this.map.keySet();
+	}
+
+	protected boolean canReplace(K key) {
+		return false;
+	}
+
+	public WTypedJsonAdapter<K, V> copy() {
+		WTypedJsonAdapter<K, V> self = this;
+		WTypedJsonAdapter<K, V> copy = new WTypedJsonAdapter<K, V>() {
+			@Override
+			protected final K parseKey(String key) {
+				return self.parseKey(key);
+			}
+
+			@Override
+			protected final boolean canReplace(K key) {
+				return self.canReplace(key);
+			}
+		};
+		copy.map.putAll(this.map);
+		return copy;
 	}
 }
