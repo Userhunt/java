@@ -1,35 +1,36 @@
 package net.w3e.base.dungeon.layers.terra;
 
-import lombok.NoArgsConstructor;
 import net.w3e.base.dungeon.DungeonGenerator;
-import net.w3e.base.dungeon.json.ILayerAdapter;
 
 public class TemperatureLayer extends NoiseLayer {
 
+	public static final String TYPE = "terra/temperature";
+
 	public static final String KEY = "temperature";
 
-	public TemperatureLayer(DungeonGenerator generator, NoiseData data) {
-		super(generator, data.withKey(KEY));
+	public TemperatureLayer() {
+		super(null, null);
+	}
+
+	public TemperatureLayer(DungeonGenerator generator, NoiseData data, int stepRate) {
+		super(generator, data.withKey(KEY), stepRate);
 	}
 
 	@Override
-	public final TemperatureLayer withDungeon(DungeonGenerator generator) {
-		return new TemperatureLayer(generator, this.data);
+	public final TemperatureLayer withDungeonImpl(DungeonGenerator generator) {
+		return new TemperatureLayer(generator, this.noise, this.stepRate);
 	}
 
-	@NoArgsConstructor
-	@SuppressWarnings({"FieldMayBeFinal"})
-	public static class TemperatureLayerData implements ILayerAdapter<TemperatureLayer> {
-		private NoiseData noise = NoiseData.INSTANCE;
+	public static class TemperatureLayerData extends NoiseLayerData<TemperatureLayer> {
+
 		@Override
-		public final TemperatureLayer withDungeon(DungeonGenerator generator) {
-			this.nonNull("noise", this.noise);
-			return new TemperatureLayer(generator, this.noise);
+		public final TemperatureLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate) {
+			return new TemperatureLayer(generator, noise, stepRate);
 		}
 	}
 
 	public static final TemperatureLayer example(DungeonGenerator generator) {
-		return new TemperatureLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).generateDefValue().build());
+		return new TemperatureLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).generateDefValue().build(), 50).setTypeKey(TYPE);
 	}
 
 	public static final int MIN = -25;

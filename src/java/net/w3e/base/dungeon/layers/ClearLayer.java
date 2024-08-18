@@ -4,14 +4,16 @@ import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.json.ILayerAdapter;
 
-public class ClearLayer extends DungeonLayer implements ILayerAdapter<ClearLayer> {
+public class ClearLayer extends DungeonLayer implements ILayerAdapter<DungeonLayer> {
+
+	public static final String TYPE = "clear";
 
 	public ClearLayer(DungeonGenerator generator) {
 		super(generator);
 	}
 
 	@Override
-	public final ClearLayer withDungeon(DungeonGenerator generator) {
+	protected final ClearLayer withDungeonImpl(DungeonGenerator generator) {
 		return new ClearLayer(generator);
 	}
 
@@ -29,7 +31,7 @@ public class ClearLayer extends DungeonLayer implements ILayerAdapter<ClearLayer
 	}
 
 	public static final ClearLayer example(DungeonGenerator generator) {
-		return new ClearLayer(generator);
+		return new ClearLayer(generator).setTypeKey(TYPE);
 	}
 
 }

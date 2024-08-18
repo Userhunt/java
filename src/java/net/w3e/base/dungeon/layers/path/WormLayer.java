@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-
-import lombok.NoArgsConstructor;
 import net.w3e.base.collection.CollectionUtils;
 import net.w3e.base.collection.ArraySet.ArraySetStrict;
 import net.w3e.base.dungeon.DungeonException;
@@ -23,11 +21,13 @@ import net.w3e.base.math.vector.i.WVector3I;
 
 public class WormLayer extends DungeonLayer implements IPathLayer {
 
+	public static final String TYPE = "path/worm";
+
 	public final DungeonPos[] centers;
 	public final WormDungeonStepChances stepChances;
 	public final DungeonChances directionChances;
 	public final DungeonChances connectionChances;
-	private final List<DungeonPos>[] entries = CollectionUtils.createArrayList(DungeonPos.class, 2);
+	private final transient List<DungeonPos>[] entries = CollectionUtils.createArrayList(DungeonPos.class, 2);
 
 	public WormLayer(DungeonGenerator generator, DungeonPos[] centers, WormDungeonStepChances stepChances, DungeonChances directionChances, DungeonChances connectionChances) {
 		super(generator);
@@ -38,7 +38,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 	}
 
 	@Override
-	public final WormLayer withDungeon(DungeonGenerator generator) {
+	public final WormLayer withDungeonImpl(DungeonGenerator generator) {
 		return new WormLayer(generator, this.centers, this.stepChances, this.directionChances, this.connectionChances);
 	}
 
@@ -142,7 +142,6 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		}
 	}
 
-	@NoArgsConstructor
 	@SuppressWarnings({"FieldMayBeFinal"})
 	public static class WormLayerData implements ILayerAdapter<WormLayer> {
 
@@ -170,6 +169,6 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 			WormDungeonStepChances.INSTANCE, 
 			new DungeonChances(20, 15, 10, 5, 0, 0, 1, 5, 0, 0), 
 			new DungeonChances(10, 4, 4, 4, 0, 0, 1, 1, 0, 0)
-		);
+		).setTypeKey(TYPE);
 	}
 }

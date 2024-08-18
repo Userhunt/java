@@ -18,7 +18,7 @@ public record DungeonPos(WVector3I pos, WDirection direction, boolean enterance)
 	}
 
 	public DungeonPos(WVector3I pos, boolean enterance) {
-		this(pos, null, false);
+		this(pos, null, enterance);
 	}
 
 	@Deprecated

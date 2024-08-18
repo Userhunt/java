@@ -5,22 +5,23 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.w3e.base.dungeon.DungeonGenerator;
+import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.base.dungeon.json.ILayerAdapter;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.math.vector.i.WVector3I;
 
-public class DistanceLayer extends ListLayer<DungeonRoomInfo> implements ILayerAdapter<DistanceLayer> {
+public class DistanceLayer extends ListLayer<DungeonRoomInfo> implements ILayerAdapter<DungeonLayer> {
 
-	public static final DistanceLayer INSTANCE = new DistanceLayer(null);
+	public static final String TYPE = "distance";
 
 	public DistanceLayer(DungeonGenerator generator) {
 		super(generator);
 	}
 
 	@Override
-	public final DistanceLayer withDungeon(DungeonGenerator generator) {
+	public final DistanceLayer withDungeonImpl(DungeonGenerator generator) {
 		return new DistanceLayer(generator);
 	}
 
@@ -62,5 +63,9 @@ public class DistanceLayer extends ListLayer<DungeonRoomInfo> implements ILayerA
 				}
 			}
 		}
+	}
+
+	public static final DistanceLayer example(DungeonGenerator generator) {
+		return new DistanceLayer(generator).setTypeKey(TYPE);
 	}
 }

@@ -3,20 +3,36 @@ package net.w3e.base.dungeon;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import lombok.AllArgsConstructor;
 import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
+import net.w3e.base.dungeon.json.ILayerAdapter;
 import net.w3e.base.dungeon.layers.roomvalues.BaseLayerRoomRange;
+import net.w3e.base.json.adapters.WTypedJsonAdapter.WJsonKeyHolder;
 import net.w3e.base.dungeon.layers.roomvalues.AbstractLayerRoomValues;
 import net.w3e.base.math.vector.WDirection;
-import net.w3e.base.math.vector.i.WBoxI;
 import net.w3e.base.math.vector.i.WVector3I;
 
-@AllArgsConstructor
-public abstract class DungeonLayer {
+public abstract class DungeonLayer implements WJsonKeyHolder {
 
-	private final DungeonGenerator generator;
+	protected String type;
+	private final transient DungeonGenerator generator;
 
-	public abstract DungeonLayer withDungeon(DungeonGenerator generator);
+	protected DungeonLayer(DungeonGenerator generator) {
+		this.generator = generator;
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public final <VALUE> VALUE setTypeKey(String type) {
+		this.type = type;
+		return (VALUE)this;
+	}
+
+	public final DungeonLayer withDungeon(DungeonGenerator generator) {
+		DungeonLayer instance = this.withDungeonImpl(generator);
+		instance.type = type;
+		return instance;
+	}
+	protected abstract DungeonLayer withDungeonImpl(DungeonGenerator generator);
 	public abstract void regenerate(boolean b) throws DungeonException;
 	public abstract int generate() throws DungeonException;
 
@@ -30,12 +46,6 @@ public abstract class DungeonLayer {
 		if (!this.generator.testDimension(pos)) {
 			throw new DungeonException("Something went wrong. Pos is not insisde dungeon " + pos.toStringArray());
 		}
-	}
-	protected final boolean isOnFrame(WVector3I pos) {
-		WBoxI box = this.generator.dimension().copy();
-		System.out.println(box);
-		System.out.println(box.expand(-1, -1, -1));
-		return this.generator.dimension().copy().expand(-1, -1, -1).contains(pos);
 	}
 	protected final DungeonRoomCreateInfo putOrGet(WVector3I pos) {
 		return this.generator.putOrGet(pos);
@@ -59,7 +69,11 @@ public abstract class DungeonLayer {
 		return this.generator.dimension().size();
 	}
 
-	public static interface IPathLayer {
+	@FunctionalInterface
+	public static interface IPathLayer extends ILayerAdapter<DungeonLayer> {
 		void add(WVector3I pos, WDirection direction) throws DungeonException;
+		default DungeonLayer withDungeon(DungeonGenerator generator) {
+			throw new AssertionError();
+		}
 	}
 }

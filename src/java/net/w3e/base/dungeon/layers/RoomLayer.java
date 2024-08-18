@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -14,6 +15,7 @@ import java.util.Set;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap.Entry;
+import lombok.NoArgsConstructor;
 import net.w3e.base.dungeon.DungeonException;
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
@@ -21,7 +23,7 @@ import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.dungeon.json.ILayerAdapter;
 import net.w3e.base.dungeon.layers.interfaces.IDungeonLimitedCount;
 import net.w3e.base.dungeon.layers.roomvalues.BaseLayerRoomRange;
-import net.w3e.base.holders.number.IntHolder;
+import net.w3e.base.dungeon.layers.interfaces.DungeonInfoCountHolder;
 import net.w3e.base.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.math.vector.i.WVector3I;
@@ -29,13 +31,15 @@ import net.w3e.base.message.MessageUtil;
 
 public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements ISetupLayer {
 
+	public static final String TYPE = "room";
+
 	public static final String KEY = "room";
 
 	private final int softChance;
-	private final List<RoomVariant<T>> roomList = new ArrayList<>();
-	private final List<RoomVariant<T>> workList = new ArrayList<>();
-	private final List<RoomSoftData<T>> softList = new ArrayList<>();
-	private Progress progress;
+	private final List<RoomVariant<T>> rooms = new ArrayList<>();
+	private final transient List<RoomVariant<T>> workList = new ArrayList<>();
+	private final transient List<RoomSoftData<T>> softList = new ArrayList<>();
+	private transient Progress progress;
 
 	@SafeVarargs
 	public RoomLayer(DungeonGenerator generator, int softChance, RoomVariant<T>... rooms) {
@@ -45,13 +49,13 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 	public RoomLayer(DungeonGenerator generator, int softChance, Collection<RoomVariant<T>> rooms) {
 		super(generator);
 		this.softChance = softChance;
-		this.roomList.addAll(rooms);
-		this.roomList.removeIf(RoomVariant::notValid);
+		this.rooms.addAll(rooms);
+		this.rooms.removeIf(RoomVariant::notValid);
 	}
 
 	@Override
-	public final RoomLayer<T> withDungeon(DungeonGenerator generator) {
-		return new RoomLayer<>(generator, this.softChance, this.roomList);
+	public final RoomLayer<T> withDungeonImpl(DungeonGenerator generator) {
+		return new RoomLayer<>(generator, this.softChance, this.rooms);
 	}
 
 	@Override
@@ -67,7 +71,7 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 		this.progress = Progress.createArray;
 
 		this.workList.clear();
-		this.roomList.stream().map(RoomVariant::copy).forEach(this.workList::add);
+		this.rooms.stream().map(RoomVariant::copy).forEach(this.workList::add);
 		if (this.workList.isEmpty()) {
 			throw new DungeonException(MessageUtil.IS_EMPTY.createMsg("Room layer"));
 		}
@@ -284,14 +288,14 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 		}
 	}
 
-	public record RoomVariant<T>(Set<Object2BooleanArrayMap<WDirection>> directionVariants, BaseLayerRoomRange layerRange, boolean enterance, T value, IntHolder count) implements IDungeonLimitedCount {
+	public record RoomVariant<T>(Set<Object2BooleanArrayMap<WDirection>> directionVariants, BaseLayerRoomRange layerRange, boolean enterance, T value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
 		public RoomVariant(Set<Object2BooleanArrayMap<WDirection>> directionVariants, BaseLayerRoomRange layerRange, boolean enterance, T value, int count) {
-			this(directionVariants, layerRange, enterance, value, new IntHolder(count));
+			this(directionVariants, layerRange, enterance, value, new DungeonInfoCountHolder(count));
 		}
 
 		public RoomVariant(Object2BooleanArrayMap<WDirection> directionVariants, BaseLayerRoomRange layerRange, boolean enterance, T value, int count) {
-			this(new HashSet<>(), layerRange, enterance, value, count);
+			this(new LinkedHashSet<>(), layerRange, enterance, value, count);
 			if (!directionVariants.isEmpty()) {
 				Object2BooleanArrayMap<WDirection> baseVariants = new Object2BooleanArrayMap<>();
 				if (directionVariants.containsKey(WDirection.UP)) {
@@ -382,17 +386,17 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 	}
 
 	public abstract static class RoomLayerData<T> implements ILayerAdapter<RoomLayer<T>> {
-		private int softChances = 0;
+		private int softChance = 0;
 
-		protected abstract RoomVariant<T>[] getVariants();
+		protected abstract RoomVariant<T>[] getRooms();
 
 		@Override
 		public final RoomLayer<T> withDungeon(DungeonGenerator generator) {
-			RoomVariant<T>[] variants = this.getVariants();
+			RoomVariant<T>[] variants = this.getRooms();
 			this.isEmpty("room variants", variants);
-			this.lessThan("softChances", this.softChances, -1);
+			this.lessThan("softChance", this.softChance, -1);
 
-			return new RoomLayer<T>(generator, this.softChances, variants);
+			return new RoomLayer<T>(generator, this.softChance, variants);
 		}
 	}
 
@@ -400,7 +404,7 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 
 		private Connections connections = new Connections();
 		private boolean enterance = false;
-		public int count = -1;
+		private int count = -1;
 	
 		protected abstract T getValue();
 		protected abstract BaseLayerRoomRange getLayerRange();
@@ -412,7 +416,7 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 			if (layerRange.notValid()) {
 				throw new IllegalStateException(MessageUtil.ILLEGAL.createMsg("layerRange"));
 			}
-			if (this.count != -1) {
+				if (this.count != -1) {
 				this.lessThan("count", this.count);
 			}
 			T value = this.getValue();
@@ -425,13 +429,31 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 			return new RoomVariant<T>(map, layerRange, this.enterance, value, count);
 		}
 
-		private class Connections {
+		@NoArgsConstructor
+		public static class Connections {
 			private Boolean north = null;
 			private Boolean south = null;
 			private Boolean west = null;
 			private Boolean east = null;
 			private Boolean up = null;
 			private Boolean down = null;
+
+			public Connections(Object2BooleanArrayMap<WDirection> map) {
+				this.north = this.get(map, WDirection.NORTH);
+				this.south = this.get(map, WDirection.SOUTH);
+				this.west = this.get(map, WDirection.WEST);
+				this.east = this.get(map, WDirection.EAST);
+				this.up = this.get(map, WDirection.UP);
+				this.down = this.get(map, WDirection.DOWN);
+			}
+
+			private final Boolean get(Object2BooleanArrayMap<WDirection> map, WDirection direction) {
+				if (map.containsKey(direction)) {
+					return map.getBoolean(direction);
+				} else {
+					return null;
+				}
+			}
 
 			public final Object2BooleanArrayMap<WDirection> map() {
 				Object2BooleanArrayMap<WDirection> map = new Object2BooleanArrayMap<>();
@@ -545,7 +567,7 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 			DungeonGenerator.LOGGER.debug("===============");
 		}
 
-		return new RoomLayer<>(generator, 50, rooms);
+		return new RoomLayer<>(generator, 50, rooms).setTypeKey(TYPE);
 	}
 
 	private static final RoomVariant<String> exampleEnterance(Set<WDirection> direction) {

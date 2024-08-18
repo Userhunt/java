@@ -1,9 +1,7 @@
 package net.w3e.base.dungeon.layers.interfaces;
 
-import net.w3e.base.holders.number.IntHolder;
-
 public interface IDungeonLimitedCount {
-	IntHolder count();
+	DungeonInfoCountHolder count();
 
 	default boolean addCount() {
 		return this.isUnlimitedCount() || this.substractCount();

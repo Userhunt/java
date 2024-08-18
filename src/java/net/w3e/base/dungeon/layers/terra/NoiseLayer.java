@@ -3,31 +3,27 @@ package net.w3e.base.dungeon.layers.terra;
 import net.w3e.base.dungeon.DungeonException;
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonRoomInfo;
+import net.w3e.base.dungeon.json.ILayerAdapter;
 import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.OpenSimplex2S;
 import net.w3e.base.math.vector.i.WVector3I;
 
 public abstract class NoiseLayer extends TerraLayer<Integer> {
 
-	protected final NoiseData data;
+	protected final NoiseData noise;
 	private long seed;
 
-	@Deprecated
-	public NoiseLayer(DungeonGenerator generator, String defKey, int min, int max, double scale) {
-		this(generator, new NoiseDataBuilder().setMinMax(min, max).setScale(scale).setDefKey(defKey).build(), 50);
+	public NoiseLayer(DungeonGenerator generator, NoiseData noies) {
+		this(generator, noies, 50);
 	}
 
-	public NoiseLayer(DungeonGenerator generator, NoiseData data) {
-		this(generator, data, 50);
-	}
-
-	public NoiseLayer(DungeonGenerator generator, NoiseData data, int stepRate) {
-		super(generator, data.defKey, data.defValue, stepRate);
-		this.data = data;
+	public NoiseLayer(DungeonGenerator generator, NoiseData noise, int stepRate) {
+		super(generator, noise.defKey, noise.defValue, stepRate);
+		this.noise = noise;
 	}
 
 	@Override
-	public abstract NoiseLayer withDungeon(DungeonGenerator generator);
+	public abstract NoiseLayer withDungeonImpl(DungeonGenerator generator);
 
 	@Override
 	public final void regenerate(boolean composite) throws DungeonException {
@@ -38,12 +34,12 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 	@Override
 	public final void generate(DungeonRoomInfo room) throws DungeonException {
 		WVector3I pos = room.pos();
-		double scale = this.data.scale();
+		double scale = this.noise.scale();
 		double x = pos.getXI() * scale;
 		double y = pos.getYI() * scale;
 		double z = pos.getZI() * scale;
 		float noise = OpenSimplex2S.noise3_ImproveXZ(this.seed, x, y, z);
-		noise = this.data.toRange(noise);
+		noise = this.noise.toRange(noise);
 		noise = this.modify(noise);
 		room.data().put(this.defKey, noise);
 	}
@@ -109,5 +105,18 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 		public final NoiseData build() {
 			return new NoiseData(this.min, this.max, this.scale, this.defKey, this.defValue);
 		}
+	}
+
+	@SuppressWarnings({"FieldMayBeFinal"})
+	public abstract static class NoiseLayerData<T extends NoiseLayer> implements ILayerAdapter<T> {
+		private NoiseData noise = NoiseData.INSTANCE;
+		private int stepRate = 50;
+		@Override
+		public final T withDungeon(DungeonGenerator generator) {
+			this.nonNull("noise", this.noise);
+			lessThan("stepRate", this.stepRate);
+			return this.withDungeon(generator, this.noise, this.stepRate);
+		}
+		protected abstract T withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate);
 	}
 }

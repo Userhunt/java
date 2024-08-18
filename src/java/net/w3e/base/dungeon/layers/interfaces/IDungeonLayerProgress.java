@@ -1,7 +1,5 @@
 package net.w3e.base.dungeon.layers.interfaces;
 
-import net.w3e.base.math.BMatUtil;
-
 public interface IDungeonLayerProgress<T extends Enum<T>> {
 	int ordinal();
 	T[] getValues();
@@ -24,6 +22,6 @@ public interface IDungeonLayerProgress<T extends Enum<T>> {
 	default int progress(IDungeonLayerProgress<T> prevProgress, float i) {
 		float partScale = 100f / this.getValues().length;
 
-		return BMatUtil.round(prevProgress.ordinal() * partScale + i * partScale / 100);
+		return (int)Math.floor(prevProgress.ordinal() * partScale + i * partScale / 100);
 	}
 }

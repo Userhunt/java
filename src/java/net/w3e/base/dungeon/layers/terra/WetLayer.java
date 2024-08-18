@@ -1,35 +1,31 @@
 package net.w3e.base.dungeon.layers.terra;
 
-import lombok.NoArgsConstructor;
 import net.w3e.base.dungeon.DungeonGenerator;
-import net.w3e.base.dungeon.json.ILayerAdapter;
 
 public class WetLayer extends NoiseLayer {
 
+	public static final String TYPE = "terra/wet";
+
 	public static final String KEY = "wet";
 
-	public WetLayer(DungeonGenerator generator, NoiseData data) {
-		super(generator, data.withKey(KEY));
+	public WetLayer(DungeonGenerator generator, NoiseData data, int stepRate) {
+		super(generator, data.withKey(KEY), stepRate);
 	}
 
 	@Override
-	public final WetLayer withDungeon(DungeonGenerator generator) {
-		return new WetLayer(generator, this.data);
+	public final WetLayer withDungeonImpl(DungeonGenerator generator) {
+		return new WetLayer(generator, this.noise, this.stepRate);
 	}
 
-	@NoArgsConstructor
-	@SuppressWarnings({"FieldMayBeFinal"})
-	public static class WetLayerData implements ILayerAdapter<WetLayer> {
-		private NoiseData noise = NoiseData.INSTANCE;
+	public static class WetLayerData extends NoiseLayerData<WetLayer> {
 		@Override
-		public final WetLayer withDungeon(DungeonGenerator generator) {
-			this.nonNull("noise", this.noise);
-			return new WetLayer(generator, this.noise);
+		protected final WetLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate) {
+			return new WetLayer(generator, noise, stepRate);
 		}
 	}
 
 	public static final WetLayer example(DungeonGenerator generator) {
-		return new WetLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build());
+		return new WetLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50).setTypeKey(TYPE);
 	}
 
 	public static final int MIN = 0;

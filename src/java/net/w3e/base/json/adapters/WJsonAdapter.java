@@ -8,14 +8,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
 import net.w3e.base.json.BJsonHelper;
 import net.w3e.base.message.MessageUtil;
 
-public abstract class WJsonAdapter<T> implements JsonDeserializer<T>, JsonSerializer<T> {
+public abstract class WJsonAdapter<T> implements JsonDeserializer<T> {
 
-	@Override
 	public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
 		return JsonNull.INSTANCE;
 	}

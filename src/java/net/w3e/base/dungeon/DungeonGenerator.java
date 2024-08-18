@@ -1,5 +1,6 @@
 package net.w3e.base.dungeon;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,9 +14,16 @@ import java.util.function.Supplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import net.w3e.base.collection.CollectionBuilder;
 import net.w3e.base.collection.CollectionBuilder.SimpleCollectionBuilder;
 import net.w3e.base.collection.MapT.MapTString;
+import net.w3e.base.dungeon.json.DungeonExampleAdapter;
+import net.w3e.base.dungeon.json.DungeonExampleAdapter.EDungeon;
 import net.w3e.base.dungeon.layers.ClearLayer;
 import net.w3e.base.dungeon.layers.DistanceLayer;
 import net.w3e.base.dungeon.layers.FeatureLayer;
@@ -28,6 +36,7 @@ import net.w3e.base.dungeon.layers.roomvalues.BaseLayerRoomValues;
 import net.w3e.base.dungeon.layers.terra.BiomeLayer;
 import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
 import net.w3e.base.holders.BoolHolder;
+import net.w3e.base.json.FileUtil;
 import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.vector.i.WBoxI;
 import net.w3e.base.math.vector.i.WVector3I;
@@ -36,19 +45,19 @@ public class DungeonGenerator {
 
 	public static final Logger LOGGER = LogManager.getLogger();
 
-	private final Map<WVector3I, Map<WVector3I, DungeonRoomInfo>> map = new HashMap<>();
+	private final transient Map<WVector3I, Map<WVector3I, DungeonRoomInfo>> map = new HashMap<>();
 
 	private final long seed;
 	private final WBoxI dimension;
 	private final Supplier<MapTString> dataFactory;
-	private final List<Factory> layers = new ArrayList<>();
+	private final List<LayerFactory> layers = new ArrayList<>();
 
-	private Random random;
-	private final List<DungeonLayer> queue = new LinkedList<>();
-	private final List<ISetupLayer> setup = new LinkedList<>();
-	private boolean regenerate = true;
+	private transient Random random;
+	private final transient List<DungeonLayer> queue = new LinkedList<>();
+	private final transient List<ISetupLayer> setup = new LinkedList<>();
+	private transient boolean regenerate = true;
 
-	public DungeonGenerator(long seed, WBoxI dimension, Supplier<MapTString> dataFactory, List<Factory> layers) {
+	public DungeonGenerator(long seed, WBoxI dimension, Supplier<MapTString> dataFactory, List<LayerFactory> layers) {
 		this.seed = seed;
 		this.dimension = dimension;
 		this.dataFactory = dataFactory;
@@ -214,6 +223,9 @@ public class DungeonGenerator {
 	}
 
 	public final int generate() throws DungeonException {
+		if (this.layers.isEmpty()) {
+			return 100;
+		}
 		int i = 100;
 		if (!queue.isEmpty()) {
 			DungeonLayer generator = this.queue.getFirst();
@@ -240,21 +252,21 @@ public class DungeonGenerator {
 		return this.queue.isEmpty() ? null : this.queue.getFirst();
 	}
 
-	public static interface Factory {
+	public static interface LayerFactory {
 		DungeonLayer create(DungeonGenerator generator);
 	}
 
-	public static final SimpleCollectionBuilder<Factory, ArrayList<Factory>> factoryCollectionBuilder() {
-		return CollectionBuilder.list(Factory.class);
+	public static final SimpleCollectionBuilder<LayerFactory, ArrayList<LayerFactory>> factoryCollectionBuilder() {
+		return CollectionBuilder.list(LayerFactory.class);
 	}
 
-	public static DungeonGenerator example(long seed) {
+	public static final DungeonGenerator example(long seed) {
 		int size = 9;
-		return new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
+		DungeonGenerator generator = new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
 			// path
 			gen -> PathRepeatLayer.example(gen, size),
 			// distance
-			DistanceLayer::new,
+			DistanceLayer::example,
 			// temperature, wet, difficulty
 			CompositeTerraLayer::example,
 			// biomes
@@ -266,5 +278,46 @@ public class DungeonGenerator {
 			//clear for save
 			ClearLayer::example
 		).build());
+		exampleSave(generator, true);
+		return generator;
+	}
+
+	public static final void exampleSave(DungeonGenerator generator, boolean debug) {
+		JsonObject json = JsonParser.parseString(DungeonExampleAdapter.GSON.toJson(generator)).getAsJsonObject();
+		FileUtil.write(new File(String.format("dungeon/example_%s.json", generator.seed)), json);
+
+		if (debug) {
+			DungeonGenerator data = DungeonExampleAdapter.GSON.fromJson(json, EDungeon.class).createInstance();
+	
+			JsonObject result = JsonParser.parseString(DungeonExampleAdapter.GSON.toJson(data)).getAsJsonObject();
+
+			if (!json.equals(result)) {
+				JsonArray jsonSave = json.remove("layers").getAsJsonArray();
+				JsonArray jsonRead = result.remove("layers").getAsJsonArray();
+				if (!json.equals(result)) {
+					System.out.println(json);
+					System.out.println(result);
+				}
+				if (!jsonSave.equals(jsonRead)) {
+					if (jsonSave.size() != jsonRead.size()) {
+						System.out.println("wrong size");
+						return;
+					}
+					for (int i = 0; i < jsonSave.size(); i++) {
+						JsonElement js = jsonSave.get(i);
+						JsonElement jr = jsonRead.get(i);
+						if (!js.equals(jr)) {
+							System.out.println(String.format("layer[%s]", i));
+							System.out.println(js);
+							System.out.println(jr);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public static void main(String[] args) {
+		example(0);
 	}
 }

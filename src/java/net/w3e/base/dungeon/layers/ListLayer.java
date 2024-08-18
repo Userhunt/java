@@ -12,15 +12,15 @@ import net.w3e.base.math.BMatUtil;
 
 public abstract class ListLayer<L> extends DungeonLayer {
 
-	protected final List<L> list = new ArrayList<>();
-	protected int filled = -1;
+	protected final transient List<L> list = new ArrayList<>();
+	protected transient int filled = -1;
 
 	protected ListLayer(DungeonGenerator generator) {
 		super(generator);
 	}
 
 	@Override
-	public abstract ListLayer<L> withDungeon(DungeonGenerator generator);
+	public abstract ListLayer<L> withDungeonImpl(DungeonGenerator generator);
 
 	@Override
 	public void regenerate(boolean composite) throws DungeonException {

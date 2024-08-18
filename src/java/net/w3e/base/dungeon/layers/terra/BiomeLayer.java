@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import net.w3e.base.collection.MapT.MapTString;
 import net.w3e.base.collection.CollectionBuilder;
@@ -19,12 +19,12 @@ import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.base.dungeon.layers.interfaces.IDungeonLimitedCount;
 import net.w3e.base.dungeon.layers.roomvalues.AbstractLayerRoomValues;
 import net.w3e.base.dungeon.layers.roomvalues.BaseLayerRoomRange;
+import net.w3e.base.dungeon.layers.interfaces.DungeonInfoCountHolder;
 import net.w3e.base.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.base.dungeon.layers.ISetupLayer;
 import net.w3e.base.dungeon.layers.LayerRange;
 import net.w3e.base.dungeon.layers.ListLayer;
 import net.w3e.base.holders.ObjectHolder;
-import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.dungeon.json.ILayerAdapter;
 import net.w3e.base.math.BMatUtil;
@@ -34,11 +34,13 @@ import net.w3e.base.message.MessageUtil;
 
 public class BiomeLayer<T> extends ListLayer<BiomeLayer.BiomePoint<T>> implements ISetupLayer {
 
+	public static final String TYPE = "terra/biome";
+
 	public static final String KEY = "biome";
 
-	private final List<BiomeInfo<T>> biomeList = new ArrayList<>();
-	private final List<BiomeInfo<T>> workList = new ArrayList<>();
-	private Progress progress = Progress.createPoint;
+	private final List<BiomeInfo<T>> biomes = new ArrayList<>();
+	private final transient List<BiomeInfo<T>> workList = new ArrayList<>();
+	private transient Progress progress = Progress.createPoint;
 
 	private final int percent;
 	private final T def;
@@ -52,13 +54,13 @@ public class BiomeLayer<T> extends ListLayer<BiomeLayer.BiomePoint<T>> implement
 		super(generator);
 		this.def = def;
 		this.percent = percent;
-		this.biomeList.addAll(biomes);
-		this.biomeList.removeIf(BiomeInfo::notValid);
+		this.biomes.addAll(biomes);
+		this.biomes.removeIf(BiomeInfo::notValid);
 	}
 
 	@Override
-	public final BiomeLayer<T> withDungeon(DungeonGenerator generator) {
-		return new BiomeLayer<T>(generator, this.def, this.percent, this.biomeList);
+	public final BiomeLayer<T> withDungeonImpl(DungeonGenerator generator) {
+		return new BiomeLayer<T>(generator, this.def, this.percent, this.biomes);
 	}
 
 	@Override
@@ -74,7 +76,7 @@ public class BiomeLayer<T> extends ListLayer<BiomeLayer.BiomePoint<T>> implement
 		this.progress = Progress.createArray;
 
 		this.workList.clear();
-		this.biomeList.stream().map(BiomeInfo::copy).forEach(this.workList::add);
+		this.biomes.stream().map(BiomeInfo::copy).forEach(this.workList::add);
 	}
 
 	@Override
@@ -207,10 +209,10 @@ public class BiomeLayer<T> extends ListLayer<BiomeLayer.BiomePoint<T>> implement
 		}
 	}
 
-	public static record BiomeInfo<T>(int weight, BaseLayerRoomRange layerRange, LayerRange impulse, T value, IntHolder count) implements IDungeonLimitedCount {
+	public static record BiomeInfo<T>(int weight, BaseLayerRoomRange layerRange, LayerRange impulse, T value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
 		public BiomeInfo(int weight, BaseLayerRoomRange layerRange, LayerRange impulse, T value, int count) {
-			this(weight, layerRange, impulse, value, new IntHolder(count));
+			this(weight, layerRange, impulse, value, new DungeonInfoCountHolder(count));
 		}
 
 		public BiomeInfo(int weight, BaseLayerRoomRange layerRange, LayerRange impulse, T value) {
@@ -297,7 +299,7 @@ public class BiomeLayer<T> extends ListLayer<BiomeLayer.BiomePoint<T>> implement
 			}
 		}
 
-		return new BiomeLayer<>(generator, "void", 11, biomes);
+		return new BiomeLayer<>(generator, "void", 11, biomes).setTypeKey(TYPE);
 	}
 
 }

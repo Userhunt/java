@@ -1,28 +1,28 @@
 package net.w3e.base.dungeon.layers.terra;
 
-import lombok.NoArgsConstructor;
 import net.w3e.base.dungeon.DungeonGenerator;
-import net.w3e.base.dungeon.json.ILayerAdapter;
 
 public class DifficultyLayer extends NoiseLayer {
+
+	public static final String TYPE = "terra/difficulty";
 
 	public static final String KEY = "difficulty";
 	private final float add;
 	private final float scale;
 
-	public DifficultyLayer(DungeonGenerator generator, NoiseData data) {
-		this(generator, data, 0, 1);
+	public DifficultyLayer(DungeonGenerator generator, NoiseData data, int stepRate) {
+		this(generator, data, stepRate, 0, 1);
 	}
 
-	public DifficultyLayer(DungeonGenerator generator, NoiseData data, float add, float scale) {
-		super(generator, data.withKey(KEY));
+	public DifficultyLayer(DungeonGenerator generator, NoiseData data, int stepRate, float add, float scale) {
+		super(generator, data.withKey(KEY), stepRate);
 		this.add = add;
 		this.scale = scale;
 	}
 
 	@Override
-	public final DifficultyLayer withDungeon(DungeonGenerator generator) {
-		return new DifficultyLayer(generator, this.data, this.add, this.scale);
+	public final DifficultyLayer withDungeonImpl(DungeonGenerator generator) {
+		return new DifficultyLayer(generator, this.noise, this.stepRate, this.add, this.scale);
 	}
 
 	@Override
@@ -30,19 +30,16 @@ public class DifficultyLayer extends NoiseLayer {
 		return value * this.scale + this.add;
 	}
 
-	@NoArgsConstructor
-	@SuppressWarnings({"FieldMayBeFinal"})
-	public static class DifficultyLayerData implements ILayerAdapter<DifficultyLayer> {
-		private NoiseData noise = NoiseData.INSTANCE;
+	public static class DifficultyLayerData extends NoiseLayerData<DifficultyLayer> {
+
 		@Override
-		public final DifficultyLayer withDungeon(DungeonGenerator generator) {
-			this.nonNull("noise", this.noise);
-			return new DifficultyLayer(generator, this.noise);
+		protected final DifficultyLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate) {
+			return new DifficultyLayer(generator, noise, stepRate);
 		}
 	}
 
 	public static final DifficultyLayer example(DungeonGenerator generator) {
-		return new DifficultyLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build());
+		return new DifficultyLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50).setTypeKey(TYPE);
 	}
 
 	public static final int MIN = 0;

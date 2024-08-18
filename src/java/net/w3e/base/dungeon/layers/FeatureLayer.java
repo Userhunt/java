@@ -15,19 +15,21 @@ import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.dungeon.json.ILayerAdapter;
 import net.w3e.base.dungeon.layers.RoomLayer.RoomData;
+import net.w3e.base.dungeon.layers.interfaces.DungeonInfoCountHolder;
 import net.w3e.base.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.base.dungeon.layers.interfaces.IDungeonLimitedCount;
 import net.w3e.base.dungeon.layers.roomvalues.BaseLayerRoomRange;
-import net.w3e.base.holders.number.IntHolder;
 import net.w3e.base.message.MessageUtil;
 
 public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> implements ISetupLayer {
 
+	public static final String TYPE = "feature";
+
 	public static final String KEY = "features";
 
-	private final List<FeatureVariant<T>> featureList = new ArrayList<>();
-	private final List<FeatureVariant<T>> workList = new ArrayList<>();
-	private Progress progress;
+	private final List<FeatureVariant<T>> features = new ArrayList<>();
+	private final transient List<FeatureVariant<T>> workList = new ArrayList<>();
+	private transient Progress progress;
 
 	@SafeVarargs
 	public FeatureLayer(DungeonGenerator generator, FeatureVariant<T>... features) {
@@ -36,13 +38,13 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 
 	public FeatureLayer(DungeonGenerator generator, Collection<FeatureVariant<T>> features) {
 		super(generator);
-		this.featureList.addAll(features);
-		this.featureList.removeIf(FeatureVariant::notValid);
+		this.features.addAll(features);
+		this.features.removeIf(FeatureVariant::notValid);
 	}
 
 	@Override
-	public final FeatureLayer<T> withDungeon(DungeonGenerator generator) {
-		return new FeatureLayer<>(generator, this.featureList);
+	public final FeatureLayer<T> withDungeonImpl(DungeonGenerator generator) {
+		return new FeatureLayer<>(generator, this.features);
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 		this.progress = Progress.createArray;
 
 		this.workList.clear();
-		this.featureList.stream().map(FeatureVariant::copy).forEach(this.workList::add);
+		this.features.stream().map(FeatureVariant::copy).forEach(this.workList::add);
 		if (this.workList.isEmpty()) {
 			throw new DungeonException(MessageUtil.IS_EMPTY.createMsg("Feature layer"));
 		}
@@ -156,9 +158,9 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 		}
 	}
 
-	public record FeaturePoint<T>(DungeonRoomInfo room, List<FeatureVariant<T>> variants, IntHolder softCount) {
+	public record FeaturePoint<T>(DungeonRoomInfo room, List<FeatureVariant<T>> variants, DungeonInfoCountHolder softCount) {
 		public FeaturePoint(DungeonRoomInfo room) {
-			this(room, new ArrayList<>(), new IntHolder());
+			this(room, new ArrayList<>(), new DungeonInfoCountHolder());
 		}
 
 		public final boolean canSoft() {
@@ -191,10 +193,10 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 		}
 	}
 
-	public record FeatureVariant<T>(BaseLayerRoomRange layerRange, BooleanEnum enterance, boolean softRequire, T value, IntHolder count) implements IDungeonLimitedCount {
+	public record FeatureVariant<T>(BaseLayerRoomRange layerRange, BooleanEnum enterance, boolean softRequire, T value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
 		public FeatureVariant(BaseLayerRoomRange layerRange, BooleanEnum enterance, boolean softRequire, T value, int count) {
-			this(layerRange, enterance, softRequire, value, new IntHolder(count));
+			this(layerRange, enterance, softRequire, value, new DungeonInfoCountHolder(count));
 		}
 
 		public final boolean notValid() {
@@ -282,6 +284,6 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 			features.add(new FeatureVariant<String>(BaseLayerRoomRange.NULL, random.nextInt(100) + 1 <= 5 ? BooleanEnum.TRUE : BooleanEnum.FALSE, random.nextInt(100) + 1 <= 90, String.valueOf(i + 1), random.nextInt(100) + 1 <= 75 ? random.nextInt(3) + 1 : -1));
 		}
 
-		return new FeatureLayer<>(generator, features);
+		return new FeatureLayer<>(generator, features).setTypeKey(TYPE);
 	}
 }
