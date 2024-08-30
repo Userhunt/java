@@ -69,7 +69,7 @@ public class BiomeLayer<T> extends ListLayer<BiomeLayer.BiomePoint<T>> implement
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
+	public final void regenerate(WDirection rotation, boolean composite) throws DungeonException {
 		this.list.clear();
 		this.filled = -1;
 

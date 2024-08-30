@@ -174,7 +174,7 @@ public class Tf2 extends FrameObject {
 		fw.add(panelLeft);
 
 		fw.add(Box.createHorizontalStrut(10));
-		
+
 		JPanel panelRight = new JPanel();
 		panelRight.setLayout(new BoxLayout(panelRight, BoxLayout.Y_AXIS));
 		this.simpleColumn(panelRight, BUTTONS2);

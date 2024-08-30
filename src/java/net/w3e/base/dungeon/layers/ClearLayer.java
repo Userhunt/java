@@ -3,6 +3,7 @@ package net.w3e.base.dungeon.layers;
 import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.json.ILayerAdapter;
+import net.w3e.base.math.vector.WDirection;
 
 public class ClearLayer extends DungeonLayer implements ILayerAdapter<DungeonLayer> {
 
@@ -18,7 +19,7 @@ public class ClearLayer extends DungeonLayer implements ILayerAdapter<DungeonLay
 	}
 
 	@Override
-	public final void regenerate(boolean composite) {}
+	public final void regenerate(WDirection rotation, boolean composite) {}
 
 	@Override
 	public final int generate() {

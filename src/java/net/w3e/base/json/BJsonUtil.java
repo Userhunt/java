@@ -298,7 +298,7 @@ public class BJsonUtil {
 			throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(target, String.class.getSimpleName(), getType(element)));
 		}
 	}
-	
+
 	/*========================================= Converter ======================================*/
 
 	private static final String abbreviateMiddle(String str, String middle, int length) {

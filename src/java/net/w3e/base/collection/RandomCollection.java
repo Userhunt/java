@@ -40,7 +40,7 @@ public class RandomCollection<T> {
 	public static final <T> RandomCollection<T> create(DoubleSupplier random) {
 		return new RandomCollection<>(() -> (float)random.getAsDouble());
 	}
-	
+
 	public final int size() {
 		return this.entries.size();
 	}

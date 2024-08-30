@@ -21,7 +21,6 @@ public interface IDungeonLayerProgress<T extends Enum<T>> {
 
 	default int progress(IDungeonLayerProgress<T> prevProgress, float i) {
 		float partScale = 100f / this.getValues().length;
-
-		return (int)Math.floor(prevProgress.ordinal() * partScale + i * partScale / 100);
+		return (int)Math.floor(prevProgress.ordinal() * partScale + i * partScale / 100 + 0.001f);
 	}
 }

@@ -76,7 +76,7 @@ public class DungeonExampleAdapter {
 			this.nonNull("biomes", this.biomes);
 			return Stream.of(this.biomes).map(e -> e.withDungeon(null)).toArray(BiomeInfo[]::new);
 		}
-	
+
 		private static class BiomeInfoDataString extends BiomeInfoData<String> {
 			@Getter
 			private String value;

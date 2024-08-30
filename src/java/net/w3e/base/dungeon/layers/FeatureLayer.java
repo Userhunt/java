@@ -19,6 +19,7 @@ import net.w3e.base.dungeon.layers.interfaces.DungeonInfoCountHolder;
 import net.w3e.base.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.base.dungeon.layers.interfaces.IDungeonLimitedCount;
 import net.w3e.base.dungeon.layers.roomvalues.BaseLayerRoomRange;
+import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.message.MessageUtil;
 
 public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> implements ISetupLayer {
@@ -53,7 +54,7 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
+	public final void regenerate(WDirection rotation, boolean composite) throws DungeonException {
 		this.list.clear();
 		this.filled = -1;
 

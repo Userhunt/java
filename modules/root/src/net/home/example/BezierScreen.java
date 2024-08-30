@@ -75,7 +75,7 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 		this.add(imagePanel);
 
 		this.update(true);
-		
+
 		this.pack();
 		this.atRightPosition(frameWin);
 		this.setVisible(true);
@@ -164,11 +164,11 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 			int x = point.getXI();
 			int z = point.getZI();
 			this.image.setColor(x, z, Color.black);
-	
+
 			g.setColor(Color.green);
 			g.drawString(text, x - FONT.getSize() / 3, z - FONT.getSize() / 3);
 			g.setColor(Color.black);
-	
+
 			int size = 6;
 			int s = size / 2;
 			g.drawArc(x - s, z - s, size, size, 0, 360);
@@ -214,7 +214,7 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 	public final void mouseReleased(MouseEvent e) {
 		this.selected = null;
 	}
-	
+
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		if (this.selected != null) {
@@ -229,7 +229,7 @@ public class BezierScreen extends AbstractFrameWin implements MouseListener, Mou
 				case LIST_0 -> this.points.set(0, mouse);
 				case LIST_1 -> this.points.set(1, mouse);
 			}
-			
+
 			this.update(true);
 		}
 	}

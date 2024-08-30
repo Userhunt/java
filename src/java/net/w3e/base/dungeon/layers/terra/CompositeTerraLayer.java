@@ -9,6 +9,7 @@ import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.dungeon.json.ILayerAdapter;
+import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.message.MessageUtil;
 
 public class CompositeTerraLayer extends TerraLayer<Object> {
@@ -35,10 +36,10 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
-		super.regenerate(composite);
+	public final void regenerate(WDirection rotation, boolean composite) throws DungeonException {
+		super.regenerate(rotation, composite);
 		for (TerraLayer<?> layer : this.layers) {
-			layer.regenerate(true);
+			layer.regenerate(rotation, true);
 		}
 	}
 

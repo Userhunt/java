@@ -67,6 +67,8 @@ public class RandGenScreen extends FrameObject {
 	private JCheckBox showBiome;
 	private JCheckBox fast;
 	private JCheckBox print;
+	private JCheckBox rotate;
+	private JCheckBox debugSave;
 
 	protected final void init(FrameWin fw, List<String> args) {
 		List<Component> buttons = new ArrayList<>();
@@ -100,7 +102,15 @@ public class RandGenScreen extends FrameObject {
 		this.print.addChangeListener(CHANGE);
 		settings.add(this.print);
 
-		buttons.addAll(LongStream.range(0, settings.size()).mapToObj(seed -> this.createButton(String.valueOf(seed), btn -> exampleDungeon(btn, seed))).toList());
+		this.rotate = new JCheckBox("Rotate", false);
+		//this.rotate.addChangeListener(CHANGE);
+		settings.add(this.rotate);
+
+		this.debugSave = new JCheckBox("Debug Save");
+		//this.debugSave.addChangeListener(CHANGE);
+		settings.add(this.debugSave);
+
+		buttons.addAll(LongStream.range(0, settings.size() - buttons.size()).mapToObj(seed -> this.createButton(String.valueOf(seed), btn -> exampleDungeon(btn, seed))).toList());
 
 		fw.setLayout(new BoxLayout(fw.getContentPane(), BoxLayout.X_AXIS));
 
@@ -148,7 +158,7 @@ public class RandGenScreen extends FrameObject {
 	}
 
 	private final void exampleDungeon(JButton button, long seed) {
-		this.creteDungeon(button.getText(), DungeonGenerator.example(seed));
+		this.creteDungeon(button.getText(), DungeonGenerator.example(seed, this.rotate.isSelected() ? WDirection.WEST : WDirection.SOUTH, this.debugSave.isSelected()));
 	}
 
 	private final void creteDungeon(String name, DungeonGenerator dungeon) {
@@ -206,6 +216,9 @@ public class RandGenScreen extends FrameObject {
 			int[] data = this.image.refillImage();
 
 			next = (count == 0 || (fast && System.currentTimeMillis() - time <= 25)) && progress < 100;
+			if (progress > 100) {
+				System.err.println("progress is more than 100");
+			}
 			if (!print) {
 				if (count != 1 && next) {
 					continue;
@@ -310,7 +323,7 @@ public class RandGenScreen extends FrameObject {
 				}
 			}
 
-			for (Map<WVector3I, DungeonRoomInfo> entry1 : this.dungeon.getRooms().values()) {
+			for (Map<WVector3I, DungeonRoomInfo> entry1 : this.dungeon.getChunks().values()) {
 				data[0] += entry1.size();
 				for (Entry<WVector3I, DungeonRoomInfo> entry2 : entry1.entrySet()) {
 					WVector3I pos = entry2.getKey();

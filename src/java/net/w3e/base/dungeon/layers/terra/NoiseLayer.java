@@ -6,6 +6,7 @@ import net.w3e.base.dungeon.DungeonRoomInfo;
 import net.w3e.base.dungeon.json.ILayerAdapter;
 import net.w3e.base.math.BMatUtil;
 import net.w3e.base.math.OpenSimplex2S;
+import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.math.vector.i.WVector3I;
 
 public abstract class NoiseLayer extends TerraLayer<Integer> {
@@ -26,9 +27,9 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 	public abstract NoiseLayer withDungeonImpl(DungeonGenerator generator);
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
+	public final void regenerate(WDirection rotation, boolean composite) throws DungeonException {
 		this.seed = this.random().nextLong();
-		super.regenerate(composite);
+		super.regenerate(rotation, composite);
 	}
 
 	@Override

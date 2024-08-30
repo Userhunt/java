@@ -452,7 +452,7 @@ public class TestScreen extends FrameObject {
 			}
 			return (int)((iteration - intTuple.getAsInt()) * 100 / iteration);
 		}).setUpdateParentPosition(false).build();
-	
+
 		BackgroundExecutor multiple = new BackgroundExecutor.BackgroundExecutorBuilder("Global Mode", this.getFrame()).multiple(100, exe1, exe2, exe3);
 
 		multiple.run();

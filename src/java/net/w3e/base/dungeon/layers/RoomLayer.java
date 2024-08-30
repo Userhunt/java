@@ -15,6 +15,7 @@ import java.util.Set;
 
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap.Entry;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.w3e.base.dungeon.DungeonException;
 import net.w3e.base.dungeon.DungeonGenerator;
@@ -64,7 +65,7 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
+	public final void regenerate(WDirection rotation, boolean composite) throws DungeonException {
 		this.list.clear();
 		this.filled = -1;
 
@@ -161,6 +162,9 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 				}
 				if (this.list.isEmpty()) {
 					this.filled = this.softList.size();
+					if (this.filled == 0) {
+						//return 100;
+					}
 				}
 			}
 			case postInit -> {
@@ -405,7 +409,7 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 		private Connections connections = new Connections();
 		private boolean enterance = false;
 		private int count = -1;
-	
+
 		protected abstract T getValue();
 		protected abstract BaseLayerRoomRange getLayerRange();
 
@@ -429,6 +433,7 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 			return new RoomVariant<T>(map, layerRange, this.enterance, value, count);
 		}
 
+		@Getter
 		@NoArgsConstructor
 		public static class Connections {
 			private Boolean north = null;
@@ -450,6 +455,25 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 			private final Boolean get(Object2BooleanArrayMap<WDirection> map, WDirection direction) {
 				if (map.containsKey(direction)) {
 					return map.getBoolean(direction);
+				} else {
+					return null;
+				}
+			}
+
+			public Connections(DungeonRoomInfo room) {
+				this.north = this.get(room, WDirection.NORTH);
+				this.south = this.get(room, WDirection.SOUTH);
+				this.west = this.get(room, WDirection.WEST);
+				this.east = this.get(room, WDirection.EAST);
+				this.up = this.get(room, WDirection.UP);
+				this.down = this.get(room, WDirection.DOWN);
+			}
+
+			private final Boolean get(DungeonRoomInfo room, WDirection direction) {
+				if (room.isConnect(direction, true)) {
+					return true;
+				} else if (room.isConnect(direction, false)) {
+					return false;
 				} else {
 					return null;
 				}

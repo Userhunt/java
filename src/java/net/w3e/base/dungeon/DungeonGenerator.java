@@ -38,6 +38,7 @@ import net.w3e.base.dungeon.layers.terra.CompositeTerraLayer;
 import net.w3e.base.holders.BoolHolder;
 import net.w3e.base.json.FileUtil;
 import net.w3e.base.math.BMatUtil;
+import net.w3e.base.math.vector.WDirection;
 import net.w3e.base.math.vector.i.WBoxI;
 import net.w3e.base.math.vector.i.WVector3I;
 
@@ -49,6 +50,7 @@ public class DungeonGenerator {
 
 	private final long seed;
 	private final WBoxI dimension;
+	private final WDirection rotation;
 	private final Supplier<MapTString> dataFactory;
 	private final List<LayerFactory> layers = new ArrayList<>();
 
@@ -58,8 +60,13 @@ public class DungeonGenerator {
 	private transient boolean regenerate = true;
 
 	public DungeonGenerator(long seed, WBoxI dimension, Supplier<MapTString> dataFactory, List<LayerFactory> layers) {
+		this(seed, dimension, WDirection.SOUTH, dataFactory, layers);
+	}
+
+	public DungeonGenerator(long seed, WBoxI dimension, WDirection rotation, Supplier<MapTString> dataFactory, List<LayerFactory> layers) {
 		this.seed = seed;
 		this.dimension = dimension;
+		this.rotation = rotation;
 		this.dataFactory = dataFactory;
 		this.layers.addAll(layers);
 	}
@@ -218,8 +225,18 @@ public class DungeonGenerator {
 		return dungeon;
 	}
 
-	public final Map<WVector3I, Map<WVector3I, DungeonRoomInfo>> getRooms() {
+	public final Map<WVector3I, Map<WVector3I, DungeonRoomInfo>> getChunks() {
 		return this.map;
+	}
+
+	public final Map<WVector3I, DungeonRoomInfo> getRooms() {
+		Map<WVector3I, DungeonRoomInfo> map = new HashMap<>();
+		for (Map<WVector3I, DungeonRoomInfo> chunk : this.map.values()) {
+			for (Entry<WVector3I, DungeonRoomInfo> entry : chunk.entrySet()) {
+				map.put(entry.getKey(), entry.getValue());
+			}
+		}
+		return map;
 	}
 
 	public final int generate() throws DungeonException {
@@ -228,13 +245,13 @@ public class DungeonGenerator {
 		}
 		int i = 100;
 		if (!queue.isEmpty()) {
-			DungeonLayer generator = this.queue.getFirst();
+			DungeonLayer layer = this.queue.getFirst();
 			if (this.regenerate) {
-				generator.regenerate(false);
+				layer.regenerate(this.rotation, false);
 				this.regenerate = false;
 				i = 1;
 			} else {
-				i = generator.generate();
+				i = layer.generate();
 				if (i == 100) {
 					i = 0;
 					this.queue.removeFirst();
@@ -260,9 +277,9 @@ public class DungeonGenerator {
 		return CollectionBuilder.list(LayerFactory.class);
 	}
 
-	public static final DungeonGenerator example(long seed) {
+	public static final DungeonGenerator example(long seed, WDirection direction, boolean debug) {
 		int size = 9;
-		DungeonGenerator generator = new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
+		DungeonGenerator generator = new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), direction, MapTString::new, factoryCollectionBuilder().add(
 			// path
 			gen -> PathRepeatLayer.example(gen, size),
 			// distance
@@ -278,17 +295,16 @@ public class DungeonGenerator {
 			//clear for save
 			ClearLayer::example
 		).build());
-		exampleSave(generator, true);
-		return generator;
+		return exampleSave(generator, debug);
 	}
 
-	public static final void exampleSave(DungeonGenerator generator, boolean debug) {
+	public static final DungeonGenerator exampleSave(DungeonGenerator generator, boolean debug) {
 		JsonObject json = JsonParser.parseString(DungeonExampleAdapter.GSON.toJson(generator)).getAsJsonObject();
 		FileUtil.write(new File(String.format("dungeon/example_%s.json", generator.seed)), json);
 
 		if (debug) {
 			DungeonGenerator data = DungeonExampleAdapter.GSON.fromJson(json, EDungeon.class).createInstance();
-	
+
 			JsonObject result = JsonParser.parseString(DungeonExampleAdapter.GSON.toJson(data)).getAsJsonObject();
 
 			if (!json.equals(result)) {
@@ -301,23 +317,26 @@ public class DungeonGenerator {
 				if (!jsonSave.equals(jsonRead)) {
 					if (jsonSave.size() != jsonRead.size()) {
 						System.out.println("wrong size");
-						return;
-					}
-					for (int i = 0; i < jsonSave.size(); i++) {
-						JsonElement js = jsonSave.get(i);
-						JsonElement jr = jsonRead.get(i);
-						if (!js.equals(jr)) {
-							System.out.println(String.format("layer[%s]", i));
-							System.out.println(js);
-							System.out.println(jr);
+					} else {
+						for (int i = 0; i < jsonSave.size(); i++) {
+							JsonElement js = jsonSave.get(i);
+							JsonElement jr = jsonRead.get(i);
+							if (!js.equals(jr)) {
+								System.out.println(String.format("layer[%s]", i));
+								System.out.println(js);
+								System.out.println(jr);
+							}
 						}
 					}
 				}
+			} else {
+				return data;
 			}
 		}
+		return generator;
 	}
 
 	public static void main(String[] args) {
-		example(0);
+		example(0, WDirection.SOUTH, true);
 	}
 }

@@ -50,8 +50,8 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
-		this.layer.regenerate(composite);
+	public final void regenerate(WDirection rotation, boolean composite) throws DungeonException {
+		this.layer.regenerate(rotation, composite);
 	}
 
 	@Override

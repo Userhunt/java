@@ -45,7 +45,7 @@ public class ImageScreen extends AbstractFrameWin {
 	public final void update() {
 		this.image.repaint();
 	}
-	
+
 	public final BufferedImage getImage() {
 		return this.image.getImage();
 	}

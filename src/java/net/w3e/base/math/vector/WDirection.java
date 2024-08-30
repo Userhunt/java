@@ -43,4 +43,25 @@ public enum WDirection {
 			return VALUES[id];
 		}
 	}
+
+	public final boolean isHorisontal() {
+		return this != UP && this != DOWN;
+	}
+
+	public static final WDirection fromRotation(float yaw) {
+		yaw = yaw % 360;
+		if (yaw < 0) {
+			yaw += 360;
+		}
+		if (yaw >= 45 && yaw < 135) {
+			return WEST;
+		}
+		if (yaw >= 135 && yaw < 225) {
+			return NORTH;
+		}
+		if (yaw >= 225 && yaw < 315) {
+			return EAST;
+		}
+		return SOUTH;
+	}
 }

@@ -97,7 +97,7 @@ public class CollectionBuilder<T, V extends Collection<T>, R extends CollectionB
 		}
 		return this.cast();
 	}
-	
+
 	public final R addAll(Stream<T> stream) {
 		Iterator<T> iterator = stream.iterator();
 		while (iterator.hasNext()) {
@@ -157,7 +157,7 @@ public class CollectionBuilder<T, V extends Collection<T>, R extends CollectionB
 			this.collection.add(object);
 			return this;
 		}
-	
+
 		@SafeVarargs
 		public final DoubleCollectionBuilder<V> add(double... objects) {
 			for (double object : objects) {
@@ -165,14 +165,14 @@ public class CollectionBuilder<T, V extends Collection<T>, R extends CollectionB
 			}
 			return this;
 		}
-	
+
 		public DoubleCollectionBuilder<V> addAll(double[] object) {
 			for (double t : object) {
 				this.collection.add(t);
 			}
 			return this;
 		}
-	
+
 		@SafeVarargs
 		public final DoubleCollectionBuilder<V> addAll(double[]... objects) {
 			for (double[] object : objects) {

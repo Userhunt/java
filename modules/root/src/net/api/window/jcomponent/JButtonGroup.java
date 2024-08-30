@@ -6,7 +6,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 
 public class JButtonGroup<T> extends ButtonGroup {
-	
+
 	@SuppressWarnings("unchecked")
 	public final T getSelectedButtonArg() {
 		for (Enumeration<AbstractButton> buttons = this.getElements(); buttons.hasMoreElements();) {

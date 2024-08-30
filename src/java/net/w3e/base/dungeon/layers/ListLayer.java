@@ -9,6 +9,7 @@ import net.w3e.base.dungeon.DungeonGenerator;
 import net.w3e.base.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.base.dungeon.DungeonLayer;
 import net.w3e.base.math.BMatUtil;
+import net.w3e.base.math.vector.WDirection;
 
 public abstract class ListLayer<L> extends DungeonLayer {
 
@@ -23,7 +24,7 @@ public abstract class ListLayer<L> extends DungeonLayer {
 	public abstract ListLayer<L> withDungeonImpl(DungeonGenerator generator);
 
 	@Override
-	public void regenerate(boolean composite) throws DungeonException {
+	public void regenerate(WDirection rotation, boolean composite) throws DungeonException {
 		this.filled = -1;
 		this.list.clear();
 	}

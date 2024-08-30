@@ -9,7 +9,7 @@ public class IntHolder extends NumberHolder<Integer, IntHolder> {
 	public IntHolder(int value) {
 		this.value = value;
 	}
-	
+
 	public IntHolder(NumberHolder<?, ?> holder) {
 		this(holder.getAsInt());
 	}

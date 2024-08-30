@@ -33,7 +33,7 @@ public abstract class DungeonLayer implements WJsonKeyHolder {
 		return instance;
 	}
 	protected abstract DungeonLayer withDungeonImpl(DungeonGenerator generator);
-	public abstract void regenerate(boolean b) throws DungeonException;
+	public abstract void regenerate(WDirection rotation, boolean composite) throws DungeonException;
 	public abstract int generate() throws DungeonException;
 
 	protected final Random random() {

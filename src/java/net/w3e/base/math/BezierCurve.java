@@ -5,7 +5,7 @@ import net.w3e.base.math.vector.d.WVector3D;
 
 //https://ru.wikipedia.org/wiki/Кривая_Безье
 public class BezierCurve {
-	
+
 	/**
 	 * (1-t)P0 + tP1
 	 * @param <T>
