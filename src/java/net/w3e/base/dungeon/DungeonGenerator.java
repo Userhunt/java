@@ -29,7 +29,9 @@ import net.w3e.base.dungeon.layers.DistanceLayer;
 import net.w3e.base.dungeon.layers.FeatureLayer;
 import net.w3e.base.dungeon.layers.ISetupLayer;
 import net.w3e.base.dungeon.layers.RoomLayer;
+import net.w3e.base.dungeon.layers.RotateLayer;
 import net.w3e.base.dungeon.layers.path.PathRepeatLayer;
+import net.w3e.base.dungeon.layers.path.WormLayer;
 import net.w3e.base.dungeon.layers.roomvalues.AbstractLayerRoomValues;
 import net.w3e.base.dungeon.layers.roomvalues.BaseLayerRoomRange;
 import net.w3e.base.dungeon.layers.roomvalues.BaseLayerRoomValues;
@@ -50,7 +52,6 @@ public class DungeonGenerator {
 
 	private final long seed;
 	private final WBoxI dimension;
-	private final WDirection rotation;
 	private final Supplier<MapTString> dataFactory;
 	private final List<LayerFactory> layers = new ArrayList<>();
 
@@ -60,13 +61,8 @@ public class DungeonGenerator {
 	private transient boolean regenerate = true;
 
 	public DungeonGenerator(long seed, WBoxI dimension, Supplier<MapTString> dataFactory, List<LayerFactory> layers) {
-		this(seed, dimension, WDirection.SOUTH, dataFactory, layers);
-	}
-
-	public DungeonGenerator(long seed, WBoxI dimension, WDirection rotation, Supplier<MapTString> dataFactory, List<LayerFactory> layers) {
 		this.seed = seed;
 		this.dimension = dimension;
-		this.rotation = rotation;
 		this.dataFactory = dataFactory;
 		this.layers.addAll(layers);
 	}
@@ -105,6 +101,16 @@ public class DungeonGenerator {
 			}
 		}
 		return DungeonRoomCreateInfo.success(room, exists.getBool());
+	}
+
+	public final DungeonRoomCreateInfo put(DungeonRoomInfo room) {
+		DungeonRoomCreateInfo info = this.putOrGet(room.pos());
+		if (info.isInside) {
+			this.map.get(info.room.chunk()).put(room.pos(), room);
+			return DungeonRoomCreateInfo.success(room, info.exists);
+		} else {
+			return info;
+		}
 	}
 
 	public final DungeonRoomCreateInfo get(WVector3I pos) {
@@ -247,7 +253,7 @@ public class DungeonGenerator {
 		if (!queue.isEmpty()) {
 			DungeonLayer layer = this.queue.getFirst();
 			if (this.regenerate) {
-				layer.regenerate(this.rotation, false);
+				layer.regenerate(false);
 				this.regenerate = false;
 				i = 1;
 			} else {
@@ -269,6 +275,10 @@ public class DungeonGenerator {
 		return this.queue.isEmpty() ? null : this.queue.getFirst();
 	}
 
+	public final List<DungeonLayer> layers() {
+		return this.layers.stream().map(e -> e.create(this)).toList();
+	}
+
 	public static interface LayerFactory {
 		DungeonLayer create(DungeonGenerator generator);
 	}
@@ -279,7 +289,7 @@ public class DungeonGenerator {
 
 	public static final DungeonGenerator example(long seed, WDirection direction, boolean debug) {
 		int size = 9;
-		DungeonGenerator generator = new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), direction, MapTString::new, factoryCollectionBuilder().add(
+		DungeonGenerator generator = new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
 			// path
 			gen -> PathRepeatLayer.example(gen, size),
 			// distance
@@ -292,8 +302,32 @@ public class DungeonGenerator {
 			RoomLayer::example,
 			// features - spawners, chests, ?
 			FeatureLayer::example,
-			//clear for save
-			ClearLayer::example
+			// clear for save
+			ClearLayer::example,
+			// rotation
+			gen -> new RotateLayer(gen, direction)
+		).build());
+		return exampleSave(generator, debug);
+	}
+
+	public static final DungeonGenerator example1(long seed, WDirection direction, boolean debug) {
+		int size = 4;
+		DungeonGenerator generator = new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
+			// path
+			WormLayer::example,
+			// distance
+			DistanceLayer::example,
+			// temperature, wet, difficulty
+			CompositeTerraLayer::example,
+			// biomes
+			BiomeLayer::example,
+			// rooms
+			RoomLayer::example,
+
+			// clear for save
+			ClearLayer::example,
+			// rotation
+			gen -> new RotateLayer(gen, direction)
 		).build());
 		return exampleSave(generator, debug);
 	}

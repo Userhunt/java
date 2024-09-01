@@ -43,10 +43,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 	}
 
 	@Override
-	public final void regenerate(WDirection rotation, boolean composite) throws DungeonException {
-		if (rotation.isHorisontal() && rotation != WDirection.SOUTH) {
-
-		}
+	public final void regenerate(boolean composite) throws DungeonException {
 		this.entries[0] = new ArraySetStrict<>();
 		this.entries[1] = new ArraySetStrict<>();
 		for(DungeonPos pos : this.centers) {

@@ -74,23 +74,23 @@ public class RandGenScreen extends FrameObject {
 		List<Component> buttons = new ArrayList<>();
 		List<Component> settings = new ArrayList<>();
 
-		this.showWall = new JCheckBox("Show Wall");
+		this.showWall = new JCheckBox("Wall");
 		this.showWall.addChangeListener(CHANGE);
 		settings.add(this.showWall);
 
-		this.showSoftPath = new JCheckBox("Show Soft Path");
+		this.showSoftPath = new JCheckBox("Soft Path");
 		this.showSoftPath.addChangeListener(CHANGE);
 		settings.add(this.showSoftPath);
 
-		this.showTemperature = new JCheckBox("Show Temperature");
+		this.showTemperature = new JCheckBox("Temperature");
 		this.showTemperature.addChangeListener(CHANGE);
 		settings.add(this.showTemperature);
 
-		this.showWet = new JCheckBox("Show Wet");
+		this.showWet = new JCheckBox("Wet");
 		this.showWet.addChangeListener(CHANGE);
 		settings.add(this.showWet);
 
-		this.showBiome = new JCheckBox("Show Biome");
+		this.showBiome = new JCheckBox("Biome");
 		this.showBiome.addChangeListener(CHANGE);
 		settings.add(this.showBiome);
 
@@ -158,7 +158,7 @@ public class RandGenScreen extends FrameObject {
 	}
 
 	private final void exampleDungeon(JButton button, long seed) {
-		this.creteDungeon(button.getText(), DungeonGenerator.example(seed, this.rotate.isSelected() ? WDirection.WEST : WDirection.SOUTH, this.debugSave.isSelected()));
+		this.creteDungeon(button.getText(), DungeonGenerator.example1(seed, this.rotate.isSelected() ? WDirection.WEST : WDirection.SOUTH, this.debugSave.isSelected()));
 	}
 
 	private final void creteDungeon(String name, DungeonGenerator dungeon) {
@@ -168,7 +168,7 @@ public class RandGenScreen extends FrameObject {
 		WBoxI dimension = dungeon.dimension();
 		WVector3I size = dimension.size().add(new WVector3I(1, 1, 1));
 		IntHolder limit = new IntHolder();
-		this.image = new ImageScreen.ImageScreenBuilder().setLocation(fw).setSize(size.getXI() * 4, size.getZI() * 4).setScale(9).buildWith((frameTitle, width, height, scale, background) -> 
+		this.image = new ImageScreen.ImageScreenBuilder().setLocation(fw).setSize(size.getXI() * 4 + 1, size.getZI() * 4 + 1).setScale(9).buildWith((frameTitle, width, height, scale, background) -> 
 			new ImagePainter(frameTitle, width, height, scale, background, dungeon)
 		);
 		this.backgroundExecutor = new BackgroundExecutorBuilder(name, fw).setExecute((oldProgres, executor) -> this.execute(oldProgres, executor, limit, dungeon)).setParentVisible(true).setUpdateParentPosition(false).build();
@@ -311,8 +311,11 @@ public class RandGenScreen extends FrameObject {
 
 			this.setColor(Color.WHITE);
 
-			for (int x = 0; x < this.size.getXI(); x++) {
-				for (int z = 0; z < this.size.getZI(); z++) {
+			int xS = this.size.getXI();
+			int zS = this.size.getZI();
+
+			for (int x = 0; x < xS; x++) {
+				for (int z = 0; z < zS; z++) {
 					for (int i = 0; i < 4; i++) {
 						for (int j = 0; j < 4; j++) {
 							if (i == 0 || j == 0) {
@@ -322,6 +325,15 @@ public class RandGenScreen extends FrameObject {
 					}
 				}
 			}
+			xS *= 4;
+			zS *= 4;
+			for (int x = 0; x < xS; x++) {
+				this.setColor(x, zS, Color.GRAY);
+			}
+			for (int z = 0; z < zS; z++) {
+				this.setColor(xS, z, Color.GRAY);
+			}
+			this.setColor(xS, zS, Color.GRAY);
 
 			for (Map<WVector3I, DungeonRoomInfo> entry1 : this.dungeon.getChunks().values()) {
 				data[0] += entry1.size();

@@ -1,11 +1,21 @@
 package net.w3e.base.math.vector.i;
 
+import java.util.Arrays;
+import java.util.Collection;
+
+import net.w3e.base.math.vector.IWVector;
+import net.w3e.base.math.vector.WDirection;
+
 public class WBoxI {
 
 	private int minX, minY, minZ;
 	private int maxX, maxY, maxZ;
 
 	public WBoxI(int x1, int y1, int z1, int x2, int y2, int z2) {
+		this.set(x1, y1, z1, x2, y2, z2);
+	}
+
+	public final void set(int x1, int y1, int z1, int x2, int y2, int z2) {
 		this.minX = Math.min(x1, x2);
 		this.minY = Math.min(y1, y2);
 		this.minZ = Math.min(z1, z2);
@@ -81,6 +91,33 @@ public class WBoxI {
 
 	public static final WBoxI of(int x, int y, int z) {
 		return new WBoxI(0, 0, 0, x, y, z);
+	}
+
+	public static final WBoxI of(IWVector<?>... points) {
+		return of(Arrays.asList(points));
+	}
+
+	public static final WBoxI of(Collection<? extends IWVector<?>> points) {
+		WBoxI box = WBoxI.of(0, 0, 0);
+		for (IWVector<?> point : points) {
+			box.minX = Math.min(box.minX, point.getXI());
+			box.minY = Math.min(box.minY, point.getYI());
+			box.minZ = Math.min(box.minZ, point.getZI());
+			box.maxX = Math.min(box.maxX, point.getXI());
+			box.maxY = Math.min(box.maxY, point.getYI());
+			box.maxZ = Math.min(box.maxZ, point.getZI());
+		}
+		return box;
+	}
+
+	public final void rotate(WDirection rotation) {
+		this.rotate(WDirection.SOUTH, rotation);
+	}
+
+	public final void rotate(WDirection base, WDirection rotation) {
+		WVector3I min = this.min().rotate(base, rotation);
+		WVector3I max = this.max().rotate(base, rotation);
+		this.set(min.getXI(), min.getYI(), min.getZI(), max.getXI(), max.getYI(), max.getZI());
 	}
 
 	private final WBoxI modify(int x, int y, int z) {

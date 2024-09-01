@@ -65,7 +65,7 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 	}
 
 	@Override
-	public final void regenerate(WDirection rotation, boolean composite) throws DungeonException {
+	public final void regenerate(boolean composite) throws DungeonException {
 		this.list.clear();
 		this.filled = -1;
 
@@ -240,6 +240,30 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 		}
 	}
 
+	@Override
+	public final void rotate(WDirection rotation, DungeonRoomInfo room, Map<WDirection, WDirection> wrapRotation) throws DungeonException {
+		RoomData<T> data = room.data().getT(KEY);
+		if (data != null) {
+			Object2BooleanArrayMap<WDirection> variant = new Object2BooleanArrayMap<>(data.variant);
+			List<WDirection> soft = new ArrayList<>(data.soft);
+			data = new RoomData<>(data.value, new Object2BooleanArrayMap<>());
+			for (Entry<WDirection> entry : variant.object2BooleanEntrySet()) {
+				WDirection key = entry.getKey();
+				if (key.isHorisontal()) {
+					key = wrapRotation.get(key);
+				}
+				data.variant.put(key, entry.getBooleanValue());
+			}
+			for (WDirection s : soft) {
+				if (s.isHorisontal()) {
+					s = wrapRotation.get(s);
+				}
+				data.soft.add(s);
+			}
+			room.data().put(KEY, data);
+		}
+	}
+
 	private enum Progress implements IDungeonLayerProgress<Progress> {
 		createArray,
 		fillRooms,
@@ -261,6 +285,7 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 		}
 
 		public final boolean initRoom(RoomLayer<T> layer) {
+			// TODO
 			RoomVariant<T> variant;
 			if (this.variants.size() == 1) {
 				variant = this.variants.removeFirst();

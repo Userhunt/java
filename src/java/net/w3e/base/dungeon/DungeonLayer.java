@@ -1,5 +1,7 @@
 package net.w3e.base.dungeon;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
@@ -33,8 +35,9 @@ public abstract class DungeonLayer implements WJsonKeyHolder {
 		return instance;
 	}
 	protected abstract DungeonLayer withDungeonImpl(DungeonGenerator generator);
-	public abstract void regenerate(WDirection rotation, boolean composite) throws DungeonException;
+	public abstract void regenerate(boolean composite) throws DungeonException;
 	public abstract int generate() throws DungeonException;
+	public void rotate(WDirection rotation, DungeonRoomInfo room, Map<WDirection, WDirection> wrapRotation) throws DungeonException {}
 
 	protected final Random random() {
 		return this.generator.random();
@@ -65,8 +68,14 @@ public abstract class DungeonLayer implements WJsonKeyHolder {
 	protected final void forEach(Consumer<DungeonRoomCreateInfo> function, boolean createIfNotExists) {
 		this.generator.forEach(function, createIfNotExists);
 	}
+	protected final void rotateDimension(WDirection rotation) {
+		this.generator.dimension().rotate(rotation);
+	}
 	protected final WVector3I dungeonSize() {
 		return this.generator.dimension().size();
+	}
+	protected final List<DungeonLayer> layers() {
+		return this.generator.layers();
 	}
 
 	@FunctionalInterface

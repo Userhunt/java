@@ -62,6 +62,30 @@ public abstract class IWVector<T extends IWVector<T>> implements Comparable<T> {
 		return this.create(this.getXD(), this.getYD(), i);
 	}
 
+	public final T rotate(WDirection rotation) {
+		return this.rotate(WDirection.SOUTH, rotation);
+	}
+
+	@SuppressWarnings("unchecked")
+	public final T rotate(WDirection base, WDirection rotation) {
+		if (base != null && rotation != null && base != rotation && base.isHorisontal() && rotation.isHorisontal()) {
+			while (base != WDirection.SOUTH) {
+				base = base.right();
+				rotation = rotation.right();
+			}
+			double x = this.getXD();
+			double z = this.getZD();
+			while (rotation != WDirection.SOUTH) {
+				rotation = rotation.left();
+				double v = x;
+				x = z;
+				z = -v;
+			}
+			return create(x, this.getYD(), z);
+		}
+		return (T)this;
+	}
+
 	public abstract String toStringArray();
 
 	@Override

@@ -18,6 +18,8 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import net.w3e.base.dungeon.DungeonGenerator.LayerFactory;
 import net.w3e.base.dungeon.layers.ClearLayer;
 import net.w3e.base.dungeon.layers.DistanceLayer;
+import net.w3e.base.dungeon.layers.RotateLayer;
+import net.w3e.base.dungeon.layers.RotateLayer.RotateLayerData;
 import net.w3e.base.dungeon.layers.RoomLayer.RoomVariant;
 import net.w3e.base.dungeon.layers.RoomLayer.RoomVariantData;
 import net.w3e.base.dungeon.layers.interfaces.DungeonInfoCountHolder;
@@ -51,6 +53,7 @@ public class DungeonGeneratorJsonAdapters {
 		// ROOM
 		// FEATURE
 		LAYER_ADAPTER.register(ClearLayer.TYPE, ClearLayer.class);
+		LAYER_ADAPTER.register(RotateLayer.TYPE, RotateLayerData.class);
 	}
 
 	public static final DungeonLayerJsonAdapter getLayerAdapter() {
