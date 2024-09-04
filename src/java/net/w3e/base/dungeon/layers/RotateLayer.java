@@ -23,7 +23,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 
 	private static final BiFunction<DungeonRoomInfo, WVector3I, DungeonException> EXCEPTION = (old, pos) -> new DungeonException(String.format("Cant rotate room. %s -> %s", old.pos(), pos));
 
-	public static final String TYPE = "clear";
+	public static final String TYPE = "rotate";
 	private final WDirection rotation;
 	private final Map<WDirection, WDirection> wrapRotation = new HashMap<>();
 	private final List<DungeonLayer> layers = new ArrayList<>();

@@ -17,14 +17,14 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 
 	private final TerraLayer<?>[] layers;
 
-	public CompositeTerraLayer(DungeonGenerator generator, int stepRate, TerraLayer<?>... layers) {
-		super(generator, null, null, stepRate);
+	public CompositeTerraLayer(DungeonGenerator generator, int stepRate, boolean fast, TerraLayer<?>... layers) {
+		super(generator, null, null, stepRate, fast);
 		this.layers = layers;
 	}
 
 	@Override
 	public final CompositeTerraLayer withDungeonImpl(DungeonGenerator generator) {
-		return new CompositeTerraLayer(generator, this.stepRate, Stream.of(this.layers).map(e -> e.withDungeon(generator)).toArray(TerraLayer[]::new));
+		return new CompositeTerraLayer(generator, this.stepRate, this.fast, Stream.of(this.layers).map(e -> e.withDungeon(generator)).toArray(TerraLayer[]::new));
 	}
 
 	@Override
@@ -54,12 +54,13 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 
 		private DungeonLayer[] layers;
 		private int stepRate = 75;
+		private boolean fast;
 		@Override
 		public final CompositeTerraLayer withDungeon(DungeonGenerator generator) {
 			this.lessThan("stepRate", this.stepRate);
 			this.isEmpty("layers", this.layers);
 			if (!Stream.of(this.layers).anyMatch(layer -> !(layer instanceof TerraLayer))) {
-				return new CompositeTerraLayer(generator, this.stepRate, Stream.of(this.layers).map(layer -> layer.withDungeon(generator)).toArray(TerraLayer[]::new));
+				return new CompositeTerraLayer(generator, this.stepRate, fast, Stream.of(this.layers).map(layer -> layer.withDungeon(generator)).toArray(TerraLayer[]::new));
 			} else {
 				throw new JsonSyntaxException(MessageUtil.EXPECTED.createMsg(Stream.of(this.layers).filter(layer -> !(layer instanceof TerraLayer)), "terra layer", TerraLayer.class.getSimpleName()));
 			}
@@ -67,7 +68,7 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 	}
 
 	public static final CompositeTerraLayer example(DungeonGenerator generator) {
-		return new CompositeTerraLayer(generator, 50, TemperatureLayer.example(generator), WetLayer.example(generator), DifficultyLayer.example(generator)).setTypeKey(TYPE);
+		return new CompositeTerraLayer(generator, 50, true, TemperatureLayer.example(generator), WetLayer.example(generator), DifficultyLayer.example(generator)).setTypeKey(TYPE);
 	}
 
 }

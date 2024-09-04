@@ -66,14 +66,14 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 			});
 			WVector3I size = this.dungeonSize().add(new WVector3I(1, 1, 1));
 			int s = size.getXI() * size.getYI() * size.getZI();
-			int p = BMatUtil.round(rooms.size() * 100f / s);
+			float p = rooms.size() * 100f / s;
 			if (p <= this.minumumPercent) {
 				int i = this.countPerStep;
 				while (i > 0 && !rooms.isEmpty()) {
 					DungeonRoomInfo room = rooms.remove(this.random().nextInt(rooms.size()));
 					this.add(room.pos(), new DungeonPos().getDirection(this.random()));
 				}
-				return this.generate();
+				return Math.min(BMatUtil.round(p / this.minumumPercent * 100), 99);
 			}
 		}
 		return value;

@@ -31,7 +31,6 @@ import net.w3e.base.dungeon.layers.ISetupLayer;
 import net.w3e.base.dungeon.layers.RoomLayer;
 import net.w3e.base.dungeon.layers.RotateLayer;
 import net.w3e.base.dungeon.layers.path.PathRepeatLayer;
-import net.w3e.base.dungeon.layers.path.WormLayer;
 import net.w3e.base.dungeon.layers.roomvalues.AbstractLayerRoomValues;
 import net.w3e.base.dungeon.layers.roomvalues.BaseLayerRoomRange;
 import net.w3e.base.dungeon.layers.roomvalues.BaseLayerRoomValues;
@@ -288,8 +287,8 @@ public class DungeonGenerator {
 	}
 
 	public static final DungeonGenerator example(long seed, WDirection direction, boolean debug) {
-		int size = 9;
-		DungeonGenerator generator = new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
+		int size = 8;
+		SimpleCollectionBuilder<LayerFactory, ArrayList<LayerFactory>> layers = factoryCollectionBuilder().add(
 			// path
 			gen -> PathRepeatLayer.example(gen, size),
 			// distance
@@ -303,32 +302,12 @@ public class DungeonGenerator {
 			// features - spawners, chests, ?
 			FeatureLayer::example,
 			// clear for save
-			ClearLayer::example,
-			// rotation
-			gen -> new RotateLayer(gen, direction)
-		).build());
-		return exampleSave(generator, debug);
-	}
-
-	public static final DungeonGenerator example1(long seed, WDirection direction, boolean debug) {
-		int size = 4;
-		DungeonGenerator generator = new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), MapTString::new, factoryCollectionBuilder().add(
-			// path
-			WormLayer::example,
-			// distance
-			DistanceLayer::example,
-			// temperature, wet, difficulty
-			CompositeTerraLayer::example,
-			// biomes
-			BiomeLayer::example,
-			// rooms
-			RoomLayer::example,
-
-			// clear for save
-			ClearLayer::example,
-			// rotation
-			gen -> new RotateLayer(gen, direction)
-		).build());
+			ClearLayer::example
+		);
+		if (direction != WDirection.SOUTH) {
+			layers.add(gen -> new RotateLayer(gen, direction));
+		}
+		DungeonGenerator generator = new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), MapTString::new, layers.build());
 		return exampleSave(generator, debug);
 	}
 

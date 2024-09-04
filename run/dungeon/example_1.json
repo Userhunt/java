@@ -1,5 +1,5 @@
 {
-	"seed": 0,
+	"seed": 1,
 	"dimension": {
 		"minX": -8,
 		"minY": 0,
@@ -78,7 +78,6 @@
 					"defKey": "temperature",
 					"defValue": 5,
 					"stepRate": 50,
-					"fast": false,
 					"type": "terra/temperature"
 				},
 				{
@@ -92,7 +91,6 @@
 					"defKey": "wet",
 					"defValue": 0,
 					"stepRate": 50,
-					"fast": false,
 					"type": "terra/wet"
 				},
 				{
@@ -108,12 +106,10 @@
 					"defKey": "difficulty",
 					"defValue": 0,
 					"stepRate": 50,
-					"fast": false,
 					"type": "terra/difficulty"
 				}
 			],
 			"stepRate": 50,
-			"fast": true,
 			"type": "terra/composite"
 		},
 		{

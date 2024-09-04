@@ -285,7 +285,6 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 		}
 
 		public final boolean initRoom(RoomLayer<T> layer) {
-			// TODO
 			RoomVariant<T> variant;
 			if (this.variants.size() == 1) {
 				variant = this.variants.removeFirst();
@@ -297,15 +296,15 @@ public class RoomLayer<T> extends ListLayer<RoomLayer.RoomPoint<T>> implements I
 
 			List<Object2BooleanArrayMap<WDirection>> directions = new ArrayList<>();
 
-			for (Object2BooleanArrayMap<WDirection> map : variant.directionVariants) {
+			map_block: for (Object2BooleanArrayMap<WDirection> map : variant.directionVariants) {
 				for (Entry<WDirection> entry : map.object2BooleanEntrySet()) {
 					if (entry.getBooleanValue()) {
-						if (this.room.isConnect(entry.getKey(), true)) {
-							directions.add(map);
-							break;
+						if (!this.room.isConnect(entry.getKey(), true)) {
+							continue map_block;
 						}
 					}
 				}
+				directions.add(map);
 			}
 
 			RoomData<T> data = new RoomData<T>(variant.value, directions.get(layer.random().nextInt(directions.size())));

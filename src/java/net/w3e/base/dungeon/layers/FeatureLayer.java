@@ -281,7 +281,7 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 		List<FeatureVariant<String>> features = new ArrayList<>();
 		Random random = new Random(0);
 		for (int i = 0; i < 20; i++) {
-			features.add(new FeatureVariant<String>(BaseLayerRoomRange.NULL, random.nextInt(100) + 1 <= 5 ? BooleanEnum.TRUE : BooleanEnum.FALSE, random.nextInt(100) + 1 <= 90, String.valueOf(i + 1), random.nextInt(100) + 1 <= 75 ? random.nextInt(3) + 1 : -1));
+			features.add(new FeatureVariant<>(BaseLayerRoomRange.NULL, random.nextInt(100) + 1 <= 5 ? BooleanEnum.TRUE : BooleanEnum.FALSE, random.nextInt(100) + 1 <= 70, String.valueOf(i + 1), random.nextInt(100) + 1 <= 75 ? random.nextInt(3) + 1 : -1));
 		}
 
 		return new FeatureLayer<>(generator, features).setTypeKey(TYPE);

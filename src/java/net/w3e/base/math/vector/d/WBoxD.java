@@ -11,6 +11,10 @@ public class WBoxD {
 	private double minX, minY, minZ;
 	private double maxX, maxY, maxZ;
 
+	public WBoxD(double x, double y, double z) {
+		this(x, y, z, x, y, z);
+	}
+
 	public WBoxD(double x1, double y1, double z1, double x2, double y2, double z2) {
 		this.set(x1, y1, z1, x2, y2, z2);
 	}
@@ -98,7 +102,13 @@ public class WBoxD {
 	}
 
 	public static final WBoxD of(Collection<? extends IWVector<?>> points) {
-		WBoxD box = WBoxD.of(0, 0, 0);
+		WBoxD box;
+		if (points.isEmpty()) {
+			box = WBoxD.of(0, 0, 0);
+		} else {
+			IWVector<?> point = points.iterator().next();
+			box = new WBoxD(point.getXD(), point.getYD(), point.getZD());
+		}
 		for (IWVector<?> point : points) {
 			box.minX = Math.min(box.minX, point.getXD());
 			box.minY = Math.min(box.minY, point.getYD());

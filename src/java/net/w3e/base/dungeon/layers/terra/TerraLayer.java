@@ -11,12 +11,14 @@ public abstract class TerraLayer<T> extends ListLayer<DungeonRoomInfo> implement
 	protected final String defKey;
 	protected final T defValue;
 	protected final int stepRate;
+	protected final boolean fast;
 
-	public TerraLayer(DungeonGenerator generator, String defKey, T defValue, int stepRate) {
+	public TerraLayer(DungeonGenerator generator, String defKey, T defValue, int stepRate, boolean fast) {
 		super(generator);
 		this.defKey = defKey;
 		this.defValue = defValue;
 		this.stepRate = stepRate;
+		this.fast = fast;
 	}
 
 	@Override
@@ -29,7 +31,7 @@ public abstract class TerraLayer<T> extends ListLayer<DungeonRoomInfo> implement
 		if (filled == -1) {
 			this.generateList(room -> {
 				return GenerateListHolder.success(room.room());
-			}, true);
+			}, !this.fast);
 			return 1;
 		}
 

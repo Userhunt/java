@@ -20,6 +20,10 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import lombok.extern.log4j.Log4j2;
 import net.w3e.base.collection.CollectionBuilder;
 import net.w3e.base.dungeon.DungeonException;
 import net.w3e.base.dungeon.DungeonGenerator;
@@ -49,7 +53,10 @@ import net.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
 import net.home.FrameObject;
 import net.home.MainFrame;
 
+@Log4j2
 public class RandGenScreen extends FrameObject {
+
+	public static final Logger LOGGER = LogManager.getLogger();
 
 	private final Change CHANGE = new Change();
 
@@ -158,7 +165,7 @@ public class RandGenScreen extends FrameObject {
 	}
 
 	private final void exampleDungeon(JButton button, long seed) {
-		this.creteDungeon(button.getText(), DungeonGenerator.example1(seed, this.rotate.isSelected() ? WDirection.WEST : WDirection.SOUTH, this.debugSave.isSelected()));
+		this.creteDungeon(button.getText(), DungeonGenerator.example(seed, this.rotate.isSelected() ? WDirection.WEST : WDirection.SOUTH, this.debugSave.isSelected()));
 	}
 
 	private final void creteDungeon(String name, DungeonGenerator dungeon) {
@@ -188,7 +195,7 @@ public class RandGenScreen extends FrameObject {
 
 		int progress = 0;
 		if (limit.getAsInt() >= 25) {
-			System.out.println("limit reached");
+			LOGGER.warn("limit reached");
 			executor.stop();
 			return oldProgres;
 		}
@@ -215,9 +222,9 @@ public class RandGenScreen extends FrameObject {
 
 			int[] data = this.image.refillImage();
 
-			next = (count == 0 || (fast && System.currentTimeMillis() - time <= 25)) && progress < 100;
+			next = (count == 0 || (fast && System.currentTimeMillis() - time <= 5)) && progress < 100;
 			if (progress > 100) {
-				System.err.println("progress is more than 100");
+				LOGGER.warn("progress is more than 100");
 			}
 			if (!print) {
 				if (count != 1 && next) {
@@ -314,33 +321,40 @@ public class RandGenScreen extends FrameObject {
 			int xS = this.size.getXI();
 			int zS = this.size.getZI();
 
-			for (int x = 0; x < xS; x++) {
-				for (int z = 0; z < zS; z++) {
-					for (int i = 0; i < 4; i++) {
-						for (int j = 0; j < 4; j++) {
-							if (i == 0 || j == 0) {
-								this.setColor(x * 4 + i, z * 4 + j, Color.GRAY);
+			// border
+			{
+				for (int x = 0; x < xS; x++) {
+					for (int z = 0; z < zS; z++) {
+						for (int i = 0; i < 4; i++) {
+							for (int j = 0; j < 4; j++) {
+								if (i == 0 || j == 0) {
+									this.setColor(x * 4 + i, z * 4 + j, Color.GRAY);
+								}
 							}
 						}
 					}
 				}
+				xS *= 4;
+				zS *= 4;
+				for (int x = 0; x < xS; x++) {
+					this.setColor(x, zS, Color.GRAY);
+				}
+				for (int z = 0; z < zS; z++) {
+					this.setColor(xS, z, Color.GRAY);
+				}
+				this.setColor(xS, zS, Color.GRAY);
+	
 			}
-			xS *= 4;
-			zS *= 4;
-			for (int x = 0; x < xS; x++) {
-				this.setColor(x, zS, Color.GRAY);
-			}
-			for (int z = 0; z < zS; z++) {
-				this.setColor(xS, z, Color.GRAY);
-			}
-			this.setColor(xS, zS, Color.GRAY);
+
+			xS -= 4;
+			zS -= 4;
 
 			for (Map<WVector3I, DungeonRoomInfo> entry1 : this.dungeon.getChunks().values()) {
 				data[0] += entry1.size();
 				for (Entry<WVector3I, DungeonRoomInfo> entry2 : entry1.entrySet()) {
 					WVector3I pos = entry2.getKey();
 					int x = (pos.getXI() + min.getXI()) * 4 + 2;
-					int z = (pos.getZI() + min.getZI()) * 4 + 2;
+					int z = zS - (pos.getZI() + min.getZI()) * 4 + 2;
 					try {
 						DungeonRoomInfo value = entry2.getValue();
 
@@ -385,13 +399,14 @@ public class RandGenScreen extends FrameObject {
 						}
 						for (WDirection direction : WDirection.values()) {
 							if (direction != WDirection.UP && direction != WDirection.DOWN) {
+								WVector3I relative = direction.getRelative();
 								if (value.isConnect(direction, true)) {
 									data[1]++;
-									this.setColor(x + direction.getRelative().getXI(), z + + direction.getRelative().getZI(), Color.RED);
+									this.setColor(x + relative.getXI(), z - relative.getZI(), Color.RED);
 								} else if (value.isConnect(direction, false)) {
 									data[2]++;
 									if (showSoftPath) {
-										this.setColor(x + direction.getRelative().getXI(), z + + direction.getRelative().getZI(), Color.GREEN);
+										this.setColor(x + relative.getXI(), z - direction.getRelative().getZI(), Color.GREEN);
 									}
 								}
 							}
@@ -408,6 +423,8 @@ public class RandGenScreen extends FrameObject {
 		public final void mouseClicked(MouseEvent event) {
 			int x = event.getX() / this.scale - this.min.getXI();
 			int z = event.getY() / this.scale - this.min.getZI();
+			//x *= -1;
+			z *= -1;
 			DungeonRoomCreateInfo data = this.dungeon.get(new WVector3I(x, 0, z));
 			if (!data.exists()) {
 				System.err.println("not found");

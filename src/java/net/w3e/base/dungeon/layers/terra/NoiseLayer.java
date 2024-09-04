@@ -11,14 +11,14 @@ import net.w3e.base.math.vector.i.WVector3I;
 public abstract class NoiseLayer extends TerraLayer<Integer> {
 
 	protected final NoiseData noise;
-	private long seed;
+	private transient long seed;
 
-	public NoiseLayer(DungeonGenerator generator, NoiseData noies) {
-		this(generator, noies, 50);
+	public NoiseLayer(DungeonGenerator generator, NoiseData noies, boolean fast) {
+		this(generator, noies, 50, fast);
 	}
 
-	public NoiseLayer(DungeonGenerator generator, NoiseData noise, int stepRate) {
-		super(generator, noise.defKey, noise.defValue, stepRate);
+	public NoiseLayer(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
+		super(generator, noise.defKey, noise.defValue, stepRate, fast);
 		this.noise = noise;
 	}
 
@@ -111,12 +111,13 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 	public abstract static class NoiseLayerData<T extends NoiseLayer> implements ILayerAdapter<T> {
 		private NoiseData noise = NoiseData.INSTANCE;
 		private int stepRate = 50;
+		private boolean fast = false;
 		@Override
 		public final T withDungeon(DungeonGenerator generator) {
 			this.nonNull("noise", this.noise);
 			lessThan("stepRate", this.stepRate);
-			return this.withDungeon(generator, this.noise, this.stepRate);
+			return this.withDungeon(generator, this.noise, this.stepRate, this.fast);
 		}
-		protected abstract T withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate);
+		protected abstract T withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast);
 	}
 }

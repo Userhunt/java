@@ -11,6 +11,10 @@ public class WBoxI {
 	private int minX, minY, minZ;
 	private int maxX, maxY, maxZ;
 
+	public WBoxI(int x, int y, int z) {
+		this(x, y, z, x, y, z);
+	}
+
 	public WBoxI(int x1, int y1, int z1, int x2, int y2, int z2) {
 		this.set(x1, y1, z1, x2, y2, z2);
 	}
@@ -98,14 +102,20 @@ public class WBoxI {
 	}
 
 	public static final WBoxI of(Collection<? extends IWVector<?>> points) {
-		WBoxI box = WBoxI.of(0, 0, 0);
+		WBoxI box;
+		if (points.isEmpty()) {
+			box = WBoxI.of(0, 0, 0);
+		} else {
+			IWVector<?> point = points.iterator().next();
+			box = new WBoxI(point.getXI(), point.getYI(), point.getZI());
+		}
 		for (IWVector<?> point : points) {
 			box.minX = Math.min(box.minX, point.getXI());
 			box.minY = Math.min(box.minY, point.getYI());
 			box.minZ = Math.min(box.minZ, point.getZI());
-			box.maxX = Math.min(box.maxX, point.getXI());
-			box.maxY = Math.min(box.maxY, point.getYI());
-			box.maxZ = Math.min(box.maxZ, point.getZI());
+			box.maxX = Math.max(box.maxX, point.getXI());
+			box.maxY = Math.max(box.maxY, point.getYI());
+			box.maxZ = Math.max(box.maxZ, point.getZI());
 		}
 		return box;
 	}

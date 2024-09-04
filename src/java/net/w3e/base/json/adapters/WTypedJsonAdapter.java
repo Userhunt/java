@@ -63,7 +63,7 @@ public abstract class WTypedJsonAdapter<K, V> extends WJsonAdapter<V> {
 	}
 
 	public final void register(K key, SimpleJsonAdapter<V> factory) {
-		if (this.canReplace(key) && this.map.containsKey(key)) {
+		if (!this.canReplace(key) && this.map.containsKey(key)) {
 			throw new IllegalStateException(MessageUtil.KEY_DUPLICATE.createMsg(this.map.keySet(), key));
 		} else {
 			this.map.put(key, factory);
