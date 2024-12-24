@@ -1,13 +1,11 @@
 rootProject.name = 'w3e-root'
 
 include(
-	':root',
-	//':tf2',
-	//':oba',
-	//':oba2',
-	':random_generator',
-	':infinitode',
-	//':cyberpunk'
+	'w3e-lib',
+	'skds-lib',
+	':app',
+	//':utils',
+	//':oba',depr
 )
 
 rootProject.children.each { project ->

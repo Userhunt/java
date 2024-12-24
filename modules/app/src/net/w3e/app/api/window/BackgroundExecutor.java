@@ -1,0 +1,326 @@
+package net.w3e.app.api.window;
+
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.IntSupplier;
+import java.util.stream.Stream;
+
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JProgressBar;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import net.skds.lib2.mat.FastMath;
+import net.skds.lib2.utils.Holders.IntHolder;
+import net.skds.lib2.utils.Holders.LongHolder;
+import net.skds.lib2.utils.Holders.ObjectHolder;
+import net.w3e.app.api.TextAreaOutputStream;
+import net.w3e.app.api.window.jcomponent.JConsole;
+import net.w3e.lib.TFNStateEnum;
+
+public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor {
+
+	private final JConsole textArea = new JConsole(1100, 700);
+	private final TextAreaOutputStream printStream = new TextAreaOutputStream(textArea, true);
+	private final JProgressBar bar = new JProgressBar();
+	private final boolean updateParentPosition;
+	private final Execute run;
+	private final Done done;
+	private final WaitTimer timer;
+	private boolean stop;
+	private volatile TFNStateEnum close = TFNStateEnum.NOT_STATED;
+
+	public BackgroundExecutor(String frameTitle, FrameWin parent, @NotNull Execute run, @Nullable Done done, boolean hideParent, boolean updateParentPosition) {
+		super(frameTitle, parent, false);
+		this.parent.setVisible(!hideParent);
+		this.updateParentPosition = updateParentPosition;
+		this.setLocation(parent.getLocation());
+		this.setVisible(true);
+		this.run = run;
+		this.done = done;
+		this.timer = new WaitTimer(frameTitle);
+
+		this.bar.setStringPainted(true);
+
+		JButton stop = new JButton("Stop");
+		FrameWin.setSize(stop, 60, 26);
+		stop.addActionListener(FrameWin.onClick(this::stop));
+
+		JButton interrupt = new JButton("Interrupt");
+		FrameWin.setSize(interrupt, 85, 26);
+		interrupt.addActionListener(FrameWin.onClick(() -> {
+			this.stopAndClose(true).run();
+		}));
+
+		this.add(FrameWin.horisontalPanelBuilder().add(this.bar, stop, interrupt).setWidth(1100).setMinWidth(1100).build());
+
+		this.add(Box.createVerticalStrut(10));
+
+		this.add(this.textArea.scroll);
+
+		this.pack();
+	}
+
+	@Override
+	protected final boolean showParentWhenClose() {
+		return this.updateParentPosition;
+	}
+
+	public final IntHolder run() {
+		if (!this.timer.isStop()) {
+			return null;
+		}
+		this.stop = false;
+		IntHolder progress = new IntHolder();
+		timer.set(() -> {
+			int old = progress.getValue();
+			BackgroundExecutor.this.printStream.enable();
+			int i = -1;
+			try {
+				i = BackgroundExecutor.this.run.run(old, this);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+			if (i < -1) {
+				i = -1;
+			}
+			if (i > 100) {
+				i = 100;
+			}
+			boolean update = false;
+			if (this.isStop() && BackgroundExecutor.this.bar.getForeground() != Color.red) {
+				BackgroundExecutor.this.bar.setForeground(Color.red);
+				update = true;
+			}
+			if (i != old) {
+				BackgroundExecutor.this.bar.setValue(i);
+				update = true;
+			}
+			if (update) {
+				BackgroundExecutor.this.bar.update(BackgroundExecutor.this.bar.getGraphics());
+			}
+
+			BackgroundExecutor.this.printStream.disable();
+
+			progress.setValue(i);
+			if (i == -1 || i == 100 || this.stop) {
+				this.timer.stop(false, true);
+				if (this.done != null) {
+					this.done.done(this);
+				}
+				if (this.close.isTrue()) {
+					this.onClose();
+				}
+				this.close = TFNStateEnum.FALSE;
+			}
+		}, 10, false);
+		return progress;
+	}
+
+	@Override
+	public final void print(Runnable runnable) {
+		this.printStream.print(runnable);
+	}
+
+	@Override
+	public final void print(Object object) {
+		this.printStream.print(object);
+	}
+
+	@Override
+	protected void onCloseIns() {
+		this.timer.stop();
+		BackgroundExecutor.this.printStream.disable();
+		stopTick();
+		if (this.close.isTrue()) {
+			this.close = TFNStateEnum.FALSE;
+			this.dispose();
+		}
+	}
+
+	public static class BackgroundExecutorBuilder {
+		private final String frameTitle;
+		@NotNull
+		private final FrameWin parent;
+		private Execute execute;
+		private Done done;
+
+		private boolean updateParentPosition = true;
+		private boolean parentVisible = false;
+
+		public BackgroundExecutorBuilder(String frameTitle, @NotNull FrameWin parent) {
+			this.frameTitle = frameTitle;
+			this.parent = parent;
+		}
+
+		public final BackgroundExecutorBuilder setExecute(Execute execute) {
+			this.execute = execute;
+			return this;
+		}
+
+		public final BackgroundExecutorBuilder setDone(Done done) {
+			this.done = done;
+			return this;
+		}
+
+		public final BackgroundExecutorBuilder setParentVisible(boolean parentVisible) {
+			this.parentVisible = parentVisible;
+			return this;
+		}
+
+		public final BackgroundExecutorBuilder setUpdateParentPosition(boolean updateParentPosition) {
+			this.updateParentPosition = updateParentPosition;
+			return this;
+		}
+
+		public final IntHolder run() {
+			return this.build().run();
+		}
+
+		public final void runThread(Consumer<BackgroundExecutor> execute, IntSupplier progress) {
+			ExecutorService thread = Executors.newFixedThreadPool(1);
+			BackgroundExecutor exe = new BackgroundExecutor(this.frameTitle, this.parent, (oldProgress, executor) -> {
+				int i = progress.getAsInt();
+				if (i > 100 || executor.isStop()) {
+					thread.shutdownNow();
+				}
+				return i;
+			}, this.done, !this.parentVisible, this.updateParentPosition);
+			exe.run();
+			thread.execute(() -> execute.accept(exe));
+		}
+
+		public final BackgroundExecutor multiple(int tickRate, BackgroundExecutor... executors) {
+			if (executors.length == 0) {
+				return null;
+			}
+			double size = executors.length;
+			List<BackgroundExecutor> list = new ArrayList<>(Stream.of(executors).toList());
+			for (BackgroundExecutor executor : list) {
+				executor.setVisible(false);
+			}
+
+			ObjectHolder<IntHolder> holder = new ObjectHolder<>();
+
+			ObjectHolder<BackgroundExecutor> frame = new ObjectHolder<>();
+			LongHolder time = new LongHolder(-1);
+
+			Consumer<IBackgroundExecutor> printTime = (executor) -> {
+				BackgroundExecutor old = frame.getValue();
+				if (old != null) {
+					old.setState(JFrame.ICONIFIED);
+					executor.print(() -> {
+						System.out.println(String.format("Time of stage %s: %s", ((int)size) - list.size(), System.currentTimeMillis() - time.getValue()));
+					});
+				}
+			};
+
+			BackgroundExecutor exe = new BackgroundExecutor(this.frameTitle, this.parent, (oldProgress, executor) -> {
+				IntHolder progress = holder.getValue();
+				if ((progress == null || progress.getValue() >= 100) && !list.isEmpty()) {
+					printTime.accept(executor);
+					BackgroundExecutor value = list.remove(0);
+					frame.setValue(value);
+					value.setVisible(true);
+					time.setValue(System.currentTimeMillis());
+					progress = value.run();
+					holder.setValue(progress);
+				} else if (list.isEmpty()) {
+					printTime.accept(executor);
+				}
+
+				int p1 = progress.getValue();
+				int p2 = FastMath.round((size - list.size() - 1) * 100d / size) + FastMath.round(p1 / size);
+				executor.print(() -> {
+					System.out.println(String.format("Stage: %s. Progress of stage: %s. Progress: %s", ((int)size) - list.size(), p1, p2));
+				});
+
+				Inputs.sleep(tickRate);
+				return p2;
+			}, this.done, !this.parentVisible, this.updateParentPosition) {
+				@Override
+				protected final void onCloseIns() {
+					super.onCloseIns();
+					for (BackgroundExecutor executor : executors) {
+						executor.close();
+					}
+				}
+			};
+
+			return exe;
+		}
+
+		public final BackgroundExecutor build() {
+			return new BackgroundExecutor(this.frameTitle, this.parent, this.execute, this.done, !this.parentVisible, this.updateParentPosition);
+		}
+	}
+
+	@FunctionalInterface
+	public static interface Execute {
+		int run(int oldProgress, IBackgroundExecutor executor);
+	}
+
+	public static interface Done {
+		void done(IBackgroundExecutor executor);
+	}
+
+	@Override
+	public final void stop() {
+		this.stop = true;
+	}
+
+	@Override
+	public final Runnable stopAndClose(boolean kill) {
+		if (this.close.isFalse()) {
+			if (kill) {
+				return () -> {};
+			} else {
+				return () -> {
+					this.dispose();
+				};
+			}
+		}
+		this.stop();
+		this.close = TFNStateEnum.TRUE;
+		return () -> {
+			ExecutorService es = Executors.newCachedThreadPool();
+			es.execute(() -> {
+				while(this.close.isTrue()) {
+					Inputs.sleep(100);
+				}
+			});
+			if (kill) {
+				this.close = TFNStateEnum.FALSE;
+				this.timer.stop();
+			}
+			es.shutdown();
+			try {
+				es.awaitTermination(1, kill ? TimeUnit.SECONDS : TimeUnit.MINUTES);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			if (!kill) {
+				this.dispose();
+			}
+		};
+	}
+
+	@Override
+	public final boolean isStop() {
+		return this.stop || this.close != TFNStateEnum.NOT_STATED;
+	}
+
+	@Override
+	public final void clear() {
+		this.textArea.setText("");
+	}
+}

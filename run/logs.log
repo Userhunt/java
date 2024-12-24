@@ -1,2 +1,6 @@
-2024-07-03 20:37:09.963 [main] WARN  SETUP - writter replaced
-2024-07-03 20:37:09.971 [main] INFO   - [PrintWrapper{install:24}]: test replace from net.home.MainFrame.<clinit>(MainFrame.java:76)
+2024-12-24 21:29:13.507 [main] WARN  SETUP - writter replaced
+2024-12-24 21:29:13.519 [main] INFO   - [PrintWrapper{install:20}]: test replace from net.w3e.app.MainFrame.<clinit>(MainFrame.java:78)
+2024-12-24 21:29:13.520 [main] INFO   - [MainFrame{run:100}]: launch
+2024-12-24 21:29:13.539 [main] INFO   - [MainFrame{register:87}]: registred frame Test
+2024-12-24 21:29:13.545 [main] INFO   - [MainFrame{register:87}]: registred frame Random Generator
+2024-12-24 21:29:18.404 [AWT-EventQueue-0] INFO   - [BezierScreen{update:146}]: 5

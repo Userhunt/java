@@ -78,6 +78,7 @@
 					"defKey": "temperature",
 					"defValue": 5,
 					"stepRate": 50,
+					"fast": false,
 					"type": "terra/temperature"
 				},
 				{
@@ -91,6 +92,7 @@
 					"defKey": "wet",
 					"defValue": 0,
 					"stepRate": 50,
+					"fast": false,
 					"type": "terra/wet"
 				},
 				{
@@ -106,10 +108,12 @@
 					"defKey": "difficulty",
 					"defValue": 0,
 					"stepRate": 50,
+					"fast": false,
 					"type": "terra/difficulty"
 				}
 			],
 			"stepRate": 50,
+			"fast": false,
 			"type": "terra/composite"
 		},
 		{

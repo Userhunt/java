@@ -1,0 +1,21 @@
+plugins {
+	id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+dependencies {
+	implementation project(":skds-lib")
+	implementation project(":w3e-lib")
+	implementation group: 'org.jsoup', name: 'jsoup', version:'1.17.2'
+	implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.13.0'
+}
+
+mainClassName = 'net.w3e.app.MainFrame'
+
+shadowJar {
+	archiveBaseName.set('w3e-app')
+	archiveClassifier.set('')
+	archiveVersion.set('')
+	/*minimize {
+		exclude(project(":"))
+	}*/
+}

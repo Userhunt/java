@@ -35,25 +35,14 @@
 		},
 		{
 			"type": "java",
-			"name": "Random Generator",
+			"name": "Random Generator GSON",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",
 			"console": "internalConsole",
 			"stopOnEntry": false,
-			"mainClass": "net.home.random_generator.RandGenScreen",
+			"mainClass": "net.w3e.base.dungeon.DungeonGenerator",
 			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
-			"args": "key=rand_gen x=3593"
-		},
-		{
-			"type": "java",
-			"name": "Inf",
-			"request": "launch",
-			"cwd": "${workspaceFolder}/run",
-			"console": "internalConsole",
-			"stopOnEntry": false,
-			"mainClass": "net.home.infinitode.Infinitode",
-			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
-			"args": "x=1675"
+			"args": ""
 		},
 		{
 			"type": "java",
@@ -62,7 +51,7 @@
 			"cwd": "${workspaceFolder}/run",
 			"console": "internalConsole",
 			"stopOnEntry": false,
-			"mainClass": "net.home.MainFrame",
+			"mainClass": "net.w3e.app.MainFrame",
 			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
 			"args": "key=test x=1675"
 		}
