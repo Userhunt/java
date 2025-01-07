@@ -17,17 +17,17 @@
             "centers": [
               {
                 "pos": {
-                  "x": 0,
-                  "y": 0,
-                  "z": 0
+                  "xi": 0,
+                  "yi": 0,
+                  "zi": 0
                 },
                 "enterance": true
               },
               {
                 "pos": {
-                  "x": 0,
-                  "y": 0,
-                  "z": 0
+                  "xi": 0,
+                  "yi": 0,
+                  "zi": 0
                 },
                 "enterance": true
               }

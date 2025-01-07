@@ -1,11 +1,11 @@
 package net.w3e.wlib.log;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.skds.lib2.utils.logger.SKDSLogger;
+import net.skds.lib2.utils.logger.SKDSLoggerFactory;
 
 public class LogUtil {
 
-	public static final Logger LOGGER = LogManager.getLogger();
+	public static final SKDSLogger LOGGER = SKDSLoggerFactory.getLogger(LogUtil.class);
 
 	public static final LogMessage EMPTY = new LogMessage("%s");
 	public static final LogMessage ILLEGAL = new LogMessage("Illegal state - %s");
@@ -58,8 +58,5 @@ public class LogUtil {
 	public static final LogMessage EXPECTED_SET = new LogMessage("Expected \"%s\" to be a \"%s\", was \"%s\", set to \"%s\"");
 
 	public static final LogMessage REQUIRED = new LogMessage("Required \"%s\"");
-	
-	public static String parseTrace(StackTraceElement stackTraceElement) {
-		return "[" + stackTraceElement.getClassName() + ":" + stackTraceElement.getMethodName() + ":" + stackTraceElement.getLineNumber() + "]: ";
-	}
+
 }

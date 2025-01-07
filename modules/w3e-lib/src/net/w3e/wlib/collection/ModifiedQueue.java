@@ -4,12 +4,12 @@ import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Predicate;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import net.skds.lib2.utils.logger.SKDSLogger;
+import net.skds.lib2.utils.logger.SKDSLoggerFactory;
 
 public class ModifiedQueue<T extends ModifiedQueue.QueueTask> {
 
-	public final Logger LOGGER = LogManager.getLogger("ModifiedQueue@" + this.hashCode());
+	public final SKDSLogger LOGGER = SKDSLoggerFactory.getLogger(ModifiedQueue.class);
 
 	private final int preferedTime;
 	private int tick = 0;

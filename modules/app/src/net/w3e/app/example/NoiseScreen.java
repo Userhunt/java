@@ -14,6 +14,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import net.skds.lib2.mat.FastMath;
+import net.skds.lib2.misc.noise.Noise;
 import net.w3e.app.api.window.AbstractFrameWin;
 import net.w3e.app.api.window.jcomponent.JButtonGroup;
 import net.w3e.app.api.window.jcomponent.JImageLabel;
@@ -118,8 +119,17 @@ public class NoiseScreen extends AbstractFrameWin {
 			array[i] = new double[this.size];
 		}
 
+		float[] amps = new float[]{
+			1f,1,1,1,1,1,1,1f,
+		};
+
+		//Noise noise = new Noise(seed, amps, 1.5f, FastMath::cosInterpolate);
+
+		float s = this.size / 2 / amps.length;
+
 		for (int x = 0; x < this.size; x++) {
 			for (int z = 0; z < this.size; z++) {
+				//array[x][z] = noise.getValueInPoint(((float)x / amps.length - s) * scale, ((float)z / amps.length - s) * scale) * 2 - 1;
 				array[x][z] = OpenSimplex2S.noise2(seed, (x - this.size / 2) * scale, (z - this.size / 2) * scale);
 			}
 		}

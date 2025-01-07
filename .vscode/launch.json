@@ -40,7 +40,7 @@
 			"cwd": "${workspaceFolder}/run",
 			"console": "internalConsole",
 			"stopOnEntry": false,
-			"mainClass": "net.w3e.base.dungeon.DungeonGenerator",
+			"mainClass": "net.w3e.wlib.dungeon.DungeonGenerator",
 			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
 			"args": ""
 		},

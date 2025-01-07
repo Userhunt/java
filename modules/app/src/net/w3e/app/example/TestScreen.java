@@ -17,8 +17,10 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
 import net.skds.lib2.benchmark.Benchmark;
+import net.skds.lib2.demo.DemoFrame;
 import net.skds.lib2.mat.FastMath;
 import net.skds.lib2.utils.AutoString;
+import net.skds.lib2.utils.StringUtils;
 import net.skds.lib2.utils.Holders.IntHolder;
 import net.w3e.app.FrameObject;
 import net.w3e.app.MainFrame;
@@ -28,8 +30,7 @@ import net.w3e.app.api.window.BackgroundExecutor;
 import net.w3e.app.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
 import net.w3e.app.api.window.FrameWin;
 import net.w3e.lib.utils.ResourceUtil;
-import net.w3e.lib.utils.StringUtil;
-import net.w3e.lib.utils.collection.ArraySet;
+import net.w3e.wlib.collection.ArraySet;
 import net.w3e.wlib.collection.CollectionOfCollections;
 import net.w3e.wlib.collection.ModifiedQueue;
 import net.w3e.wlib.collection.RandomCollection;
@@ -65,6 +66,8 @@ public class TestScreen extends FrameObject {
 		list.add(this.addCmonentListiner(new JButton("Frame Location"), this::location));
 		list.add(this.addCmonentListiner(new JButton("Noise Screen"), this::noiseScreen));
 		list.add(this.addCmonentListiner(new JButton("Bezier Screen"), this::bezierScreen));
+		list.add(this.addCmonentListiner(new JButton("RandGen Screen"), this::randomGeneratorScreen));
+		list.add(this.addCmonentListiner(new JButton("Sasai Demo"), this::sasaiDemo));
 
 		this.simpleColumn(fw.getContentPane(), list);
 
@@ -161,16 +164,16 @@ public class TestScreen extends FrameObject {
 		String key = String.format(
 			"{\"%s\":%s}", 
 			"key", 
-			StringUtil.quote(String.format(
-				"lorem %s ipsum", StringUtil.quote(String.valueOf(1))
+			StringUtils.quote(String.format(
+				"lorem %s ipsum", StringUtils.quote(String.valueOf(1))
 				)
 			)
 		);
 		this.println();
 		this.println(key);
-		String quote = StringUtil.quote(key);
+		String quote = StringUtils.quote(key);
 		this.println(quote);
-		this.println(StringUtil.unquote(quote));
+		this.println(StringUtils.unquote(quote));
 	}
 
 	private final void putLinkedMap(JButton btn) {
@@ -495,6 +498,13 @@ public class TestScreen extends FrameObject {
 		new BezierScreen(this.getFrame());
 	}
 
+	private final void randomGeneratorScreen(JButton button) {
+		new RandGenScreen(this.getFrame());
+	}
+
+	private final void sasaiDemo(JButton button) {
+		DemoFrame.main(null);
+	}
 
 	private static enum SneakType {
 		empty,

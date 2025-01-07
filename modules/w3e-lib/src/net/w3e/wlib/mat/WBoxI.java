@@ -3,10 +3,13 @@ package net.w3e.wlib.mat;
 import java.util.Arrays;
 import java.util.Collection;
 
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3;
 import net.skds.lib2.mat.Vec3I;
+import net.w3e.wlib.json.adapters.WBoxIJsonAdapter;
 
+@DefaultJsonCodec(WBoxIJsonAdapter.class)
 public class WBoxI {
 
 	private int minX, minY, minZ;

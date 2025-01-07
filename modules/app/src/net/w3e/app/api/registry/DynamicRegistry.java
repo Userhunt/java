@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Set;
 
 import net.skds.lib2.utils.AutoString;
-import net.w3e.lib.utils.StringUtil;
-import net.w3e.lib.utils.collection.ArraySet;
-import net.w3e.lib.utils.collection.IdentityLinkedHashMap;
+import net.skds.lib2.utils.StringUtils;
+import net.w3e.wlib.collection.ArraySet;
+import net.w3e.wlib.collection.IdentityLinkedHashMap;
 import net.w3e.wlib.collection.cache.CacheKeys;
 import net.w3e.wlib.collection.cache.CacheKeys.CacheKeysEmpty;
 
@@ -141,7 +141,7 @@ public class DynamicRegistry<T> extends Registry<T> {
 
 		@Override
 		public String toString() {
-			return String.format("{key:%s,value:%s,reason:%s}", StringUtil.quote(this.key), this.value, AutoString.autoString(this.reasons));
+			return String.format("{key:%s,value:%s,reason:%s}", StringUtils.quote(this.key), this.value, AutoString.autoString(this.reasons));
 		}
 	}
 

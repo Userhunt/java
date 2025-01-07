@@ -14,11 +14,6 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import net.w3e.lib.utils.collection.IdentityLinkedHashMap;
-
 public class CollectionOfCollections<E> implements Collection<E> {
 
 	private final Collection<E> collection;
@@ -196,12 +191,12 @@ public class CollectionOfCollections<E> implements Collection<E> {
 
 	@SafeVarargs
 	public static final <T> Set<T> newSet(Set<T>... collections) {
-		return newCollection(CollectionsOfSet::new, () -> ImmutableSet.of(), collections);
+		return newCollection(CollectionsOfSet::new, () -> Set.of(), collections);
 	}
 
 	@SafeVarargs
 	public static final <T> List<T> newList(List<T>... collections) {
-		return newCollection(CollectionsOfList::new, () -> ImmutableList.of(), collections);
+		return newCollection(CollectionsOfList::new, () -> List.of(), collections);
 	}
 
 	private static class CollectionsOfSet<E> extends CollectionOfCollections<E> implements Set<E> {

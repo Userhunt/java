@@ -20,7 +20,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import net.skds.lib2.mat.FastMath;
-import net.w3e.lib.utils.collection.ArraySet;
 
 public class CollectionUtils {
 

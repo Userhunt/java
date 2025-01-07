@@ -15,5 +15,5 @@ shadowJar {
 	relocate 'net.skds.lib2', 'net.w3e.include.skds'
 	relocate 'net.sdteam', 'net.w3e.include.sdteam'
 	relocate 'net.w3e.lib', 'net.w3e.include.lib'
-	relocate 'net.w3e.wlib', 'net.w3e.lib'
+	//relocate 'net.w3e.wlib', 'net.w3e.lib'
 }

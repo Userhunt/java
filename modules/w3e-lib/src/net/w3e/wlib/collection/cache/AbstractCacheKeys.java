@@ -2,11 +2,11 @@ package net.w3e.wlib.collection.cache;
 
 import java.util.Collection;
 
-import lombok.extern.log4j.Log4j2;
-import net.w3e.lib.utils.collection.ArraySet;
+import lombok.CustomLog;
+import net.w3e.wlib.collection.ArraySet;
 import net.w3e.wlib.log.LogUtil;
 
-@Log4j2
+@CustomLog
 public abstract class AbstractCacheKeys<T> {
 
 	protected static boolean debug = true;
@@ -83,7 +83,7 @@ public abstract class AbstractCacheKeys<T> {
 	public final <V extends AbstractCacheKeys<T>> V register(T value) {
 		if (contains(value, true)) {
 			if (debug) {
-				LogUtil.KEY_DUPLICATE.warn(log, keys(), value);
+				log.warn(LogUtil.KEY_DUPLICATE.createMsg(keys(), value));
 			}
 		} else {
 			registerIns(value);

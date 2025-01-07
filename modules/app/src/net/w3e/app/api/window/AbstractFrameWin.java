@@ -1,7 +1,9 @@
 package net.w3e.app.api.window;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -13,12 +15,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import net.w3e.app.MainFrame;
 import net.w3e.app.api.StopEvent;
 
 public abstract class AbstractFrameWin extends JFrame {
@@ -242,5 +246,39 @@ public abstract class AbstractFrameWin extends JFrame {
 
 			return panel;
 		}
+	}
+
+	public static void simpleColumn(Container container, List<Component> list) {
+		int w = 0;
+
+		for (Component component : list) {
+			w = Math.max(w, component.getPreferredSize().width);
+		}
+		for (Component component : list) {
+			FrameWin.setSize(component, w, component.getPreferredSize().height);
+		}
+
+		Iterator<Component> iterator = list.iterator();
+
+		while (iterator.hasNext()) {
+			Component next = iterator.next();
+			JPanel panel = new JPanel();
+			panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+			//panel.setBackground(Color.RED);
+			panel.add(next);
+			container.add(panel);
+			if (iterator.hasNext()) {
+				container.add(Box.createVerticalStrut(5));
+			}
+		}
+	}
+
+	public static <T extends AbstractButton> T addCmonentListiner(T component, Consumer<T> onClick) {
+		component.addActionListener(FrameWin.onClick(component, onClick));
+		return component;
+	}
+
+	public static void sleep(int i) {
+		MainFrame.sleep(i);
 	}
 }

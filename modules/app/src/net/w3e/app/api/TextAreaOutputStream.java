@@ -2,22 +2,17 @@ package net.w3e.app.api;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.JTextArea;
 
-import net.w3e.wlib.PrintWrapper;
+import net.skds.lib2.utils.logger.CustomPrintStream;
+import net.skds.lib2.utils.logger.SKDSLogger;
+import net.skds.lib2.utils.logger.CustomPrintStream.Type;
 
 public class TextAreaOutputStream extends OutputStream {
 
-	private static final PrintStream OUT = System.out;
-	private static final PrintStream ERR = System.err;
-
 	private final JTextArea textArea;
 	private final PrintStream printStream;
-	private final Queue<PrintStream> out = new ConcurrentLinkedQueue<>();
-	private final Queue<PrintStream> err = new ConcurrentLinkedQueue<>();
 
 	public TextAreaOutputStream(JTextArea textArea) {
 		this(textArea, true);
@@ -25,11 +20,16 @@ public class TextAreaOutputStream extends OutputStream {
 
 	public TextAreaOutputStream(JTextArea textArea, boolean custom) {
 		this.textArea = textArea;
-		this.printStream = custom ? new PrintWrapper(this) {
+		this.printStream = custom ? new CustomPrintStream(Type.OUT, this) {
 			@Override
-			protected final void info(String string) {
+			protected void logLine(String string) {
+				int m = string.indexOf("m");
+				if (m != -1) {
+					string = string.substring(m + 1);
+				}
+				//SKDSLogger.ORIGINAL_OUT.println("\"" + string + "\"");
 				JTextArea area = TextAreaOutputStream.this.textArea;
-				area.append(string + "\n");
+				area.append(string);
 				area.setCaretPosition(area.getDocument().getLength());
 				area.update(area.getGraphics());
 			}
@@ -37,23 +37,15 @@ public class TextAreaOutputStream extends OutputStream {
 	}
 
 	public final void enable() {
-		this.out.add(System.out);
-		this.err.add(System.err);
-		System.setOut(this.printStream);
-		System.setErr(this.printStream);
+		SKDSLogger.attachPrintStream(this.printStream);
+		//SKDSLogger.setAttachToGlobal(false);
+		SKDSLogger.setAttachToFile(false);
 	}
 
 	public final void disable() {
-		PrintStream out = TextAreaOutputStream.OUT;
-		PrintStream err = TextAreaOutputStream.ERR;
-		if (this.out.size() > 0) {
-			out = this.out.remove();
-		}
-		if (this.err.size() > 0) {
-			err = this.err.remove();
-		}
-		System.setOut(out);
-		System.setErr(err);
+		SKDSLogger.detachPrintStream(this.printStream);
+		//SKDSLogger.setAttachToGlobal(true);
+		SKDSLogger.setAttachToFile(true);
 	}
 
 	public final void print(Runnable runnable) {
@@ -66,7 +58,7 @@ public class TextAreaOutputStream extends OutputStream {
 		if (object == null) {
 			object = "null";
 		}
-		this.printStream.println(object);
+		System.out.println(object);
 	}
 
 	@Override

@@ -9,13 +9,14 @@ import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.function.Function;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.CustomLog;
+import net.skds.lib2.utils.logger.SKDSLogger;
 import net.w3e.app.api.assets.type.PngAsset;
 import net.w3e.app.api.assets.type.TxtAsset;
-import net.w3e.wlib.PrintWrapper;
 import net.w3e.wlib.log.LogUtil;
 
-@Log4j2
+@CustomLog
+@Deprecated
 public class AssetLoader {
 
 	public static final AssetLoader INSTANCE = new AssetLoader(AssetCollector.folder("", null));
@@ -35,25 +36,25 @@ public class AssetLoader {
 
 	public final <T extends Asset<?>> T register(String key, Function<AssetLoader, T> assetFactory) {
 		if (key == null) {
-			LogUtil.IS_EMPTY_OR_NULL.error(log, "Key of asset");
+			log.error(LogUtil.IS_EMPTY_OR_NULL.createMsg("Key of asset"));
 			return null;
 		}
 		if (assetFactory == null) {
-			LogUtil.IS_EMPTY_OR_NULL.error(log, "AssetFactory");
+			log.error(LogUtil.IS_EMPTY_OR_NULL.createMsg("AssetFactory"));
 			return null;
 		}
 		T asset = assetFactory.apply(this);
 		if (asset == null) {
-			LogUtil.IS_EMPTY_OR_NULL.error(log, "Asset");
+			log.error(LogUtil.IS_EMPTY_OR_NULL.createMsg("Asset"));
 			return null;
 		}
 		if (asset.source.loader() == null) {
-			LogUtil.IS_EMPTY_OR_NULL.error(log, "Loader of asset is null");
+			log.error(LogUtil.IS_EMPTY_OR_NULL.createMsg("Loader of asset is null"));
 			return null;
 		}
 		if (asset.source.loader() != this) {
 			String name = AssetLoader.class.getSimpleName();
-			LogUtil.NOT_EQUAL.error(log, asset.source.loader(), name, this, name);
+			log.error(LogUtil.NOT_EQUAL.createMsg(asset.source.loader(), name, this, name));
 			return null;
 		}
 		Asset<?> old = this.assets.put(key, asset);
@@ -221,7 +222,7 @@ public class AssetLoader {
 	}
 
 	public static void main(String[] args) {
-		PrintWrapper.install();
+		SKDSLogger.replaceOuts();
 
 		AssetLoader.INSTANCE.register("log", loader -> new TxtAsset(AssetCollector.jarFile("log4j2.xml", loader)) {
 			@Override

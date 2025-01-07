@@ -21,7 +21,7 @@ import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.FastMath;
 import net.skds.lib2.mat.Vec3I;
 import net.skds.lib2.utils.Holders.ObjectHolder;
-import net.w3e.lib.utils.collection.CollectionBuilder;
+import net.w3e.wlib.collection.CollectionBuilder;
 import net.w3e.wlib.collection.RandomCollection;
 import net.w3e.wlib.collection.MapT.MapTString;
 import net.w3e.wlib.dungeon.DungeonException;

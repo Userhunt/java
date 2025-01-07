@@ -38,7 +38,7 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 	private boolean stop;
 	private volatile TFNStateEnum close = TFNStateEnum.NOT_STATED;
 
-	public BackgroundExecutor(String frameTitle, FrameWin parent, @NotNull Execute run, @Nullable Done done, boolean hideParent, boolean updateParentPosition) {
+	public BackgroundExecutor(String frameTitle, AbstractFrameWin parent, @NotNull Execute run, @Nullable Done done, boolean hideParent, boolean updateParentPosition) {
 		super(frameTitle, parent, false);
 		this.parent.setVisible(!hideParent);
 		this.updateParentPosition = updateParentPosition;
@@ -149,14 +149,14 @@ public class BackgroundExecutor extends FrameWin implements IBackgroundExecutor 
 	public static class BackgroundExecutorBuilder {
 		private final String frameTitle;
 		@NotNull
-		private final FrameWin parent;
+		private final AbstractFrameWin parent;
 		private Execute execute;
 		private Done done;
 
 		private boolean updateParentPosition = true;
 		private boolean parentVisible = false;
 
-		public BackgroundExecutorBuilder(String frameTitle, @NotNull FrameWin parent) {
+		public BackgroundExecutorBuilder(String frameTitle, @NotNull AbstractFrameWin parent) {
 			this.frameTitle = frameTitle;
 			this.parent = parent;
 		}

@@ -29,7 +29,7 @@ import net.w3e.app.api.window.FrameWin;
 import net.w3e.app.api.window.jcomponent.JButtonGroup;
 import net.w3e.app.api.window.jcomponent.JImageLabel;
 import net.w3e.lib.mat.BezierCurve;
-import net.w3e.lib.utils.collection.IdentityLinkedHashMap;
+import net.w3e.wlib.collection.IdentityLinkedHashMap;
 import it.unimi.dsi.fastutil.floats.Float2ObjectFunction;
 
 public class BezierScreen extends AbstractFrameWin implements MouseListener, MouseMotionListener {

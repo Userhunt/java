@@ -16,12 +16,10 @@ import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import net.skds.lib2.utils.logger.SKDSLogger;
+import net.skds.lib2.utils.logger.SKDSLoggerFactory;
 import net.w3e.app.api.window.FrameWin;
 import net.w3e.app.api.window.Inputs;
-import net.w3e.app.example.RandGenScreen;
 import net.w3e.app.example.TestScreen;
 import net.w3e.lib.utils.ResourceUtil;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -31,7 +29,7 @@ import it.unimi.dsi.fastutil.ints.IntListIterator;
 public class MainFrame {
 
 	public static final Random RANDOM = new Random();
-	public static final Logger LOGGER = LogManager.getLogger("");
+	public static final SKDSLogger LOGGER = SKDSLoggerFactory.getLogger(MainFrame.class);
 
 	public static final boolean isDebug() {
 		return java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");
@@ -75,7 +73,17 @@ public class MainFrame {
 	};
 
 	static {
-		net.w3e.wlib.PrintWrapper.install();
+		SKDSLogger.replaceOuts();
+		//net.w3e.wlib.PrintWrapper.install();
+
+		System.out.println("1");
+		System.err.println("2");
+		SKDSLoggerFactory.getLogger().info("info");
+		SKDSLoggerFactory.getLogger().debug("debug");
+		SKDSLoggerFactory.getLogger().warn("warn");
+		SKDSLoggerFactory.getLogger().error("error");
+		SKDSLoggerFactory.getLogger().log("log");
+
 		FRAME.setResizable(false);
 	}
 
@@ -169,7 +177,6 @@ public class MainFrame {
 
 	private static void init() {
 		register(new TestScreen());
-		register(new RandGenScreen());
 	}
 
 	public static final void sleep(int i) {

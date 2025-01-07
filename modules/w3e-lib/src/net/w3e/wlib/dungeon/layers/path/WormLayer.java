@@ -12,8 +12,8 @@ import com.google.gson.JsonParseException;
 
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
-import net.w3e.lib.utils.collection.ArraySet.ArraySetStrict;
 import net.w3e.wlib.collection.CollectionUtils;
+import net.w3e.wlib.collection.ArraySet.ArraySetStrict;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;

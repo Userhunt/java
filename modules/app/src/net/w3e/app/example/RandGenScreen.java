@@ -15,32 +15,31 @@ import java.util.stream.LongStream;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.CustomLog;
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.FastMath;
 import net.skds.lib2.mat.Vec3I;
 import net.skds.lib2.utils.Holders.IntHolder;
-import net.w3e.app.FrameObject;
-import net.w3e.app.MainFrame;
 import net.w3e.app.api.window.AbstractFrameWin;
 import net.w3e.app.api.window.BackgroundExecutor;
 import net.w3e.app.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
 import net.w3e.app.api.window.FrameWin;
 import net.w3e.app.api.window.IBackgroundExecutor;
 import net.w3e.app.api.window.ImageScreen;
-import net.w3e.lib.utils.collection.CollectionBuilder;
+import net.w3e.wlib.collection.CollectionBuilder;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.DungeonLayer.IPathLayer;
-import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
+import net.w3e.wlib.dungeon.json.DungeonJsonAdaptersString;
 import net.w3e.wlib.dungeon.layers.ClearLayer;
 import net.w3e.wlib.dungeon.layers.DistanceLayer;
 import net.w3e.wlib.dungeon.layers.FeatureLayer;
@@ -50,15 +49,14 @@ import net.w3e.wlib.dungeon.layers.terra.BiomeLayer;
 import net.w3e.wlib.dungeon.layers.terra.CompositeTerraLayer;
 import net.w3e.wlib.mat.WBoxI;
 
-@Log4j2
-public class RandGenScreen extends FrameObject {
+@CustomLog
+public class RandGenScreen extends AbstractFrameWin {
+
+	static {
+		DungeonJsonAdaptersString.initString();
+	}
 
 	private final Change CHANGE = new Change();
-
-	public static final void main(String[] args) {
-		MainFrame.register(new RandGenScreen());
-		MainFrame.run(args);
-	}
 
 	private BackgroundExecutor backgroundExecutor;
 	private ImagePainter image;
@@ -72,7 +70,15 @@ public class RandGenScreen extends FrameObject {
 	private JCheckBox rotate;
 	private JCheckBox debugSave;
 
-	protected final void init(FrameWin fw, List<String> args) {
+	public RandGenScreen(JFrame parent) {
+		super("Random Generator");
+		this.init();
+		this.atRightPosition(parent);
+
+		this.setVisible(true);
+	}
+
+	protected final void init() {
 		List<Component> buttons = new ArrayList<>();
 		List<Component> settings = new ArrayList<>();
 
@@ -114,30 +120,29 @@ public class RandGenScreen extends FrameObject {
 
 		buttons.addAll(LongStream.range(0, settings.size() - buttons.size()).mapToObj(seed -> this.createButton(String.valueOf(seed), btn -> exampleDungeon(btn, seed))).toList());
 
-		fw.setLayout(new BoxLayout(fw.getContentPane(), BoxLayout.X_AXIS));
+		this.setLayout(new BoxLayout(this.getContentPane(), BoxLayout.X_AXIS));
 
 		JPanel left = new JPanel();
 		left.setBorder(null);
 		left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
-		fw.add(left);
+		this.add(left);
 
-		this.simpleColumn(left, buttons);
+		simpleColumn(left, buttons);
 
 		JPanel right = new JPanel();
 		right.setBorder(null);
 		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
 
-		this.simpleColumn(right, settings);
-		fw.add(right);
+		simpleColumn(right, settings);
+		this.add(right);
 
-		fw.pack();
-		DungeonJsonAdapters.init();
+		this.pack();
 	}
 
 	private final JButton createButton(String text, Consumer<JButton> function) {
 		JButton button = new JButton(text);
 		FrameWin.setSize(button, 300, 26);
-		this.addCmonentListiner(button, function);
+		addCmonentListiner(button, function);
 		return button;
 	}
 
@@ -167,17 +172,16 @@ public class RandGenScreen extends FrameObject {
 	private final void creteDungeon(String name, DungeonGenerator dungeon) {
 		this.onClose();
 		dungeon.regenerate();
-		FrameWin fw = this.getFrame();
 		WBoxI dimension = dungeon.dimension();
 		Vec3I size = dimension.size().addI(Vec3I.SINGLE);
 		IntHolder limit = new IntHolder();
-		this.image = new ImageScreen.ImageScreenBuilder().setLocation(fw).setSize(size.xi() * 4 + 1, size.zi() * 4 + 1).setScale(9).buildWith((frameTitle, width, height, scale, background) -> 
+		this.image = new ImageScreen.ImageScreenBuilder().setLocation(this).setSize(size.xi() * 4 + 1, size.zi() * 4 + 1).setScale(9).buildWith((frameTitle, width, height, scale, background) -> 
 			new ImagePainter(frameTitle, width, height, scale, background, dungeon)
 		);
-		this.backgroundExecutor = new BackgroundExecutorBuilder(name, fw).setExecute((oldProgres, executor) -> this.execute(oldProgres, executor, limit, dungeon)).setParentVisible(true).setUpdateParentPosition(false).build();
-		int x = fw.getX() + fw.getWidth();
-		this.backgroundExecutor.setLocation(FastMath.clamp(this.image.getX() + this.image.getWidth(), x, x + 2000) - 5, fw.getY());
-		this.backgroundExecutor.setSize(new Dimension(this.backgroundExecutor.getWidth(), Math.min(this.getFrame().getHeight() + this.image.getHeight(), 1650)));
+		this.backgroundExecutor = new BackgroundExecutorBuilder(name, this).setExecute((oldProgres, executor) -> this.execute(oldProgres, executor, limit, dungeon)).setParentVisible(true).setUpdateParentPosition(false).build();
+		int x = this.getX() + this.getWidth();
+		this.backgroundExecutor.setLocation(FastMath.clamp(this.image.getX() + this.image.getWidth(), x, x + 2000) - 5, this.getY());
+		this.backgroundExecutor.setSize(new Dimension(this.backgroundExecutor.getWidth(), Math.min(this.getHeight() + this.image.getHeight(), 1650)));
 
 		this.backgroundExecutor.run();
 	}
@@ -452,7 +456,7 @@ public class RandGenScreen extends FrameObject {
 				.removeNull().build())));
 				list.add(new JLabel(String.format("Data: %s", room.data())));
 
-				RandGenScreen.this.simpleColumn(frame, list);
+				RandGenScreen.simpleColumn(frame, list);
 
 				frame.pack();
 				frame.setVisible(true);
@@ -488,15 +492,5 @@ public class RandGenScreen extends FrameObject {
 	@Override
 	public final String getName() {
 		return "Random Generator";
-	}
-
-	@Override
-	public final String fastKey() {
-		return "rand_gen";
-	}
-
-	@Override
-	public final int[] version() {
-		return new int[]{1,0,0};
 	}
 }

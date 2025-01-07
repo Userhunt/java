@@ -2,6 +2,7 @@ package net.w3e.wlib.mat;
 
 import java.util.Random;
 
+import net.skds.lib2.mat.Direction.Axis;
 import net.skds.lib2.mat.FastMath;
 import net.skds.lib2.mat.Vec3;
 
@@ -156,5 +157,21 @@ public class WMatUtil {
 			z *= d;
 			return pos.add(x, 0, z);
 		}
+	}
+
+	public static Vec3 reflect(Vec3 vec, Axis... axis) {
+		int x = 1;
+		int y = 1;
+		int z = 1;
+
+		for (Axis a : axis) {
+			switch(a) {
+				case X: x = -1; break;
+				case Y: y = -1; break;
+				case Z: z = -1; break;
+			}
+		}
+
+		return vec.scale(x, y, z);
 	}
 }

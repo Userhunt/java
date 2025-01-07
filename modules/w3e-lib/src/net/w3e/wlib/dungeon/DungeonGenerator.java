@@ -11,27 +11,28 @@ import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.FastMath;
 import net.skds.lib2.mat.Vec3I;
 import net.skds.lib2.utils.Holders.BooleanHolder;
 import net.skds.lib2.utils.json.JsonUtils;
-import net.w3e.lib.utils.collection.CollectionBuilder;
-import net.w3e.lib.utils.collection.CollectionBuilder.SimpleCollectionBuilder;
+import net.skds.lib2.utils.logger.SKDSLogger;
+import net.skds.lib2.utils.logger.SKDSLoggerFactory;
+import net.w3e.wlib.collection.CollectionBuilder;
+import net.w3e.wlib.collection.CollectionBuilder.SimpleCollectionBuilder;
 import net.w3e.wlib.collection.MapT.MapTString;
-import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
-import net.w3e.wlib.dungeon.json.DungeonJsonAdapters.EDungeon;
+import net.w3e.wlib.dungeon.json.DungeonJsonAdaptersString;
+import net.w3e.wlib.dungeon.json.sasai.DungeonJsonAdaptersString.DungeonGeneratorJsonAdapter;
 import net.w3e.wlib.dungeon.layers.ClearLayer;
 import net.w3e.wlib.dungeon.layers.DistanceLayer;
+import net.w3e.wlib.dungeon.layers.DungeonLayerFactory;
 import net.w3e.wlib.dungeon.layers.FeatureLayer;
 import net.w3e.wlib.dungeon.layers.ISetupLayer;
 import net.w3e.wlib.dungeon.layers.RoomLayer;
@@ -45,23 +46,24 @@ import net.w3e.wlib.dungeon.layers.terra.CompositeTerraLayer;
 import net.w3e.wlib.mat.VecUtil;
 import net.w3e.wlib.mat.WBoxI;
 
+@DefaultJsonCodec(DungeonGeneratorJsonAdapter.class)
 public class DungeonGenerator {
 
-	public static final Logger LOGGER = LogManager.getLogger();
+	public static final SKDSLogger LOGGER = SKDSLoggerFactory.getLogger();
 
 	private final transient Map<Vec3I, Map<Vec3I, DungeonRoomInfo>> map = new HashMap<>();
 
 	private final long seed;
 	private final WBoxI dimension;
 	private final Supplier<MapTString> dataFactory;
-	private final List<LayerFactory> layers = new ArrayList<>();
+	private final List<DungeonLayerFactory> layers = new ArrayList<>();
 
 	private transient Random random;
 	private final transient List<DungeonLayer> queue = new LinkedList<>();
 	private final transient List<ISetupLayer> setup = new LinkedList<>();
 	private transient boolean regenerate = true;
 
-	public DungeonGenerator(long seed, WBoxI dimension, Supplier<MapTString> dataFactory, List<LayerFactory> layers) {
+	public DungeonGenerator(long seed, WBoxI dimension, Supplier<MapTString> dataFactory, List<DungeonLayerFactory> layers) {
 		this.seed = seed;
 		this.dimension = dimension;
 		this.dataFactory = dataFactory;
@@ -142,7 +144,7 @@ public class DungeonGenerator {
 		return this.createFailRoom(pos, false);
 	}
 
-	public AbstractLayerRoomValues<BaseLayerRoomRange> getRoomValues(DungeonRoomInfo room) {
+	public final AbstractLayerRoomValues<BaseLayerRoomRange> getRoomValues(DungeonRoomInfo room) {
 		return new BaseLayerRoomValues(room);
 	}
 
@@ -280,17 +282,13 @@ public class DungeonGenerator {
 		return this.layers.stream().map(e -> e.create(this)).toList();
 	}
 
-	public static interface LayerFactory {
-		DungeonLayer create(DungeonGenerator generator);
-	}
-
-	public static final SimpleCollectionBuilder<LayerFactory, ArrayList<LayerFactory>> factoryCollectionBuilder() {
-		return CollectionBuilder.list(LayerFactory.class);
+	public static final SimpleCollectionBuilder<DungeonLayerFactory, ArrayList<DungeonLayerFactory>> factoryCollectionBuilder() {
+		return CollectionBuilder.list(DungeonLayerFactory.class);
 	}
 
 	public static final DungeonGenerator example(long seed, Direction direction, boolean debug) {
 		int size = 8;
-		SimpleCollectionBuilder<LayerFactory, ArrayList<LayerFactory>> layers = factoryCollectionBuilder().add(
+		SimpleCollectionBuilder<DungeonLayerFactory, ArrayList<DungeonLayerFactory>> layers = factoryCollectionBuilder().add(
 			// path
 			gen -> PathRepeatLayer.example(gen, size),
 			// distance
@@ -314,20 +312,21 @@ public class DungeonGenerator {
 	}
 
 	public static final DungeonGenerator exampleSave(DungeonGenerator generator, boolean debug) {
-		Gson gosn = JsonUtils.getGSON_COMPACT();
-		JsonObject json = JsonParser.parseString(gosn.toJson(generator)).getAsJsonObject();
-		JsonUtils.saveConfig(new File(String.format("dungeon/example_%s.json", generator.seed)), json);
+		Gson gson = JsonUtils.getGSON_COMPACT();
+		final JsonObject jsonObject = JsonParser.parseString(gson.toJson(generator)).getAsJsonObject();
+		JsonUtils.saveConfig(new File(String.format("dungeon/example_%s.json", generator.seed)), jsonObject);
 
+		DungeonGenerator data;
 		if (debug) {
-			DungeonGenerator data = gosn.fromJson(json, EDungeon.class).createInstance();
+			data = gson.fromJson(jsonObject, DungeonGenerator.class);
 
-			JsonObject result = JsonParser.parseString(gosn.toJson(data)).getAsJsonObject();
+			JsonObject result = JsonParser.parseString(gson.toJson(data)).getAsJsonObject();
 
-			if (!json.equals(result)) {
-				JsonArray jsonSave = json.remove("layers").getAsJsonArray();
+			if (!jsonObject.equals(result)) {
+				JsonArray jsonSave = jsonObject.remove("layers").getAsJsonArray();
 				JsonArray jsonRead = result.remove("layers").getAsJsonArray();
-				if (!json.equals(result)) {
-					System.out.println(json);
+				if (!jsonObject.equals(result)) {
+					System.out.println(jsonObject);
 					System.out.println(result);
 				}
 				if (!jsonSave.equals(jsonRead)) {
@@ -346,14 +345,23 @@ public class DungeonGenerator {
 					}
 				}
 			} else {
-				return data;
+				generator = data;
 			}
 		}
+		File file = new File(String.format("dungeon/example_%s_sasai.json", generator.seed));
+		net.skds.lib2.io.json.JsonUtils.saveJson(file, generator);
+		//net.skds.lib2.io.json.elements.JsonObject json = net.skds.lib2.io.json.JsonUtils.readJson(file, DungeonGenerator.class);
+
 		return generator;
 	}
 
 	public static void main(String[] args) {
-		DungeonJsonAdapters.init();
+		SKDSLogger.replaceOuts();
+
+		DungeonJsonAdaptersString.initString();
+		net.w3e.wlib.dungeon.json.sasai.DungeonJsonAdaptersString.initString();
+
 		example(0, Direction.SOUTH, true);
+		System.out.println("done dungeon generator");
 	}
 }

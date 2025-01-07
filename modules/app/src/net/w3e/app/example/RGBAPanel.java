@@ -12,8 +12,8 @@ import net.skds.lib2.awtutils.SwingDocListener;
 import net.skds.lib2.mat.FastMath;
 import net.w3e.app.api.window.FrameWin;
 import net.w3e.app.api.window.jcomponent.JNumberTextField;
-import net.w3e.lib.utils.ColorUtil;
-import net.w3e.lib.utils.ColorUtil.ColorPackFlag;
+import net.w3e.wlib.ColorUtil;
+import net.w3e.wlib.ColorUtil.ColorPackFlag;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 

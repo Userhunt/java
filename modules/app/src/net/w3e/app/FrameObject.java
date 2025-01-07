@@ -2,19 +2,16 @@ package net.w3e.app;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
 import javax.swing.AbstractButton;
-import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JPanel;
 
 import net.skds.lib2.utils.Holders.IntHolder;
+import net.w3e.app.api.window.AbstractFrameWin;
 import net.w3e.app.api.window.FrameWin;
 
 public abstract class FrameObject {
@@ -38,7 +35,7 @@ public abstract class FrameObject {
 	}
 
 	public static final void sleep(int i) {
-		MainFrame.sleep(i);
+		AbstractFrameWin.sleep(i);
 	}
 
 	protected int width = 150;
@@ -57,28 +54,7 @@ public abstract class FrameObject {
 	}
 
 	protected final void simpleColumn(Container container, List<Component> list) {
-		int w = 0;
-
-		for (Component component : list) {
-			w = Math.max(w, component.getPreferredSize().width);
-		}
-		for (Component component : list) {
-			FrameWin.setSize(component, w, component.getPreferredSize().height);
-		}
-
-		Iterator<Component> iterator = list.iterator();
-
-		while (iterator.hasNext()) {
-			Component next = iterator.next();
-			JPanel panel = new JPanel();
-			panel.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-			//panel.setBackground(Color.RED);
-			panel.add(next);
-			container.add(panel);
-			if (iterator.hasNext()) {
-				container.add(Box.createVerticalStrut(5));
-			}
-		}
+		AbstractFrameWin.simpleColumn(container, list);
 	}
 
 	@Deprecated

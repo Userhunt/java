@@ -12,8 +12,8 @@ import com.google.gson.JsonElement;
 
 import net.skds.lib2.utils.json.JsonUtils;
 import net.w3e.app.api.window.FrameWin;
-import net.w3e.lib.utils.collection.CollectionBuilder;
-import net.w3e.lib.utils.collection.CollectionBuilder.SimpleCollectionBuilder;
+import net.w3e.wlib.collection.CollectionBuilder;
+import net.w3e.wlib.collection.CollectionBuilder.SimpleCollectionBuilder;
 
 public class MainArgs<T extends FrameObject> {
 

@@ -1,16 +1,16 @@
 package net.w3e.wlib.attribute;
 
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jetbrains.annotations.Nullable;
 
-public class WAttributeMap<T extends WAttribute, V extends WAttributeInstance<T>, R extends WAttributeSupplier<T, V>> {
+public class WAttributeMap<V extends WAttributeInstance, R extends WAttributeSupplier<V>> {
 
-	protected final Map<T, V> attributes = Maps.newHashMap();
+	protected final Map<WAttribute, V> attributes = new HashMap<>();
 	protected final R supplier;
 
 	public WAttributeMap(R attributeSupplier) {
@@ -18,43 +18,43 @@ public class WAttributeMap<T extends WAttribute, V extends WAttributeInstance<T>
 	}
 
 	@Nullable
-	public final V getInstance(T location) {
-		return this.attributes.computeIfAbsent(location, attribute -> this.supplier.createInstance(attribute));
+	public final V getInstance(WAttribute location) {
+		return this.attributes.computeIfAbsent(location, this.supplier::createInstance);
 	}
 
-	public final V get(T location) {
+	public final V get(WAttribute location) {
 		return this.attributes.get(location);
 	}
 
-	public final V remove(T location) {
+	public final V remove(WAttribute location) {
 		return this.attributes.remove(location);
 	}
 
-	public final boolean hasAttribute(T attribute) {
+	public final boolean hasAttribute(WAttribute attribute) {
 		return this.attributes.get(attribute) != null || this.supplier.hasAttribute(attribute);
 	}
 
-	public final boolean hasModifier(T attribute, String name) {
+	public final boolean hasModifier(WAttribute attribute, String name) {
 		V attributeInstance = this.attributes.get(attribute);
 		return attributeInstance != null ? attributeInstance.getModifier(name) != null : this.supplier.hasModifier(attribute, name);
 	}
 
-	public final double getValue(T attribute) {
+	public final double getValue(WAttribute attribute) {
 		V attributeInstance = this.attributes.get(attribute);
 		return attributeInstance != null ? attributeInstance.getValue() : this.supplier.getValue(attribute);
 	}
 
-	public final double getBaseValue(T attribute) {
+	public final double getBaseValue(WAttribute attribute) {
 		V attributeInstance = this.attributes.get(attribute);
 		return attributeInstance != null ? attributeInstance.getBaseValue() : this.supplier.getBaseValue(attribute);
 	}
 
-	public final double getModifierValue(T attribute, String name) {
+	public final double getModifierValue(WAttribute attribute, String name) {
 		V attributeInstance = this.attributes.get(attribute);
 		return attributeInstance != null ? attributeInstance.getModifier(name).getAmount() : this.supplier.getModifierValue(attribute, name);
 	}
 
-	public final void removeAttributeModifiers(Multimap<T, WAttributeModifier> multimap) {
+	public final void removeAttributeModifiers(Multimap<WAttribute, WAttributeModifier> multimap) {
 		multimap.asMap().forEach((attribute, collection) -> {
 			V attributeInstance = this.attributes.get(attribute);
 			if (attributeInstance != null) {
@@ -63,7 +63,7 @@ public class WAttributeMap<T extends WAttribute, V extends WAttributeInstance<T>
 		});
 	}
 
-	public final void addTransientAttributeModifiers(Multimap<T, WAttributeModifier> multimap) {
+	public final void addTransientAttributeModifiers(Multimap<WAttribute, WAttributeModifier> multimap) {
 		multimap.forEach((attribute, attributeModifier) -> {
 			V attributeInstance = this.getInstance(attribute);
 			if (attributeInstance != null) {
@@ -73,7 +73,7 @@ public class WAttributeMap<T extends WAttribute, V extends WAttributeInstance<T>
 		});
 	}
 
-	public final void assignValues(WAttributeMap<T, V, R> attributeMap) {
+	public final void assignValues(WAttributeMap<V, R> attributeMap) {
 		attributeMap.attributes.values().forEach(attributeInstance -> {
 			V attributeInstance2 = this.getInstance(attributeInstance.getAttribute());
 			if (attributeInstance2 != null) {
@@ -94,7 +94,7 @@ public class WAttributeMap<T extends WAttribute, V extends WAttributeInstance<T>
 		}
 	}
 
-	public final boolean tryClear(T location) {
+	public final boolean tryClear(WAttribute location) {
 		if (!this.hasAttribute(location)) {
 			return false;
 		} else {

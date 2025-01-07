@@ -1,6 +1,6 @@
 package net.w3e.wlib.collection.cache;
 
-import net.w3e.lib.utils.collection.ArraySet;
+import net.w3e.wlib.collection.ArraySet;
 
 public abstract class CacheKeys<T> extends AbstractCacheKeys<T> {
 

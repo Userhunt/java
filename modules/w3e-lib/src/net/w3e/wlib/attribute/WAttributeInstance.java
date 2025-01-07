@@ -2,24 +2,22 @@ package net.w3e.wlib.attribute;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import net.skds.lib2.mat.FastMath;
-import net.w3e.lib.utils.collection.ArraySet;
 import net.w3e.wlib.attribute.WAttributeModifier.Operation;
+import net.w3e.wlib.collection.ArraySet;
 
-public class WAttributeInstance<T extends WAttribute> {
+public class WAttributeInstance {
 
-	protected final T attribute;
-	private final Map<Operation, Set<WAttributeModifier>> modifiersByOperation = Maps.newEnumMap(Operation.class);
+	protected final WAttribute attribute;
+	private final Map<Operation, Set<WAttributeModifier>> modifiersByOperation = new EnumMap<>(Operation.class);
 	private final Map<String, WAttributeModifier> modifierById = new HashMap<>();
 	private final Set<WAttributeModifier> permanentModifiers = new ArraySet<>();
 	private final double defaultValue;
@@ -27,14 +25,14 @@ public class WAttributeInstance<T extends WAttribute> {
 	private boolean dirty = true;
 	private double cachedValue;
 
-	public WAttributeInstance(T attribute) {
+	public WAttributeInstance(WAttribute attribute) {
 		this.attribute = attribute;
 		this.defaultValue = this.attribute.getDefValue();
 		this.baseValue = this.defaultValue;
 	}
 
-	public final T getAttribute() {
-		return this.attribute;
+	public final <T extends WAttribute> T getAttribute() {
+		return (T)this.attribute;
 	}
 
 	public final boolean isEmptyBase() {
@@ -80,11 +78,11 @@ public class WAttributeInstance<T extends WAttribute> {
 	}
 
 	public final Set<WAttributeModifier> getModifiers(Operation operation) {
-		return this.modifiersByOperation.computeIfAbsent(operation, e -> Sets.newHashSet());
+		return this.modifiersByOperation.computeIfAbsent(operation, e -> new HashSet<>());
 	}
 
-	public final Set<WAttributeModifier> getModifiers() {
-		return ImmutableSet.copyOf(this.modifierById.values());
+	public final Collection<WAttributeModifier> getModifiers() {
+		return Collections.unmodifiableCollection(this.modifierById.values());
 	}
 
 	@Nullable
@@ -190,7 +188,7 @@ public class WAttributeInstance<T extends WAttribute> {
 		return this.modifiersByOperation.getOrDefault(operation, Collections.emptySet());
 	}
 
-	public final void replaceFrom(WAttributeInstance<T> attributeInstance) {
+	public final void replaceFrom(WAttributeInstance attributeInstance) {
 		this.baseValue = attributeInstance.baseValue;
 		this.modifierById.clear();
 		this.modifierById.putAll(attributeInstance.modifierById);
