@@ -8,13 +8,13 @@ import net.w3e.wlib.dungeon.layers.ListLayer;
 
 public abstract class TerraLayer<T> extends ListLayer<DungeonRoomInfo> implements ISetupLayer {
 
-	protected final String defKey;
+	protected final transient String defKey;
 	protected final T defValue;
 	protected final int stepRate;
 	protected final boolean fast;
 
-	public TerraLayer(DungeonGenerator generator, String defKey, T defValue, int stepRate, boolean fast) {
-		super(generator);
+	public TerraLayer(String keyName, DungeonGenerator generator, String defKey, T defValue, int stepRate, boolean fast) {
+		super(keyName, generator);
 		this.defKey = defKey;
 		this.defValue = defValue;
 		this.stepRate = stepRate;

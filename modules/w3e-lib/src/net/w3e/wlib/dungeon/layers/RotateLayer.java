@@ -13,6 +13,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
 import net.skds.lib2.mat.Direction.Axis;
@@ -27,6 +30,7 @@ import net.w3e.wlib.dungeon.json.ILayerDeserializerAdapter;
 import net.w3e.wlib.mat.VecUtil;
 import net.w3e.wlib.mat.WBoxI;
 
+@DefaultJsonCodec(RotateLayer.RotateLayerDataJsonAdapter.class)
 public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 
 	private static final BiFunction<DungeonRoomInfo, Vec3I, DungeonException> EXCEPTION = (old, pos) -> new DungeonException(String.format("Cant rotate room. %s -> %s", old.pos(), pos));
@@ -37,13 +41,8 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 	private final transient List<DungeonLayer> layers = new ArrayList<>();
 
 	public RotateLayer(DungeonGenerator generator, Direction rotation) {
-		super(generator);
+		super(TYPE, generator);
 		this.rotation = rotation;
-	}
-
-	@Override
-	protected String keyName() {
-		return TYPE;
 	}
 
 	@Override
@@ -137,7 +136,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 	}
 
 	public static final Map<Vec3I, DungeonRoomInfo> rotate(Map<Vec3I, DungeonRoomInfo> rooms, Direction rotation) throws DungeonException {
-		DungeonGenerator generator = new DungeonGenerator(0, WBoxI.of(rooms.values().stream().map(DungeonRoomInfo::pos).toList()), MapTString::new, Collections.emptyList());
+		DungeonGenerator generator = new DungeonGenerator(0, WBoxI.of(rooms.values().stream().map(DungeonRoomInfo::pos).toList()), new MapTString(), Collections.emptyList());
 		for (DungeonRoomInfo room : rooms.values()) {
 			DungeonRoomCreateInfo info = generator.put(room);
 			if (!info.isInside()) {
@@ -147,6 +146,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 		return rotate(generator, rotation).getRooms();
 	}
 
+	@Deprecated
 	public static class RotateLayerAdapter implements ILayerDeserializerAdapter<RotateLayerData, RotateLayer> {
 		@Override
 		public final RotateLayer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -154,6 +154,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 		}
 	}
 
+	@Deprecated
 	@SuppressWarnings({"FieldMayBeFinal"})
 	public static class RotateLayerData implements ILayerData<RotateLayer> {
 
@@ -162,6 +163,24 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 		@Override
 		public RotateLayer withDungeon(DungeonGenerator generator) {
 			return new RotateLayer(generator, this.rotation);
+		}
+	}
+
+	private static class RotateLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<RotateLayerData> {
+
+		public RotateLayerDataJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, RotateLayerData.class, registry);
+		}
+
+		@SuppressWarnings({"FieldMayBeFinal"})
+		public static class RotateLayerData implements ILayerData<RotateLayer> {
+	
+			private Direction rotation = Direction.SOUTH;
+	
+			@Override
+			public RotateLayer withDungeon(DungeonGenerator generator) {
+				return new RotateLayer(generator, this.rotation);
+			}
 		}
 	}
 }

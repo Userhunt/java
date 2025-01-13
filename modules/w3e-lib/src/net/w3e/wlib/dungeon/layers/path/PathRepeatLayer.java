@@ -12,6 +12,9 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.FastMath;
 import net.skds.lib2.mat.Vec3I;
@@ -25,35 +28,32 @@ import net.w3e.wlib.dungeon.json.ILayerData;
 import net.w3e.wlib.dungeon.json.ILayerDeserializerAdapter;
 import net.w3e.wlib.log.LogUtil;
 
+@DefaultJsonCodec(PathRepeatLayer.PathRepeatJsonAdapter.class)
 public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends DungeonLayer implements IPathLayer {
 
 	public static final String TYPE = "path/repeat";
 
-	private final T layer;
+	private final DungeonLayer layer;
 	private final float minumumPercent;
 	private final int countPerStep;
 
 	public PathRepeatLayer(DungeonGenerator generator, T layer, float minumumPercent, int countPerStep) {
-		super(generator);
+		super(TYPE, generator);
 		this.layer = layer;
 		this.minumumPercent = minumumPercent;
 		this.countPerStep = countPerStep;
 	}
 
-	@Override
-	protected String keyName() {
-		return TYPE;
-	}
-
-	@Override
 	@SuppressWarnings("unchecked")
+	@Override
 	public final PathRepeatLayer<T> withDungeon(DungeonGenerator generator) {
 		return new PathRepeatLayer<>(generator, (T)this.layer.withDungeon(generator), this.minumumPercent, this.countPerStep);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public final void add(Vec3I pos, Direction direction) throws DungeonException {
-		this.layer.add(pos, direction);
+		((T)this.layer).add(pos, direction);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 			return data.withDungeon(null);
 		}
 
-		//@Override
+		@Override
 		public JsonElement serialize(PathRepeatLayer<T> src, Type typeOfSrc, JsonSerializationContext context) {
 			JsonObject json = new JsonObject();
 			json.add("layer", context.serialize(src.layer, DungeonLayer.class));
@@ -137,6 +137,32 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 		@SuppressWarnings("unchecked")
 		public final PathRepeatLayer<T> withDungeon(DungeonGenerator generator) {
 			return new PathRepeatLayer<>(generator, (T)this.layer.withDungeon(generator), this.minumumPercent, this.countPerStep);
+		}
+	}
+
+	private static class PathRepeatJsonAdapter extends JsonReflectiveBuilderCodec<PathRepeatLayerData<?>> {
+
+		public PathRepeatJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, PathRepeatLayerData.class, registry);
+		}
+
+		private static class PathRepeatLayerData<T extends DungeonLayer & IPathLayer> implements ILayerData<PathRepeatLayer<T>> {
+			private DungeonLayer layer;
+			private float minumumPercent = 0;
+			private int countPerStep = 1;
+	
+			@Override
+			@SuppressWarnings("unchecked")
+			public final PathRepeatLayer<T> withDungeon(DungeonGenerator generator) {
+				this.nonNull("layer", this.layer);
+				if (this.layer instanceof IPathLayer && !(this.layer instanceof PathRepeatLayer<?>)) {
+					this.lessThan("minimumPercent", this.minumumPercent);
+					this.lessThan("countPerStep", this.countPerStep);
+				} else {
+					throw new JsonSyntaxException(LogUtil.EXPECTED.createMsg("layer", "path layer", this.layer.getClass().getSimpleName()));
+				}
+				return new PathRepeatLayer<>(generator, (T)this.layer.withDungeon(generator), this.minumumPercent, this.countPerStep);
+			}
 		}
 	}
 

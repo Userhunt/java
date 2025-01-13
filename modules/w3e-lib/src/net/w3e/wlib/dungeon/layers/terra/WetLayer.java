@@ -1,7 +1,13 @@
 package net.w3e.wlib.dungeon.layers.terra;
 
+import java.lang.reflect.Type;
+
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 
+@DefaultJsonCodec(WetLayer.WetLayerJsonAdapter.class)
 public class WetLayer extends NoiseLayer {
 
 	public static final String TYPE = "terra/wet";
@@ -9,12 +15,7 @@ public class WetLayer extends NoiseLayer {
 	public static final String KEY = "wet";
 
 	public WetLayer(DungeonGenerator generator, NoiseData data, int stepRate, boolean fast) {
-		super(generator, data.withKey(KEY), stepRate, fast);
-	}
-
-	@Override
-	protected String keyName() {
-		return TYPE;
+		super(TYPE, generator, data.withKey(KEY), stepRate, fast);
 	}
 
 	@Override
@@ -22,19 +23,20 @@ public class WetLayer extends NoiseLayer {
 		return new WetLayer(generator, this.noise, this.stepRate, this.fast);
 	}
 
+	@Deprecated
 	public static class WetLayerAdapter extends NoiseLayerAdapter<WetLayerData> {
 		public WetLayerAdapter() {
 			super(WetLayerData.class);
 		}
 	}
 
+	@Deprecated
 	private static class WetLayerData extends NoiseLayerData<WetLayer> {
 		@Override
 		protected final WetLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
 			return new WetLayer(generator, noise, stepRate, fast);
 		}
 	}
-
 
 	public static final WetLayer example(DungeonGenerator generator) {
 		return new WetLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50, false);
@@ -43,4 +45,17 @@ public class WetLayer extends NoiseLayer {
 	public static final int MIN = 0;
 	public static final int MAX = 100;
 
+	private static class WetLayerJsonAdapter extends JsonReflectiveBuilderCodec<WetLayerData> {
+
+		public WetLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, WetLayerData.class, registry);
+		}
+
+		private static class WetLayerData extends NoiseLayerData<WetLayer> {
+			@Override
+			protected final WetLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
+				return new WetLayer(generator, noise, stepRate, fast);
+			}
+		}
+	}
 }

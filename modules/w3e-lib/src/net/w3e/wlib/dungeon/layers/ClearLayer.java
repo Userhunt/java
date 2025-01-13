@@ -8,13 +8,15 @@ public class ClearLayer extends DungeonLayer implements ILayerAdapter {
 
 	public static final String TYPE = "clear";
 
-	public ClearLayer(DungeonGenerator generator) {
-		super(generator);
+	/**
+	 * json
+	 */
+	private ClearLayer() {
+		super(TYPE, null);
 	}
 
-	@Override
-	protected String keyName() {
-		return TYPE;
+	public ClearLayer(DungeonGenerator generator) {
+		super(TYPE, generator);
 	}
 
 	@Override

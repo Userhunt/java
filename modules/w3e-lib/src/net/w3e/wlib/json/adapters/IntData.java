@@ -1,14 +1,17 @@
 package net.w3e.wlib.json.adapters;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
+import net.skds.lib2.io.json.JsonEntryType;
+import net.skds.lib2.io.json.JsonReader;
+import net.skds.lib2.io.json.JsonWriter;
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.codec.AbstractJsonCodec;
+import net.skds.lib2.io.json.codec.JsonCodec;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 
-import net.skds.lib2.utils.json.JsonUtils;
-
+@DefaultJsonCodec(IntData.IntDataJsonAdapter.class)
 public class IntData {
 
 	public final int min;
@@ -24,34 +27,45 @@ public class IntData {
 		return String.format("{min:%s,max:%s}", min, max);
 	}
 
-	public static class IntDataAdapter extends TypeAdapter<IntData> {
+	private static class IntDataJsonAdapter extends AbstractJsonCodec<IntData> {
+
+		private final JsonCodec<IntDataA> reader;
+
+		public IntDataJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, registry);
+			this.reader = this.registry.getCodecIndirect(IntDataA.class);
+		}
+
 		@Override
-		public final void write(JsonWriter out, IntData value) throws IOException {
+		public void write(IntData value, JsonWriter writer) throws IOException {
 			if (value.min == value.max) {
-				out.value(value.min);
+				writer.writeInt(value.min);
 			} else {
-				out.beginObject();
-				out.name("min").value(value.min);
-				out.name("max").value(value.max);
-				out.endObject();
+				writer.beginObject();
+				writer.writeInt("min", value.min);
+				writer.writeInt("max", value.max);
+				writer.endObject();
 			}
 		}
 
 		@Override
-		public final IntData read(JsonReader in) throws IOException {
-			if (in.peek() == JsonToken.NUMBER) {
-				int data = in.nextInt();
+		public IntData read(JsonReader reader) throws IOException {
+			if (reader.nextEntryType() == JsonEntryType.NULL) {
+				reader.skipNull();
+				return new IntData(0, 0);
+			}
+			if (reader.nextEntryType() == JsonEntryType.NUMBER) {
+				int data = reader.readInt();
 				return new IntData(data, data);
 			} else {
-				TypeAdapter<IntDataA> adapter = JsonUtils.getGSON().getAdapter(IntDataA.class);
-				IntDataA data = adapter.read(in);
+				IntDataA data = this.reader.read(reader);
 				return new IntData(Math.min(data.min, data.max), Math.max(data.min, data.max));
 			}
 		}
-	}
 
-	private static class IntDataA {
-		public int min;
-		public int max;
+		private static class IntDataA {
+			public int min;
+			public int max;
+		}
 	}
 }

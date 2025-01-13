@@ -7,6 +7,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
 import lombok.AllArgsConstructor;
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.annotation.TransientComponent;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonDeserializeBuilder;
+import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.mat.FastMath;
 import net.skds.lib2.mat.Vec3I;
 import net.w3e.lib.mat.OpenSimplex2S;
@@ -22,12 +27,12 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 	protected final NoiseData noise;
 	private transient long seed;
 
-	public NoiseLayer(DungeonGenerator generator, NoiseData noies, boolean fast) {
-		this(generator, noies, 50, fast);
+	public NoiseLayer(String keyName, DungeonGenerator generator, NoiseData noies, boolean fast) {
+		this(keyName, generator, noies, 50, fast);
 	}
 
-	public NoiseLayer(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
-		super(generator, noise.defKey, noise.defValue, stepRate, fast);
+	public NoiseLayer(String keyName, DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
+		super(keyName, generator, noise.defKey, noise.defValue, stepRate, fast);
 		this.noise = noise;
 	}
 
@@ -57,7 +62,8 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 		return value;
 	}
 
-	public static record NoiseData(int min, int max, double scale, String defKey, int defValue) {
+	@DefaultJsonCodec(NoiseDataJsonAdapter.class)
+	public static record NoiseData(int min, int max, double scale, @TransientComponent String defKey, int defValue) {
 
 		public static final NoiseData INSTANCE = new NoiseData(0, 100, 1d / 8, null, 0);
 
@@ -69,8 +75,15 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 			return WMatUtil.mapRange(value, -1, 1, this.min, this.max);
 		}
 	}
+	
+	private static class NoiseDataJsonAdapter extends JsonReflectiveBuilderCodec<NoiseData> {
 
-	public static class NoiseDataBuilder {
+		public NoiseDataJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, NoiseDataBuilder.class, registry);
+		}
+	}
+
+	public static class NoiseDataBuilder implements JsonDeserializeBuilder<NoiseData> {
 		private int min = NoiseData.INSTANCE.min;
 		private int max = NoiseData.INSTANCE.max;
 		private double scale = NoiseData.INSTANCE.scale;
@@ -117,6 +130,7 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 	}
 
 	@AllArgsConstructor
+	@Deprecated
 	public abstract static class NoiseLayerAdapter<D extends NoiseLayerData<? extends NoiseLayer>> implements ILayerDeserializerAdapter<D, NoiseLayer> {
 
 		private final Class<D> dataClass;
@@ -137,6 +151,8 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 		protected boolean fast = false;
 		@Override
 		public final T withDungeon(DungeonGenerator generator) {
+			this.nonNull("noise", this.noise);
+			this.lessThan("stepRate", this.stepRate);
 			return this.withDungeon(generator, this.noise, this.stepRate, this.fast);
 		}
 

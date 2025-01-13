@@ -7,29 +7,18 @@ import java.util.function.Consumer;
 
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
-import net.skds.lib2.utils.json.ConfigType;
-import net.skds.lib2.utils.json.TypedConfig;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
-import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
 import net.w3e.wlib.dungeon.json.ILayerData;
-import net.w3e.wlib.dungeon.layers.roomvalues.AbstractLayerRoomValues;
-import net.w3e.wlib.dungeon.layers.roomvalues.BaseLayerRoomRange;
+import net.w3e.wlib.dungeon.json.sasai.DungeonJsonAdapters;
+import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilterValues;
 
-public abstract class DungeonLayer implements TypedConfig {
+public abstract class DungeonLayer extends DungeonRegistryElement {
 
-	protected transient final ConfigType<?> configType;
 	private final transient DungeonGenerator generator;
 
-	protected DungeonLayer(DungeonGenerator generator) {
-		this.configType = DungeonJsonAdapters.INSTANCE.getConfigType(this.keyName());
+	protected DungeonLayer(String keyName, DungeonGenerator generator) {
+		super(keyName, DungeonJsonAdapters.INSTANCE.layerAdapters);
 		this.generator = generator;
-	}
-
-	protected abstract String keyName();
-
-	@Override
-	public final ConfigType<?> getConfigType() {
-		return this.configType;
 	}
 
 	public abstract DungeonLayer withDungeon(DungeonGenerator generator);
@@ -57,7 +46,7 @@ public abstract class DungeonLayer implements TypedConfig {
 	protected final DungeonRoomCreateInfo removeRoom(Vec3I pos) {
 		return this.generator.removeRoom(pos);
 	}
-	protected final AbstractLayerRoomValues<BaseLayerRoomRange> getRoomValues(DungeonRoomInfo room) {
+	protected final RoomLayerFilterValues getRoomValues(DungeonRoomInfo room) {
 		return this.generator.getRoomValues(room);
 	}
 	protected final void forEach(Consumer<DungeonRoomCreateInfo> function) {

@@ -23,10 +23,10 @@ import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.json.ILayerData;
 import net.w3e.wlib.dungeon.json.ILayerDeserializerAdapter;
 import net.w3e.wlib.dungeon.layers.RoomLayer.RoomData;
+import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters;
 import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLimitedCount;
-import net.w3e.wlib.dungeon.layers.roomvalues.BaseLayerRoomRange;
 import net.w3e.wlib.log.LogUtil;
 
 public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> implements ISetupLayer {
@@ -45,14 +45,9 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 	}
 
 	public FeatureLayer(DungeonGenerator generator, Collection<FeatureVariant<T>> features) {
-		super(generator);
+		super(TYPE, generator);
 		this.features.addAll(features);
 		this.features.removeIf(FeatureVariant::notValid);
-	}
-
-	@Override
-	public String keyName() {
-		return TYPE;
 	}
 
 	@Override
@@ -102,7 +97,7 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 					int soft = room.connectCount(false) - room.connectCount(true);
 
 					MapTString data = room.data();
-					RoomData<T> roomData = data.getT(RoomLayer.KEY);
+					RoomData roomData = data.getT(RoomLayer.KEY);
 					if (roomData != null) {
 						soft -= roomData.soft().size();
 					}
@@ -206,9 +201,9 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 		}
 	}
 
-	public record FeatureVariant<T>(BaseLayerRoomRange layerRange, TFNStateEnum enterance, boolean softRequire, T value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
+	public record FeatureVariant<T>(RoomLayerFilters layerRange, TFNStateEnum enterance, boolean softRequire, T value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
-		public FeatureVariant(BaseLayerRoomRange layerRange, TFNStateEnum enterance, boolean softRequire, T value, int count) {
+		public FeatureVariant(RoomLayerFilters layerRange, TFNStateEnum enterance, boolean softRequire, T value, int count) {
 			this(layerRange, enterance, softRequire, value, new DungeonInfoCountHolder(count));
 		}
 
@@ -223,7 +218,7 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 			if (this.enterance.isStated() && !((this.enterance.isTrue()) == room.isEnterance())) {
 				return false;
 			}
-			return layer.getRoomValues(room).test(layer.random(), this.layerRange);
+			return this.layerRange.test(layer.random(), layer.getRoomValues(room));
 		}
 
 		public final FeatureVariant<T> copy() {
@@ -290,7 +285,7 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 		@Override
 		public final FeatureVariantData<D> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
 			FeatureVariantData<D> data = context.deserialize(json, this.dataClass);
-			BaseLayerRoomRange layerRange = data.getLayerRange();
+			RoomLayerFilters layerRange = data.getLayerRange();
 			this.nonNull("layerRange", layerRange);
 			if (layerRange.notValid()) {
 				throw new IllegalStateException(LogUtil.ILLEGAL.createMsg("layerRange"));
@@ -310,14 +305,14 @@ public class FeatureLayer<T> extends ListLayer<FeatureLayer.FeaturePoint<T>> imp
 		public int count = -1;
 
 		protected abstract T getValue();
-		protected abstract BaseLayerRoomRange getLayerRange();
+		protected abstract RoomLayerFilters getLayerRange();
 	}
 
 	public static final FeatureLayer<String> example(DungeonGenerator generator) {
 		List<FeatureVariant<String>> features = new ArrayList<>();
 		Random random = new Random(0);
 		for (int i = 0; i < 20; i++) {
-			features.add(new FeatureVariant<>(BaseLayerRoomRange.NULL, random.nextInt(100) + 1 <= 5 ? TFNStateEnum.TRUE : TFNStateEnum.FALSE, random.nextInt(100) + 1 <= 70, String.valueOf(i + 1), random.nextInt(100) + 1 <= 75 ? random.nextInt(3) + 1 : -1));
+			features.add(new FeatureVariant<>(RoomLayerFilters.NULL, random.nextInt(100) + 1 <= 5 ? TFNStateEnum.TRUE : TFNStateEnum.FALSE, random.nextInt(100) + 1 <= 70, String.valueOf(i + 1), random.nextInt(100) + 1 <= 75 ? random.nextInt(3) + 1 : -1));
 		}
 
 		return new FeatureLayer<>(generator, features);

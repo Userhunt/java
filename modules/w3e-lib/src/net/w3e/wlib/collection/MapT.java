@@ -1,8 +1,13 @@
 package net.w3e.wlib.collection;
 
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import net.skds.lib2.io.json.codec.BuiltinCodecFactory.MapCodec;
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 
 public class MapT<K> extends HashMap<K, Object> {
 
@@ -103,6 +108,7 @@ public class MapT<K> extends HashMap<K, Object> {
 		return getT(key);
 	}
 
+	@DefaultJsonCodec(MapTStringCodec.class)
 	public static class MapTString extends MapT<String> {
 
 		public MapTString() {
@@ -111,6 +117,13 @@ public class MapT<K> extends HashMap<K, Object> {
 
 		public MapTString(Map<String, ? extends Object> map) {
 			super(map);
+		}
+	}
+
+	public static class MapTStringCodec extends MapCodec {
+
+		public MapTStringCodec(Type type, JsonCodecRegistry registry) {
+			super(MapTString.class, new Type[]{String.class, Object.class}, registry);
 		}
 	}
 }

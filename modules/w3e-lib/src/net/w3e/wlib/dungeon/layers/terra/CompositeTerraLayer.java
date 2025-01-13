@@ -12,6 +12,10 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import com.google.gson.JsonSyntaxException;
 
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
+import net.skds.lib2.io.json.codec.array.ArraySerializeOnlyJsonCodec;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
@@ -20,20 +24,17 @@ import net.w3e.wlib.dungeon.json.ILayerData;
 import net.w3e.wlib.dungeon.json.ILayerDeserializerAdapter;
 import net.w3e.wlib.log.LogUtil;
 
+@DefaultJsonCodec(CompositeTerraLayer.CompositeTerraLayerJsonAdapter.class)
 public class CompositeTerraLayer extends TerraLayer<Object> {
 
 	public static final String TYPE = "terra/composite";
 
+	@DefaultJsonCodec(CompositeTerraLayer.TerraLayerArrayJsonAdapter.class)
 	private final TerraLayer<?>[] layers;
 
 	public CompositeTerraLayer(DungeonGenerator generator, int stepRate, boolean fast, TerraLayer<?>... layers) {
-		super(generator, null, null, stepRate, fast);
+		super(TYPE, generator, null, null, stepRate, fast);
 		this.layers = layers;
-	}
-
-	@Override
-	protected String keyName() {
-		return TYPE;
 	}
 
 	@Override
@@ -63,6 +64,7 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 		}
 	}
 
+	@Deprecated
 	public static class CompositeTerraLayerAdapter implements ILayerDeserializerAdapter<CompositeTerraLayerData, CompositeTerraLayer>, JsonSerializer<CompositeTerraLayer> {
 		@Override
 		public final CompositeTerraLayer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -86,14 +88,44 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 		}
 	}
 
+	@Deprecated
 	private static class CompositeTerraLayerData implements ILayerData<CompositeTerraLayer> {
 
 		private DungeonLayer[] layers;
 		private int stepRate = 75;
 		private boolean fast;
+
 		@Override
 		public final CompositeTerraLayer withDungeon(DungeonGenerator generator) {
 			return new CompositeTerraLayer(generator, this.stepRate, fast, Stream.of(this.layers).map(layer -> layer.withDungeon(generator)).toArray(TerraLayer[]::new));
+		}
+	}
+
+	private static class CompositeTerraLayerJsonAdapter extends JsonReflectiveBuilderCodec<CompositeTerraLayerData> {
+
+		public CompositeTerraLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, CompositeTerraLayerData.class, registry);
+		}
+
+		private static class CompositeTerraLayerData implements ILayerData<CompositeTerraLayer> {
+
+			private DungeonLayer[] layers;
+			private int stepRate = 75;
+			private boolean fast;
+
+			@Override
+			public final CompositeTerraLayer withDungeon(DungeonGenerator generator) {
+				this.lessThan("stepRate", this.stepRate);
+				this.isEmpty("layers", this.layers);
+				return new CompositeTerraLayer(generator, this.stepRate, fast, Stream.of(this.layers).map(layer -> layer.withDungeon(generator)).toArray(TerraLayer[]::new));
+			}
+		}
+	}
+
+	private static class TerraLayerArrayJsonAdapter extends ArraySerializeOnlyJsonCodec {
+	
+		public TerraLayerArrayJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(DungeonLayer.class, registry);
 		}
 	}
 

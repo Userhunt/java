@@ -1,7 +1,6 @@
 package net.w3e.wlib.dungeon;
 
 import java.util.Collection;
-import java.util.function.Supplier;
 
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
@@ -11,12 +10,12 @@ import net.w3e.wlib.mat.VecUtil;
 
 public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString data) {
 
-	public static final DungeonRoomInfo create(Vec3I pos, Supplier<MapTString> factory) {
+	public static final DungeonRoomInfo create(Vec3I pos, MapTString factory) {
 		return create(pos, VecUtil.pos2Chunk(pos), factory);
 	}
 
-	public static final DungeonRoomInfo create(Vec3I pos, Vec3I chunk, Supplier<MapTString> factory) {
-		return new DungeonRoomInfo(pos, chunk, new int[]{-1, 0}, factory.get()).setWall(true);
+	public static final DungeonRoomInfo create(Vec3I pos, Vec3I chunk, MapTString factory) {
+		return new DungeonRoomInfo(pos, chunk, new int[]{-1, 0}, factory).setWall(true);
 	}
 
 	@Deprecated

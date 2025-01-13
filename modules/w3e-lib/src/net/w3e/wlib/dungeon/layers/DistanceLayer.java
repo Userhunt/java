@@ -14,14 +14,17 @@ import net.w3e.wlib.dungeon.json.ILayerAdapter;
 public class DistanceLayer extends ListLayer<DungeonRoomInfo> implements ILayerAdapter {
 
 	public static final String TYPE = "distance";
+	public static final String KEY = "distance";
 
-	public DistanceLayer(DungeonGenerator generator) {
-		super(generator);
+	/**
+	 * json
+	 */
+	private DistanceLayer() {
+		super(TYPE, null);
 	}
 
-	@Override
-	protected String keyName() {
-		return TYPE;
+	public DistanceLayer(DungeonGenerator generator) {
+		super(TYPE, generator);
 	}
 
 	@Override

@@ -3,6 +3,17 @@
 	"configurations": [
 		{
 			"type": "java",
+			"name": "JsonTest",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.skds.lib2.io.json.JsonTest",
+			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
+			"args": ""
+		},
+		{
+			"type": "java",
 			"name": "Run",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",

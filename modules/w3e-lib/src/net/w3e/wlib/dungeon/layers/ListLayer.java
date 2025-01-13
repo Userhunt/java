@@ -15,8 +15,8 @@ public abstract class ListLayer<L> extends DungeonLayer {
 	protected final transient List<L> list = new ArrayList<>();
 	protected transient int filled = -1;
 
-	protected ListLayer(DungeonGenerator generator) {
-		super(generator);
+	protected ListLayer(String keyName, DungeonGenerator generator) {
+		super(keyName, generator);
 	}
 
 	@Override

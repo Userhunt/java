@@ -10,6 +10,9 @@ import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
 import net.w3e.wlib.collection.CollectionUtils;
@@ -25,6 +28,7 @@ import net.w3e.wlib.dungeon.direction.DungeonChances;
 import net.w3e.wlib.dungeon.json.ILayerData;
 import net.w3e.wlib.dungeon.json.ILayerDeserializerAdapter;
 
+@DefaultJsonCodec(WormLayer.WormLayerDataJsonAdapter.class)
 public class WormLayer extends DungeonLayer implements IPathLayer {
 
 	public static final String TYPE = "path/worm";
@@ -36,16 +40,11 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 	private final transient List<DungeonPos>[] entries = CollectionUtils.createArrayOfList(DungeonPos.class, 2);
 
 	public WormLayer(DungeonGenerator generator, DungeonPos[] centers, WormDungeonStepChances stepChances, DungeonChances directionChances, DungeonChances connectionChances) {
-		super(generator);
+		super(TYPE, generator);
 		this.centers = centers;
 		this.stepChances = stepChances;
 		this.directionChances = directionChances;
 		this.connectionChances = connectionChances;
-	}
-
-	@Override
-	protected String keyName() {
-		return TYPE;
 	}
 
 	@Override
@@ -153,6 +152,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		}
 	}
 
+	@Deprecated
 	public static class WormLayerAdapter implements ILayerDeserializerAdapter<WormLayerData, WormLayer> {
 		@Override
 		public final WormLayer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
@@ -166,6 +166,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		}
 	}
 
+	@Deprecated
 	private static class WormLayerData implements ILayerData<WormLayer> {
 
 		private static final DungeonPos[] CENTERS = new DungeonPos[]{DungeonPos.EMPTY_POS};
@@ -178,6 +179,33 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		@Override
 		public final WormLayer withDungeon(DungeonGenerator generator) {
 			return new WormLayer(generator, this.centers, this.stepChances, this.directionChances, this.connectionChances);
+		}
+	}
+
+	private static class WormLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<WormLayerData> {
+
+		public WormLayerDataJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, WormLayerData.class, registry);
+		}
+
+		private static class WormLayerData implements ILayerData<WormLayer> {
+
+			private static final DungeonPos[] CENTERS = new DungeonPos[]{DungeonPos.EMPTY_POS};
+	
+			private DungeonPos[] centers = CENTERS;
+			private WormDungeonStepChances stepChances = WormDungeonStepChances.INSTANCE;
+			private DungeonChances directionChances = DungeonChances.INSTANCE;
+			private DungeonChances connectionChances = DungeonChances.INSTANCE;
+	
+			@Override
+			public final WormLayer withDungeon(DungeonGenerator generator) {
+				this.nonNull("centers", this.centers);
+				this.nonNull("stepChance", this.stepChances);
+				this.nonNull("directionChances", this.directionChances);
+				this.nonNull("connectionChances", this.connectionChances);
+				this.isEmpty("centers", this.centers);
+				return new WormLayer(generator, this.centers, this.stepChances, this.directionChances, this.connectionChances);
+			}
 		}
 	}
 

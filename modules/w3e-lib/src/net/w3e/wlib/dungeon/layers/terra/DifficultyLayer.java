@@ -1,7 +1,13 @@
 package net.w3e.wlib.dungeon.layers.terra;
 
+import java.lang.reflect.Type;
+
+import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 
+@DefaultJsonCodec(DifficultyLayer.DifficultyLayerJsonAdapter.class)
 public class DifficultyLayer extends NoiseLayer {
 
 	public static final String TYPE = "terra/difficulty";
@@ -11,14 +17,9 @@ public class DifficultyLayer extends NoiseLayer {
 	private final float scale;
 
 	public DifficultyLayer(DungeonGenerator generator, NoiseData data, int stepRate, float add, float scale, boolean fast) {
-		super(generator, data.withKey(KEY), stepRate, fast);
+		super(TYPE, generator, data.withKey(KEY), stepRate, fast);
 		this.add = add;
 		this.scale = scale;
-	}
-
-	@Override
-	protected String keyName() {
-		return TYPE;
 	}
 
 	@Override
@@ -31,12 +32,14 @@ public class DifficultyLayer extends NoiseLayer {
 		return value * this.scale + this.add;
 	}
 
+	@Deprecated
 	public static class DifficultyLayerAdapter extends NoiseLayerAdapter<DifficultyLayerData> {
 		public DifficultyLayerAdapter() {
 			super(DifficultyLayerData.class);
 		}
 	}
 
+	@Deprecated
 	private static class DifficultyLayerData extends NoiseLayerData<DifficultyLayer> {
 
 		private float add = 0;
@@ -55,4 +58,21 @@ public class DifficultyLayer extends NoiseLayer {
 	public static final int MIN = 0;
 	public static final int MAX = 100;
 
+	private static class DifficultyLayerJsonAdapter extends JsonReflectiveBuilderCodec<DifficultyLayerData> {
+
+		public DifficultyLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, DifficultyLayerData.class, registry);
+		}
+
+		private static class DifficultyLayerData extends NoiseLayerData<DifficultyLayer> {
+
+			private float add = 0;
+			private float scale = 1;
+	
+			@Override
+			protected final DifficultyLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
+				return new DifficultyLayer(generator, noise, stepRate, this.add, this.scale, fast);
+			}
+		}
+	}
 }
