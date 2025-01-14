@@ -23,29 +23,10 @@ public class TemperatureLayer extends NoiseLayer {
 		return new TemperatureLayer(generator, this.noise, this.stepRate, this.fast);
 	}
 
-	@Deprecated
-	public static class TemperatureLayerAdapter extends NoiseLayerAdapter<TemperatureLayerData> {
-		public TemperatureLayerAdapter() {
-			super(TemperatureLayerData.class);
-		}
-	}
-
-	@Deprecated
-	private static class TemperatureLayerData extends NoiseLayerData<TemperatureLayer> {
-		@Override
-		public final TemperatureLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
-			return new TemperatureLayer(generator, noise, stepRate, fast);
-		}
-	}
-
-	public static final TemperatureLayer example(DungeonGenerator generator) {
-		return new TemperatureLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).generateDefValue().build(), 50, false);
-	}
-
 	public static final int MIN = -25;
 	public static final int MAX = 35;
 
-	private static class TemperatureLayerJsonAdapter extends JsonReflectiveBuilderCodec<TemperatureLayerData> {
+	private static class TemperatureLayerJsonAdapter extends JsonReflectiveBuilderCodec<TemperatureLayerJsonAdapter.TemperatureLayerData> {
 
 		public TemperatureLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, TemperatureLayerData.class, registry);
@@ -57,5 +38,9 @@ public class TemperatureLayer extends NoiseLayer {
 				return new TemperatureLayer(generator, noise, stepRate, fast);
 			}
 		}
+	}
+
+	public static final TemperatureLayer example(DungeonGenerator generator) {
+		return new TemperatureLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).generateDefValue().build(), 50, false);
 	}
 }

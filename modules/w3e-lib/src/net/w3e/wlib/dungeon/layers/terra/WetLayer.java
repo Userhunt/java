@@ -23,29 +23,10 @@ public class WetLayer extends NoiseLayer {
 		return new WetLayer(generator, this.noise, this.stepRate, this.fast);
 	}
 
-	@Deprecated
-	public static class WetLayerAdapter extends NoiseLayerAdapter<WetLayerData> {
-		public WetLayerAdapter() {
-			super(WetLayerData.class);
-		}
-	}
-
-	@Deprecated
-	private static class WetLayerData extends NoiseLayerData<WetLayer> {
-		@Override
-		protected final WetLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
-			return new WetLayer(generator, noise, stepRate, fast);
-		}
-	}
-
-	public static final WetLayer example(DungeonGenerator generator) {
-		return new WetLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50, false);
-	}
-
 	public static final int MIN = 0;
 	public static final int MAX = 100;
 
-	private static class WetLayerJsonAdapter extends JsonReflectiveBuilderCodec<WetLayerData> {
+	private static class WetLayerJsonAdapter extends JsonReflectiveBuilderCodec<WetLayerJsonAdapter.WetLayerData> {
 
 		public WetLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, WetLayerData.class, registry);
@@ -57,5 +38,9 @@ public class WetLayer extends NoiseLayer {
 				return new WetLayer(generator, noise, stepRate, fast);
 			}
 		}
+	}
+
+	public static final WetLayer example(DungeonGenerator generator) {
+		return new WetLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50, false);
 	}
 }

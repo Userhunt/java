@@ -32,33 +32,10 @@ public class DifficultyLayer extends NoiseLayer {
 		return value * this.scale + this.add;
 	}
 
-	@Deprecated
-	public static class DifficultyLayerAdapter extends NoiseLayerAdapter<DifficultyLayerData> {
-		public DifficultyLayerAdapter() {
-			super(DifficultyLayerData.class);
-		}
-	}
-
-	@Deprecated
-	private static class DifficultyLayerData extends NoiseLayerData<DifficultyLayer> {
-
-		private float add = 0;
-		private float scale = 1;
-
-		@Override
-		protected final DifficultyLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
-			return new DifficultyLayer(generator, noise, stepRate, this.add, this.scale, fast);
-		}
-	}
-
-	public static final DifficultyLayer example(DungeonGenerator generator) {
-		return new DifficultyLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50, 0, 1, false);
-	}
-
 	public static final int MIN = 0;
 	public static final int MAX = 100;
 
-	private static class DifficultyLayerJsonAdapter extends JsonReflectiveBuilderCodec<DifficultyLayerData> {
+	private static class DifficultyLayerJsonAdapter extends JsonReflectiveBuilderCodec<DifficultyLayerJsonAdapter.DifficultyLayerData> {
 
 		public DifficultyLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, DifficultyLayerData.class, registry);
@@ -74,5 +51,9 @@ public class DifficultyLayer extends NoiseLayer {
 				return new DifficultyLayer(generator, noise, stepRate, this.add, this.scale, fast);
 			}
 		}
+	}
+
+	public static final DifficultyLayer example(DungeonGenerator generator) {
+		return new DifficultyLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50, 0, 1, false);
 	}
 }

@@ -1,5 +1,6 @@
 package net.w3e.wlib.dungeon.layers;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,19 +16,18 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-
 import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2BooleanMap.Entry;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import net.skds.lib2.io.json.JsonPostDeserializeCall;
+import net.skds.lib2.io.json.JsonWriter;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.annotation.JsonAlias;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
+import net.skds.lib2.io.json.codec.SerializeOnlyJsonCodec;
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
 import net.skds.lib2.mat.Direction.Axis;
@@ -36,17 +36,14 @@ import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.json.DungeonKeySupplier;
-import net.w3e.wlib.dungeon.json.ILayerAdapter;
+import net.w3e.wlib.dungeon.json.IDungeonJsonAdapter;
 import net.w3e.wlib.dungeon.json.ILayerData;
-import net.w3e.wlib.dungeon.json.ILayerDeserializerAdapter;
-import net.w3e.wlib.dungeon.layers.RoomLayer.ConnectionsData;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilter;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters;
 import net.w3e.wlib.dungeon.layers.filter.types.DistanceRoomFilter;
 import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLimitedCount;
-import net.w3e.wlib.dungeon.layers.terra.BiomeLayer;
 import net.w3e.wlib.log.LogUtil;
 
 @DefaultJsonCodec(RoomLayer.RoomLayerJsonAdapter.class)
@@ -336,15 +333,12 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		}
 	}
 
-	public record RoomVariant(Set<Object2BooleanArrayMap<Direction>> directionVariants, RoomLayerFilters layerRange, boolean enterance, DungeonKeySupplier value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
+	public record RoomVariant(@DefaultJsonCodec(RoomVariantFieldJsonAdapter.class) @JsonAlias("connections") Set<Object2BooleanArrayMap<Direction>> directionVariants, RoomLayerFilters layerRange, boolean enterance, DungeonKeySupplier value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
-		public RoomVariant(Set<Object2BooleanArrayMap<Direction>> directionVariants, RoomLayerFilters layerRange, boolean enterance, DungeonKeySupplier value, int count) {
-			this(directionVariants, layerRange, enterance, value, new DungeonInfoCountHolder(count));
-		}
-
-		public RoomVariant(Object2BooleanArrayMap<Direction> directionVariants, RoomLayerFilters layerRange, boolean enterance, DungeonKeySupplier value, int count) {
+		public RoomVariant(Object2BooleanArrayMap<Direction> directionVariants, RoomLayerFilters layerRange, boolean enterance, DungeonKeySupplier value, DungeonInfoCountHolder count) {
 			this(new LinkedHashSet<>(), layerRange, enterance, value, count);
 			if (!directionVariants.isEmpty()) {
+				this.directionVariants.add(new Object2BooleanArrayMap<>(directionVariants));
 				Object2BooleanArrayMap<Direction> baseVariants = new Object2BooleanArrayMap<>();
 				if (directionVariants.containsKey(Direction.UP)) {
 					baseVariants.put(Direction.UP, directionVariants.removeBoolean(Direction.UP));
@@ -353,7 +347,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 					baseVariants.put(Direction.DOWN, directionVariants.removeBoolean(Direction.DOWN));
 				}
 				if (!directionVariants.isEmpty()) {
-					for (int i = 0; i < 4; i++) {
+					for (int i = 0; i < 3; i++) {
 						Object2BooleanArrayMap<Direction> directions = new Object2BooleanArrayMap<>(baseVariants);
 						for (Entry<Direction> entry : directionVariants.object2BooleanEntrySet()) {
 							directions.put(entry.getKey().rotateClockwise(Axis.Y), entry.getBooleanValue());
@@ -433,76 +427,6 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		return name;
 	}
 
-	@Deprecated
-	@AllArgsConstructor
-	public abstract static class RoomLayerAdapter<D> implements ILayerDeserializerAdapter<RoomLayerData<D>, RoomLayer> {
-
-		private final Class<? extends RoomLayerData<D>> dataClass;
-		
-		@Override
-		public final RoomLayer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			RoomLayerData<D> data = context.deserialize(json, this.dataClass);
-			this.isEmpty("room variants", data.rooms);
-			this.lessThan("softChance", data.softChance, -1);
-			data = deserialize(data, context);
-			data.roomsVariants = Stream.of(data.rooms).map(e -> new RoomVariant(e.connections.map(), e.getLayerRange(), e.enterance, e::getValue, e.count)).toArray(RoomVariant[]::new);
-			return data.withDungeon(null);
-		}
-	}
-
-	@Deprecated
-	public abstract static class RoomLayerData<T> implements ILayerData<RoomLayer> {
-		private int softChance = 0;
-
-		private RoomVariantData<T>[] rooms;
-
-		private transient RoomVariant[] roomsVariants;
-
-		@Override
-		public final RoomLayer withDungeon(DungeonGenerator generator) {
-			return new RoomLayer(generator, this.softChance, this.roomsVariants);
-		}
-	}
-
-	@Deprecated
-	@AllArgsConstructor
-	public static class RoomVariantAdapter<D> implements ILayerDeserializerAdapter<RoomVariantData<D>, RoomVariantData<D>> {
-
-		private final Class<? extends RoomVariantData<D>> dataClass;
-
-		@Override
-		public final RoomVariantData<D> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			RoomVariantData<D> data = context.deserialize(json, this.dataClass);
-			RoomLayerFilters layerRange = data.getLayerRange();
-			this.nonNull("layerRange", layerRange);
-			if (layerRange.notValid()) {
-				throw new IllegalStateException(LogUtil.ILLEGAL.createMsg("layerRange"));
-			}
-			if (data.count != -1) {
-				this.lessThan("count", data.count);
-			}
-			D value = data.getValue();
-			this.nonNull("value", value);
-			this.nonNull("conntections", data.connections);
-			Object2BooleanArrayMap<Direction> map = data.connections.map();
-			if (map.isEmpty()) {
-				this.isEmpty("connections");
-			}
-			return deserialize(data, context);
-		}
-	}
-
-	@Deprecated
-	public abstract static class RoomVariantData<T> {
-
-		public ConnectionsData connections = new ConnectionsData();
-		public boolean enterance = false;
-		public int count = -1;
-
-		protected abstract T getValue();
-		protected abstract RoomLayerFilters getLayerRange();
-	}
-
 	private static class RoomLayerJsonAdapter extends JsonReflectiveBuilderCodec<RoomLayerJsonAdapter.RoomLayerData> {
 
 		public RoomLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
@@ -524,25 +448,26 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 			}
 		}
 
-		private static class RoomVariantData implements JsonPostDeserializeCall, ILayerAdapter {
+		private static class RoomVariantData implements JsonPostDeserializeCall, IDungeonJsonAdapter {
 			public ConnectionsData connections = new ConnectionsData();
 			public boolean enterance = false;
-			public int count = -1;
+			public DungeonInfoCountHolder count = DungeonInfoCountHolder.NULL;
 	
 			public DungeonKeySupplier value;
 			public RoomLayerFilters layerRange = RoomLayerFilters.NULL;
 
 			@Override
-			public void postDeserializedJson() {
+			public final void postDeserializedJson() {
 				this.nonNull("layerRange", this.layerRange);
 				if (layerRange.notValid()) {
 					throw new IllegalStateException(LogUtil.ILLEGAL.createMsg("layerRange"));
 				}
-				if (this.count != -1) {
-					this.lessThan("count", this.count);
+				if (this.count.getValue() > -1) {
+					this.lessThan("count", this.count.getValue());
 				}
 				this.nonNull("value", this.value);
 				this.nonNull("conntections", this.connections);
+
 				Object2BooleanArrayMap<Direction> map = this.connections.map();
 				if (map.isEmpty()) {
 					this.isEmpty("connections");
@@ -551,6 +476,33 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		}
 	}
 
+	private static class RoomVariantFieldJsonAdapter extends SerializeOnlyJsonCodec<Set<Object2BooleanArrayMap<Direction>>> {
+		public RoomVariantFieldJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, registry);
+		}
+
+		@Override
+		public void write(Set<Object2BooleanArrayMap<Direction>> value, JsonWriter writer) throws IOException {
+			Object2BooleanArrayMap<Direction> data;
+			if (value.isEmpty()) {
+				data = new Object2BooleanArrayMap<Direction>();
+			} else {
+				data = value.iterator().next();
+			}
+			if (!data.isEmpty()) {
+				writer.beginObject();
+				for (Entry<Direction> entry : data.object2BooleanEntrySet()) {
+					writer.writeName(entry.getKey().getName());
+					writer.writeBoolean(entry.getBooleanValue());
+				}
+				writer.endObject();
+			} else {
+				writer.writeNull();
+			}
+		}
+	}
+
+	@ToString
 	@Getter
 	@NoArgsConstructor
 	public static class ConnectionsData {
@@ -621,7 +573,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		List<Direction> dir = new ArrayList<>();
 		List<RoomLayerFilter<?>> filters = new ArrayList<>();
 		filters.add(new DistanceRoomFilter(new LayerRange(5, Integer.MAX_VALUE)));
-		RoomLayerFilters bossBase = new RoomLayerFilters(new ArrayList<>());
+		RoomLayerFilters bossBase = new RoomLayerFilters(filters);
 		for (Direction direction : Direction.values()) {
 			if (direction != Direction.UP && direction != Direction.DOWN) {
 				dir.add(direction);
@@ -654,7 +606,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 				count = random.nextInt(100) + 1 <= 20 ? random.nextInt(5) + 1 : -1;
 			}
 
-			rooms.add(new RoomVariant(directions, baseLayerRange, false, name::toString, count));
+			rooms.add(new RoomVariant(directions, baseLayerRange, false, name::toString, new DungeonInfoCountHolder(count)));
 		}
 
 		boolean print = false;
@@ -718,7 +670,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		for (Direction d : direction) {
 			directions.put(d, true);
 		}
-		return new RoomVariant(directions, RoomLayerFilters.NULL, true, () -> "center", -1);
+		return new RoomVariant(directions, RoomLayerFilters.NULL, true, () -> "center", DungeonInfoCountHolder.NULL);
 	}
 
 }

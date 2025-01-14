@@ -1,18 +1,20 @@
 package net.w3e.wlib.dungeon.layers.path;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-
+import net.skds.lib2.io.json.JsonReader;
+import net.skds.lib2.io.json.JsonWriter;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.codec.AbstractJsonCodec;
+import net.skds.lib2.io.json.codec.JsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
+import net.skds.lib2.io.json.codec.BuiltinCodecFactory.ArrayCodec;
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
 import net.w3e.wlib.collection.CollectionUtils;
@@ -21,18 +23,19 @@ import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
 import net.w3e.wlib.dungeon.DungeonPos;
+import net.w3e.wlib.dungeon.DungeonPos.DungeonPosEnteranceCodec;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.DungeonLayer.IPathLayer;
 import net.w3e.wlib.dungeon.direction.DungeonChances;
 import net.w3e.wlib.dungeon.json.ILayerData;
-import net.w3e.wlib.dungeon.json.ILayerDeserializerAdapter;
 
 @DefaultJsonCodec(WormLayer.WormLayerDataJsonAdapter.class)
 public class WormLayer extends DungeonLayer implements IPathLayer {
 
 	public static final String TYPE = "path/worm";
 
+	@DefaultJsonCodec(WormLayer.DungeonPosEnteranceFieldCodec.class)
 	public final DungeonPos[] centers;
 	public final WormDungeonStepChances stepChances;
 	public final DungeonChances directionChances;
@@ -152,37 +155,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		}
 	}
 
-	@Deprecated
-	public static class WormLayerAdapter implements ILayerDeserializerAdapter<WormLayerData, WormLayer> {
-		@Override
-		public final WormLayer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			WormLayerData data = context.deserialize(json, WormLayerData.class);
-			this.nonNull("centers", data.centers);
-			this.nonNull("stepChance", data.stepChances);
-			this.nonNull("directionChances", data.directionChances);
-			this.nonNull("connectionChances", data.connectionChances);
-			this.isEmpty("centers", data.centers);
-			return deserialize(data, context).withDungeon(null);
-		}
-	}
-
-	@Deprecated
-	private static class WormLayerData implements ILayerData<WormLayer> {
-
-		private static final DungeonPos[] CENTERS = new DungeonPos[]{DungeonPos.EMPTY_POS};
-
-		private DungeonPos[] centers = CENTERS;
-		private WormDungeonStepChances stepChances = WormDungeonStepChances.INSTANCE;
-		private DungeonChances directionChances = DungeonChances.INSTANCE;
-		private DungeonChances connectionChances = DungeonChances.INSTANCE;
-
-		@Override
-		public final WormLayer withDungeon(DungeonGenerator generator) {
-			return new WormLayer(generator, this.centers, this.stepChances, this.directionChances, this.connectionChances);
-		}
-	}
-
-	private static class WormLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<WormLayerData> {
+	private static class WormLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<WormLayerDataJsonAdapter.WormLayerData> {
 
 		public WormLayerDataJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, WormLayerData.class, registry);
@@ -192,6 +165,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 
 			private static final DungeonPos[] CENTERS = new DungeonPos[]{DungeonPos.EMPTY_POS};
 	
+			@DefaultJsonCodec(DungeonPosEnteranceFieldCodec.class)
 			private DungeonPos[] centers = CENTERS;
 			private WormDungeonStepChances stepChances = WormDungeonStepChances.INSTANCE;
 			private DungeonChances directionChances = DungeonChances.INSTANCE;
@@ -206,6 +180,26 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 				this.isEmpty("centers", this.centers);
 				return new WormLayer(generator, this.centers, this.stepChances, this.directionChances, this.connectionChances);
 			}
+		}
+	}
+
+	private static class DungeonPosEnteranceFieldCodec extends AbstractJsonCodec<DungeonPos[]> {
+
+		private final JsonCodec<DungeonPos> codec;
+
+		public DungeonPosEnteranceFieldCodec(Type type, JsonCodecRegistry registry) {
+			super(type, registry);
+			this.codec = new DungeonPosEnteranceCodec(this.codecType, this.registry);
+		}
+
+		@Override
+		public void write(DungeonPos[] value, JsonWriter writer) throws IOException {
+			ArrayCodec.write(value, writer, this.codec);
+		}
+
+		@Override
+		public DungeonPos[] read(JsonReader reader) throws IOException {
+			return ArrayCodec.read(new DungeonPos[0], reader, this.codec);
 		}
 	}
 

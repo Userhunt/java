@@ -1,4 +1,4 @@
-package net.w3e.wlib.json.adapters;
+package net.w3e.wlib.json;
 
 import java.io.IOException;
 import java.lang.reflect.Type;

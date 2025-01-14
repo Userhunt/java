@@ -4,8 +4,7 @@ import com.google.gson.JsonSyntaxException;
 
 import net.w3e.wlib.log.LogUtil;
 
-//@Deprecated
-public interface ILayerAdapter {
+public interface IDungeonJsonAdapter {
 	default void nonNull(String msg, Object obj) {
 		if (obj == null) throw new JsonSyntaxException(new NullPointerException(msg));
 	}

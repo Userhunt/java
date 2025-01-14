@@ -3,14 +3,30 @@ package net.w3e.wlib.dungeon.layers.interfaces;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
+import net.skds.lib2.io.json.JsonEntryType;
+import net.skds.lib2.io.json.JsonReader;
 import net.skds.lib2.io.json.JsonWriter;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.codec.AbstractJsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
-import net.skds.lib2.io.json.codec.SerializeOnlyJsonCodec;
 import net.skds.lib2.utils.Holders.IntHolder;
 
 @DefaultJsonCodec(DungeonInfoCountHolder.DungeonInfoCountHolderJsonAdapter.class)
 public class DungeonInfoCountHolder extends IntHolder {
+
+	public static final DungeonInfoCountHolder NULL = new DungeonInfoCountHolder(-1) {
+		@Override
+		public final void setValue(int value) {}
+		@Override
+		public final int increment(int inc) {
+			return this.value;
+		}
+		@Override
+		public final int decrement(int inc) {
+			return this.value;
+		}
+	};
+
 	public DungeonInfoCountHolder() {}
 
 	public DungeonInfoCountHolder(int value) {
@@ -18,10 +34,13 @@ public class DungeonInfoCountHolder extends IntHolder {
 	}
 
 	public final DungeonInfoCountHolder copy() {
+		if (this.value < 0) {
+			return DungeonInfoCountHolder.NULL;
+		}
 		return new DungeonInfoCountHolder(this.getValue());
 	}
 
-	public static class DungeonInfoCountHolderJsonAdapter extends SerializeOnlyJsonCodec<DungeonInfoCountHolder> {
+	public static class DungeonInfoCountHolderJsonAdapter extends AbstractJsonCodec<DungeonInfoCountHolder> {
 
 		public DungeonInfoCountHolderJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, registry);
@@ -29,16 +48,20 @@ public class DungeonInfoCountHolder extends IntHolder {
 
 		@Override
 		public void write(DungeonInfoCountHolder value, JsonWriter writer) throws IOException {
-			if (value.getValue() != -1) {
+			if (value.getValue() > 0) {
 				writer.writeInt(value.getValue());
 			} else {
 				writer.writeNull();
 			}
 		}
 
-		/*@Override
-		public final Integer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			return context.deserialize(json, int.class);
-		}*/
+		@Override
+		public DungeonInfoCountHolder read(JsonReader reader) throws IOException {
+			if (reader.nextEntryType() == JsonEntryType.NULL) {
+				reader.skipNull();
+				return DungeonInfoCountHolder.NULL;
+			}
+			return new DungeonInfoCountHolder(reader.readInt());
+		}
 	}
 }

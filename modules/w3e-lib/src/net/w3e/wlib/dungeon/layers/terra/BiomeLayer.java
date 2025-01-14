@@ -218,12 +218,8 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 
 	public static record BiomeInfo(int weight, RoomLayerFilters layerRange, LayerRange impulse, DungeonKeySupplier value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
-		public BiomeInfo(int weight, RoomLayerFilters layerRange, LayerRange impulse, DungeonKeySupplier value, int count) {
-			this(weight, layerRange, impulse, value, new DungeonInfoCountHolder(count));
-		}
-
 		public BiomeInfo(int weight, RoomLayerFilters layerRange, LayerRange impulse, DungeonKeySupplier value) {
-			this(weight, layerRange, impulse, value, -1);
+			this(weight, layerRange, impulse, value, DungeonInfoCountHolder.NULL);
 		}
 
 		public final boolean notValid() {
@@ -263,7 +259,7 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 		public static class BiomeInfoData {
 			public int weight = 1;
 			public LayerRange impulse = LayerRange.ONE;
-			public int count = -1;
+			public DungeonInfoCountHolder count = DungeonInfoCountHolder.NULL;
 	
 			public DungeonKeySupplier value;
 			public RoomLayerFilters layerRange = RoomLayerFilters.NULL;
@@ -300,7 +296,7 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 
 				String key = String.format("%s-%s", name, j);
 
-				biomes.add(new BiomeInfo(weight, new RoomLayerFilters(filters), new LayerRange(minImpulse, maxImpulse), () -> key, 1 + random.nextInt(3)));
+				biomes.add(new BiomeInfo(weight, new RoomLayerFilters(filters), new LayerRange(minImpulse, maxImpulse), () -> key, new DungeonInfoCountHolder(1 + random.nextInt(3))));
 			}
 		}
 

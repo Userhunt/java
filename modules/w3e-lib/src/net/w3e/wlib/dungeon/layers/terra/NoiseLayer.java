@@ -2,11 +2,6 @@ package net.w3e.wlib.dungeon.layers.terra;
 
 import java.lang.reflect.Type;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-
-import lombok.AllArgsConstructor;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.annotation.TransientComponent;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
@@ -19,7 +14,6 @@ import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.json.ILayerData;
-import net.w3e.wlib.dungeon.json.ILayerDeserializerAdapter;
 import net.w3e.wlib.mat.WMatUtil;
 
 public abstract class NoiseLayer extends TerraLayer<Integer> {
@@ -126,22 +120,6 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 
 		public final NoiseData build() {
 			return new NoiseData(this.min, this.max, this.scale, this.defKey, this.defValue);
-		}
-	}
-
-	@AllArgsConstructor
-	@Deprecated
-	public abstract static class NoiseLayerAdapter<D extends NoiseLayerData<? extends NoiseLayer>> implements ILayerDeserializerAdapter<D, NoiseLayer> {
-
-		private final Class<D> dataClass;
-
-		@Override
-		public final NoiseLayer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			D data = context.deserialize(json, this.dataClass);
-			this.nonNull("noise", data.noise);
-			this.lessThan("stepRate", data.stepRate);
-
-			return deserialize(data, context).withDungeon(null);
 		}
 	}
 

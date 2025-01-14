@@ -3,17 +3,13 @@ package net.w3e.wlib.dungeon;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
-import it.unimi.dsi.fastutil.objects.Object2BooleanArrayMap;
 import net.skds.lib2.io.json.JsonUtils;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.elements.JsonArray;
@@ -25,7 +21,6 @@ import net.skds.lib2.mat.Vec3I;
 import net.skds.lib2.utils.Holders.BooleanHolder;
 import net.skds.lib2.utils.logger.SKDSLogger;
 import net.skds.lib2.utils.logger.SKDSLoggerFactory;
-import net.w3e.lib.utils.CompareUtil;
 import net.w3e.wlib.collection.CollectionBuilder;
 import net.w3e.wlib.collection.CollectionBuilder.SimpleCollectionBuilder;
 import net.w3e.wlib.collection.MapT.MapTString;
@@ -40,10 +35,10 @@ import net.w3e.wlib.dungeon.layers.ISetupLayer;
 import net.w3e.wlib.dungeon.layers.RoomLayer;
 import net.w3e.wlib.dungeon.layers.RotateLayer;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilterValues;
-import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters;
 import net.w3e.wlib.dungeon.layers.path.PathRepeatLayer;
 import net.w3e.wlib.dungeon.layers.terra.BiomeLayer;
 import net.w3e.wlib.dungeon.layers.terra.CompositeTerraLayer;
+import net.w3e.wlib.json.CompareJsonUtil;
 import net.w3e.wlib.mat.VecUtil;
 import net.w3e.wlib.mat.WBoxI;
 
@@ -292,6 +287,7 @@ public class DungeonGenerator {
 		SimpleCollectionBuilder<DungeonLayerFactory, ArrayList<DungeonLayerFactory>> layers = factoryCollectionBuilder().add(
 			// path
 			gen -> PathRepeatLayer.example(gen, size),
+			//WormLayer::example
 			// distance
 			DistanceLayer::example,
 			// temperature, wet, difficulty
@@ -301,7 +297,7 @@ public class DungeonGenerator {
 			// rooms
 			RoomLayer::example,
 			// features - spawners, chests, ?
-			//FeatureLayer::example,
+			FeatureLayer::example,
 			// clear for save
 			ClearLayer::example
 		);
@@ -380,8 +376,8 @@ public class DungeonGenerator {
 
 		JsonObject result = JsonUtils.parseJson(JsonUtils.toJson(data), JsonObject.class);
 
-		CompareUtil.CompareResult compare = CompareUtil.compare(jsonObject, result);
-		System.out.println(compare.print(false));
+		CompareJsonUtil.CompareResult compare = CompareJsonUtil.compare(jsonObject, result);
+		System.out.println(compare.print(true));
 
 		if (!jsonObject.equals(result)) {
 			JsonArray jsonSave = jsonObject.remove("layers").getAsJsonArray();
@@ -416,19 +412,17 @@ public class DungeonGenerator {
 
 		DungeonJsonAdaptersString.initString();
 
-		InnerDungeonGenerator inner = new InnerDungeonGenerator();
+		//InnerDungeonGenerator inner = new InnerDungeonGenerator();
 
-		System.out.println(JsonUtils.toJson(inner));
-
-		//example(0, Direction.SOUTH, true);
+		example(0, Direction.SOUTH, true);
 		System.out.println("done dungeon generator");
 	}
 
-	private static class InnerDungeonGenerator {
+	/*private static class InnerDungeonGenerator {
 	
 		transient List<String> list = new ArrayList<>();
 		transient Set<String> set = new HashSet<>();
-		transient Set<Object2BooleanArrayMap<Direction>> directionVariants = new HashSet<>();
+		Set<Object2BooleanArrayMap<Direction>> directionVariants = new HashSet<>();
 		Object2BooleanArrayMap<Direction> map = new Object2BooleanArrayMap<>();
 
 		public InnerDungeonGenerator() {
@@ -439,9 +433,16 @@ public class DungeonGenerator {
 
 			Object2BooleanArrayMap<Direction> map1 = new Object2BooleanArrayMap<>();
 			map1.put(Direction.DOWN, false);
-			map1.put(null, false);
+			map1.put(null, true);
+			map1.put(Direction.UP, true);
+			
 			directionVariants.add(null);
 			directionVariants.add(map1);
+
+			this.map.putAll(map1);
+
+			System.out.println(JsonUtils.toJson(this));
+			System.out.println(JsonUtils.getFancyRegistry().getSerializer(map1.getClass()));
 		}
-	}
+	}*/
 }

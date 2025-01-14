@@ -9,10 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
@@ -26,7 +22,6 @@ import net.w3e.wlib.dungeon.DungeonLayer;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.json.ILayerData;
-import net.w3e.wlib.dungeon.json.ILayerDeserializerAdapter;
 import net.w3e.wlib.mat.VecUtil;
 import net.w3e.wlib.mat.WBoxI;
 
@@ -146,27 +141,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 		return rotate(generator, rotation).getRooms();
 	}
 
-	@Deprecated
-	public static class RotateLayerAdapter implements ILayerDeserializerAdapter<RotateLayerData, RotateLayer> {
-		@Override
-		public final RotateLayer deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			return deserialize(context.deserialize(json, RotateLayerData.class), context).withDungeon(null);
-		}
-	}
-
-	@Deprecated
-	@SuppressWarnings({"FieldMayBeFinal"})
-	public static class RotateLayerData implements ILayerData<RotateLayer> {
-
-		private Direction rotation = Direction.SOUTH;
-
-		@Override
-		public RotateLayer withDungeon(DungeonGenerator generator) {
-			return new RotateLayer(generator, this.rotation);
-		}
-	}
-
-	private static class RotateLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<RotateLayerData> {
+	private static class RotateLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<RotateLayerDataJsonAdapter.RotateLayerData> {
 
 		public RotateLayerDataJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, RotateLayerData.class, registry);
