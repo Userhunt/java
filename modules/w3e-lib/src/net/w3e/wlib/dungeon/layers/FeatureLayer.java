@@ -205,7 +205,7 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 		}
 	}
 
-	public record FeatureVariant(@SkipSerialization(predicate = RoomLayerFiltersNullPredicate.class) RoomLayerFilters layerRange, TFNStateEnum enterance, @SkipSerialization boolean softRequire, DungeonKeySupplier value, @SkipSerialization(predicate = DungeonInfoCountHolderNullPredicate.class) DungeonInfoCountHolder count) implements IDungeonLimitedCount {
+	public record FeatureVariant(@SkipSerialization(predicate = RoomLayerFiltersNullPredicate.class) RoomLayerFilters layerRange, TFNStateEnum entrance, @SkipSerialization boolean softRequire, DungeonKeySupplier value, @SkipSerialization(predicate = DungeonInfoCountHolderNullPredicate.class) DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
 		public final boolean notValid() {
 			return this.layerRange.notValid();
@@ -215,14 +215,14 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 			if (this.softRequire && !canSoft) {
 				return false;
 			}
-			if (this.enterance.isStated() && !((this.enterance.isTrue()) == room.isEnterance())) {
+			if (this.entrance.isStated() && !((this.entrance.isTrue()) == room.isentrance())) {
 				return false;
 			}
 			return this.layerRange.test(layer.random(), layer.getRoomValues(room));
 		}
 
 		public final FeatureVariant copy() {
-			return new FeatureVariant(this.layerRange, this.enterance, this.softRequire, this.value, this.count.copy());
+			return new FeatureVariant(this.layerRange, this.entrance, this.softRequire, this.value, this.count.copy());
 		}
 
 		@Override
@@ -231,8 +231,8 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 			if (!this.layerRange.isNull()) {
 				builder.append(String.format(",baseLayerRange:%s", this.layerRange));
 			}
-			if (this.enterance.isStated()) {
-				builder.append(String.format(",enterance:%s", this.enterance.name().toLowerCase()));
+			if (this.entrance.isStated()) {
+				builder.append(String.format(",entrance:%s", this.entrance.name().toLowerCase()));
 			}
 			if (this.softRequire) {
 				builder.append(",softRequire");
@@ -259,15 +259,15 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 			public FeatureLayer withDungeon(DungeonGenerator generator) {
 				this.isEmpty("variants", this.features);
 				FeatureVariant[] featuresVariant = Stream.of(this.features).map(e -> {
-					TFNStateEnum enterance = e.enterance != null ? (e.enterance ? TFNStateEnum.TRUE : TFNStateEnum.FALSE) : TFNStateEnum.NOT_STATED;
-					return new FeatureVariant(e.layerRange, enterance, e.softRequire, e.value, e.count);
+					TFNStateEnum entrance = e.entrance != null ? (e.entrance ? TFNStateEnum.TRUE : TFNStateEnum.FALSE) : TFNStateEnum.NOT_STATED;
+					return new FeatureVariant(e.layerRange, entrance, e.softRequire, e.value, e.count);
 				}).toArray(e -> new FeatureVariant[e]);
 				return new FeatureLayer(generator, featuresVariant);
 			}
 		}
 
 		public static class FeatureVariantData implements JsonPostDeserializeCall, IDungeonJsonAdapter {
-			public Boolean enterance;
+			public Boolean entrance;
 			public boolean softRequire = false;
 			public DungeonInfoCountHolder count = DungeonInfoCountHolder.NULL;
 	

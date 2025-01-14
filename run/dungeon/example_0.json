@@ -21,7 +21,7 @@
                   "yi": 0,
                   "zi": 0
                 },
-                "enterance": true
+                "entrance": true
               },
               {
                 "pos": {
@@ -29,7 +29,7 @@
                   "yi": 0,
                   "zi": 0
                 },
-                "enterance": true
+                "entrance": true
               }
             ],
             "stepChances": {

@@ -245,7 +245,7 @@ public class RandGenScreen extends AbstractFrameWin {
 
 				if (list instanceof DistanceLayer) {
 					layerName = "distance";
-					arg = "enterances" + listProgress;
+					arg = "entrances" + listProgress;
 				}
 				if (list instanceof BiomeLayer) {
 					layerName = "terra/biome";
@@ -387,7 +387,7 @@ public class RandGenScreen extends AbstractFrameWin {
 						}
 
 						Color color = Color.LIGHT_GRAY;
-						if (value.isEnterance()) {
+						if (value.isentrance()) {
 							color = Color.DARK_GRAY;
 						} else {
 							if (!value.isWall()) {
@@ -445,7 +445,7 @@ public class RandGenScreen extends AbstractFrameWin {
 				list.add(new JLabel(String.format("Chunk: %s", room.chunk())));
 				list.add(new JLabel(String.format("Distance: %s", room.getDistance())));
 				list.add(new JLabel(String.format("IsWall: %s", room.isWall())));
-				list.add(new JLabel(String.format("IsEnterance: %s", room.isEnterance())));
+				list.add(new JLabel(String.format("Isentrance: %s", room.isentrance())));
 				list.add(new JLabel(String.format("Connections: %s", CollectionBuilder.list(String.class)
 					.add(room.isConnect(Direction.UP) ? Direction.UP.name() : null)
 					.add(room.isConnect(Direction.DOWN) ? Direction.DOWN.name() : null)

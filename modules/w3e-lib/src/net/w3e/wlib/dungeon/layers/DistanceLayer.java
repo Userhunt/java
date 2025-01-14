@@ -37,14 +37,14 @@ public class DistanceLayer extends ListLayer<DungeonRoomInfo> implements IDungeo
 		if (this.filled == -1) {
 			this.generateList(room -> {
 				room.room().setDistance(-1);
-				return room.isEnterance() ? GenerateListHolder.success(room.room()) : GenerateListHolder.fail();
+				return room.isentrance() ? GenerateListHolder.success(room.room()) : GenerateListHolder.fail();
 			});
 			return 1;
 		}
 		if (!this.list.isEmpty()) {
-			DungeonRoomInfo enterance = this.list.remove(0);
+			DungeonRoomInfo entrance = this.list.remove(0);
 			Object2IntArrayMap<DungeonRoomInfo> rooms = new Object2IntArrayMap<>();
-			rooms.put(enterance, 0);
+			rooms.put(entrance, 0);
 			while (!rooms.isEmpty()) {
 				ObjectIterator<Entry<DungeonRoomInfo>> iterator = rooms.object2IntEntrySet().iterator();
 				Entry<DungeonRoomInfo> next = iterator.next();
@@ -65,7 +65,7 @@ public class DistanceLayer extends ListLayer<DungeonRoomInfo> implements IDungeo
 			Vec3I pos = room.pos();
 			for (Direction direction : Direction.values()) {
 				DungeonRoomCreateInfo next = this.get(pos.addI(direction.getOpposite()));
-				if (!next.notExistsOrWall() && !next.isEnterance()) {
+				if (!next.notExistsOrWall() && !next.isentrance()) {
 					rooms.put(next.room(), distance + 1);
 				}
 			}

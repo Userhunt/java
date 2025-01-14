@@ -14,9 +14,9 @@ import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
 import net.w3e.wlib.dungeon.json.IDungeonJsonAdapter;
 
-public record DungeonPos(Vec3I pos, Direction direction, boolean enterance) {
+public record DungeonPos(Vec3I pos, Direction direction, boolean entrance) {
 	public static final DungeonPos EMPTY_POS = new DungeonPos();
-	public static final DungeonPos EMPTY_ENTERANCE = new DungeonPos(Vec3I.ZERO, true);
+	public static final DungeonPos EMPTY_entrance = new DungeonPos(Vec3I.ZERO, true);
 
 	public DungeonPos() {
 		this(Vec3I.ZERO);
@@ -26,8 +26,8 @@ public record DungeonPos(Vec3I pos, Direction direction, boolean enterance) {
 		this(pos, false);
 	}
 
-	public DungeonPos(Vec3I pos, boolean enterance) {
-		this(pos, null, enterance);
+	public DungeonPos(Vec3I pos, boolean entrance) {
+		this(pos, null, entrance);
 	}
 
 	@Deprecated
@@ -48,12 +48,12 @@ public record DungeonPos(Vec3I pos, Direction direction, boolean enterance) {
 		};
 	}
 
-	public static class DungeonPosEnteranceCodec extends AbstractJsonCodec<DungeonPos> {
+	public static class DungeonPosentranceCodec extends AbstractJsonCodec<DungeonPos> {
 
 		private final JsonCodec<Vec3I> posCodec;
 		private final JsonCodec<DungeonCenterPos> reader;
 
-		public DungeonPosEnteranceCodec(Type type, JsonCodecRegistry registry) {
+		public DungeonPosentranceCodec(Type type, JsonCodecRegistry registry) {
 			super(type, registry);
 			this.posCodec = registry.getCodec(Vec3I.class);
 			this.reader = registry.getCodecIndirect(DungeonCenterPos.class);

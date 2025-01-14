@@ -202,8 +202,8 @@ public class DungeonGenerator {
 		public final boolean notExistsOrWall() {
 			return !this.exists || this.room.isWall();
 		}
-		public final boolean isEnterance() {
-			return this.room.isEnterance();
+		public final boolean isentrance() {
+			return this.room.isentrance();
 		}
 		public final boolean isWall() {
 			return this.room.isWall();

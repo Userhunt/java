@@ -20,7 +20,6 @@ import net.skds.lib2.io.json.codec.JsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.BuiltinCodecFactory.ArrayCodec;
 import net.skds.lib2.utils.ArrayUtils;
-import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder;
 
 @NoArgsConstructor
 @AllArgsConstructor

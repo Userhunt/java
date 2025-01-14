@@ -1469,12 +1469,12 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"south": true,
@@ -1482,7 +1482,7 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"south": true,
@@ -1491,7 +1491,7 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1501,7 +1501,7 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1510,7 +1510,7 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"north": true,
@@ -1518,7 +1518,7 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1527,7 +1527,7 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1535,12 +1535,12 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {"south": true}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"south": true,
@@ -1548,7 +1548,7 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1557,7 +1557,7 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1565,12 +1565,12 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {"west": true}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1578,7 +1578,7 @@
 					}
 				},
 				{
-					"enterance": true,
+					"entrance": true,
 					"value": "center",
 					"connections": {"east": true}
 				}
@@ -1588,112 +1588,112 @@
 		{"feature": {"features": [
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 3,
 				"value": "1"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"value": "2"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 3,
 				"value": "3"
 			},
 			{
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 3,
 				"value": "4"
 			},
 			{
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"value": "5"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 1,
 				"value": "6"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 2,
 				"value": "7"
 			},
 			{
-				"enterance": "TRUE",
+				"entrance": "TRUE",
 				"value": "8"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 3,
 				"value": "9"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 1,
 				"value": "10"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 3,
 				"value": "11"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 2,
 				"value": "12"
 			},
 			{
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 2,
 				"value": "13"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"value": "14"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 2,
 				"value": "15"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 2,
 				"value": "16"
 			},
 			{
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 1,
 				"value": "17"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 3,
 				"value": "18"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 2,
 				"value": "19"
 			},
 			{
 				"softRequire": true,
-				"enterance": "FALSE",
+				"entrance": "FALSE",
 				"count": 1,
 				"value": "20"
 			}

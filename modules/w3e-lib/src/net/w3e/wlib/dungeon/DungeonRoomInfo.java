@@ -41,11 +41,11 @@ public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString da
 		return this;
 	}
 
-	public final boolean isEnterance() {
+	public final boolean isentrance() {
 		return PackUtil.test(this.flags[1], 1);
 	}
 
-	public final DungeonRoomInfo setEnterance(boolean value) {
+	public final DungeonRoomInfo setentrance(boolean value) {
 		this.flags[1] = PackUtil.set(this.flags[1], 1, value);
 		return this;
 	}

@@ -23,7 +23,7 @@ import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
 import net.w3e.wlib.dungeon.DungeonPos;
-import net.w3e.wlib.dungeon.DungeonPos.DungeonPosEnteranceCodec;
+import net.w3e.wlib.dungeon.DungeonPos.DungeonPosentranceCodec;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.DungeonLayer.IPathLayer;
@@ -35,7 +35,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 
 	public static final String TYPE = "path/worm";
 
-	@DefaultJsonCodec(WormLayer.DungeonPosEnteranceFieldCodec.class)
+	@DefaultJsonCodec(WormLayer.DungeonPosentranceFieldCodec.class)
 	public final DungeonPos[] centers;
 	public final WormDungeonStepChances stepChances;
 	public final DungeonChances directionChances;
@@ -73,9 +73,9 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		this.add(pos, direction, false);
 	}
 
-	private final void add(Vec3I pos, Direction direction, boolean enterance) throws DungeonException {
+	private final void add(Vec3I pos, Direction direction, boolean entrance) throws DungeonException {
 		this.assertInside(pos);
-		this.entries[1].add(new DungeonPos(pos, direction, enterance));
+		this.entries[1].add(new DungeonPos(pos, direction, entrance));
 	}
 
 	@Override
@@ -94,8 +94,8 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 			DungeonRoomCreateInfo info = this.putOrGet(pos);
 			DungeonRoomInfo room = info.room();
 			room.setWall(false);
-			if (entry.enterance()) {
-				info.room().setEnterance(true);
+			if (entry.entrance()) {
+				info.room().setentrance(true);
 				if (!this.get(pos.addI(direction)).notExistsOrWall()) {
 					Direction old = direction;
 					entry = new DungeonPos(pos, null, true);
@@ -165,7 +165,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 
 			private static final DungeonPos[] CENTERS = new DungeonPos[]{DungeonPos.EMPTY_POS};
 	
-			@DefaultJsonCodec(DungeonPosEnteranceFieldCodec.class)
+			@DefaultJsonCodec(DungeonPosentranceFieldCodec.class)
 			private DungeonPos[] centers = CENTERS;
 			private WormDungeonStepChances stepChances = WormDungeonStepChances.INSTANCE;
 			private DungeonChances directionChances = DungeonChances.INSTANCE;
@@ -183,13 +183,13 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		}
 	}
 
-	private static class DungeonPosEnteranceFieldCodec extends AbstractJsonCodec<DungeonPos[]> {
+	private static class DungeonPosentranceFieldCodec extends AbstractJsonCodec<DungeonPos[]> {
 
 		private final JsonCodec<DungeonPos> codec;
 
-		public DungeonPosEnteranceFieldCodec(Type type, JsonCodecRegistry registry) {
+		public DungeonPosentranceFieldCodec(Type type, JsonCodecRegistry registry) {
 			super(type, registry);
-			this.codec = new DungeonPosEnteranceCodec(this.codecType, this.registry);
+			this.codec = new DungeonPosentranceCodec(this.codecType, this.registry);
 		}
 
 		@Override
@@ -206,7 +206,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 	public static final WormLayer example(DungeonGenerator generator) {
 		return new WormLayer(
 			generator,
-			new DungeonPos[]{DungeonPos.EMPTY_ENTERANCE, DungeonPos.EMPTY_ENTERANCE}, 
+			new DungeonPos[]{DungeonPos.EMPTY_entrance, DungeonPos.EMPTY_entrance}, 
 			WormDungeonStepChances.INSTANCE, 
 			new DungeonChances(20, 15, 10, 5, 0, 0, 1, 5, 0, 0), 
 			new DungeonChances(10, 4, 4, 4, 0, 0, 1, 1, 0, 0)

@@ -19,7 +19,7 @@
 							"y": 0,
 							"z": 0
 						},
-						"enterance": true
+						"entrance": true
 					},
 					{
 						"pos": {
@@ -27,7 +27,7 @@
 							"y": 0,
 							"z": 0
 						},
-						"enterance": true
+						"entrance": true
 					}
 				],
 				"stepChances": {
@@ -1781,7 +1781,7 @@
 				{
 					"connections": {"north": true},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1790,7 +1790,7 @@
 						"south": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1800,7 +1800,7 @@
 						"west": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1811,7 +1811,7 @@
 						"east": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1821,7 +1821,7 @@
 						"east": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1830,7 +1830,7 @@
 						"west": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1840,7 +1840,7 @@
 						"east": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1849,13 +1849,13 @@
 						"east": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
 					"connections": {"south": true},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1864,7 +1864,7 @@
 						"west": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1874,7 +1874,7 @@
 						"east": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1883,13 +1883,13 @@
 						"east": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
 					"connections": {"west": true},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
@@ -1898,13 +1898,13 @@
 						"east": true
 					},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				},
 				{
 					"connections": {"east": true},
 					"layerRange": {},
-					"enterance": true,
+					"entrance": true,
 					"value": "center"
 				}
 			],
@@ -1914,136 +1914,136 @@
 			"features": [
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "1",
 					"count": 3
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "2"
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "3",
 					"count": 3
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": false,
 					"value": "4",
 					"count": 3
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": false,
 					"value": "5"
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "6",
 					"count": 1
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "7",
 					"count": 2
 				},
 				{
 					"layerRange": {},
-					"enterance": "TRUE",
+					"entrance": "TRUE",
 					"softRequire": false,
 					"value": "8"
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "9",
 					"count": 3
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "10",
 					"count": 1
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "11",
 					"count": 3
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "12",
 					"count": 2
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": false,
 					"value": "13",
 					"count": 2
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "14"
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "15",
 					"count": 2
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "16",
 					"count": 2
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": false,
 					"value": "17",
 					"count": 1
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "18",
 					"count": 3
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "19",
 					"count": 2
 				},
 				{
 					"layerRange": {},
-					"enterance": "FALSE",
+					"entrance": "FALSE",
 					"softRequire": true,
 					"value": "20",
 					"count": 1

@@ -336,10 +336,10 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		}
 	}
 
-	public record RoomVariant(@DefaultJsonCodec(RoomVariantFieldJsonAdapter.class) @JsonAlias("connections") Set<Object2BooleanArrayMap<Direction>> directionVariants, @SkipSerialization(predicate = RoomLayerFiltersNullPredicate.class) RoomLayerFilters layerRange, @SkipSerialization boolean enterance, DungeonKeySupplier value, @SkipSerialization(predicate = DungeonInfoCountHolderNullPredicate.class) DungeonInfoCountHolder count) implements IDungeonLimitedCount {
+	public record RoomVariant(@DefaultJsonCodec(RoomVariantFieldJsonAdapter.class) @JsonAlias("connections") Set<Object2BooleanArrayMap<Direction>> directionVariants, @SkipSerialization(predicate = RoomLayerFiltersNullPredicate.class) RoomLayerFilters layerRange, @SkipSerialization boolean entrance, DungeonKeySupplier value, @SkipSerialization(predicate = DungeonInfoCountHolderNullPredicate.class) DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
-		public RoomVariant(Object2BooleanArrayMap<Direction> directionVariants, RoomLayerFilters layerRange, boolean enterance, DungeonKeySupplier value, DungeonInfoCountHolder count) {
-			this(new LinkedHashSet<>(), layerRange, enterance, value, count);
+		public RoomVariant(Object2BooleanArrayMap<Direction> directionVariants, RoomLayerFilters layerRange, boolean entrance, DungeonKeySupplier value, DungeonInfoCountHolder count) {
+			this(new LinkedHashSet<>(), layerRange, entrance, value, count);
 			if (!directionVariants.isEmpty()) {
 				this.directionVariants.add(new Object2BooleanArrayMap<>(directionVariants));
 				Object2BooleanArrayMap<Direction> baseVariants = new Object2BooleanArrayMap<>();
@@ -367,7 +367,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		}
 
 		public final boolean test(RoomLayer layer, DungeonRoomInfo room) {
-			if (this.enterance == room.isEnterance() && this.layerRange.test(layer.random(), layer.getRoomValues(room))) {
+			if (this.entrance == room.isentrance() && this.layerRange.test(layer.random(), layer.getRoomValues(room))) {
 				if (this.directionVariants.iterator().next().values().stream().filter(e -> e).count() != room.connectCount(true)) {
 					return false;
 				}
@@ -386,7 +386,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		}
 
 		public final RoomVariant copy() {
-			return new RoomVariant(this.directionVariants, this.layerRange, this.enterance, this.value, this.count.copy());
+			return new RoomVariant(this.directionVariants, this.layerRange, this.entrance, this.value, this.count.copy());
 		}
 
 		@Override
@@ -396,8 +396,8 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 			if (!this.layerRange.isNull()) {
 				builder.append(String.format(",baseLayerRange:%s", this.layerRange));
 			}
-			if (this.enterance) {
-				builder.append(",enterance");
+			if (this.entrance) {
+				builder.append(",entrance");
 			}
 			builder.append(String.format(",value:%s", this.value));
 			if (!this.isUnlimitedCount()) {
@@ -446,14 +446,14 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 			public RoomLayer withDungeon(DungeonGenerator generator) {
 				this.isEmpty("room variants", this.rooms);
 				this.lessThan("softChance", this.softChance, -1);
-				RoomVariant[] roomsVariants = Stream.of(this.rooms).map(e -> new RoomVariant(e.connections.map(), e.layerRange, e.enterance, e.value, e.count)).toArray(RoomVariant[]::new);
+				RoomVariant[] roomsVariants = Stream.of(this.rooms).map(e -> new RoomVariant(e.connections.map(), e.layerRange, e.entrance, e.value, e.count)).toArray(RoomVariant[]::new);
 				return new RoomLayer(generator, this.softChance, roomsVariants);
 			}
 		}
 
 		private static class RoomVariantData implements JsonPostDeserializeCall, IDungeonJsonAdapter {
 			public ConnectionsData connections = new ConnectionsData();
-			public boolean enterance = false;
+			public boolean entrance = false;
 			public DungeonInfoCountHolder count = DungeonInfoCountHolder.NULL;
 	
 			public DungeonKeySupplier value;
@@ -627,22 +627,22 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 			Set<Direction> s1 = new HashSet<>();
 			s1.add(d1);
 			if (filter.add(s1)) {
-				rooms.add(exampleEnterance(s1));
+				rooms.add(exampleentrance(s1));
 				for (Direction d2 : dir) {
 					Set<Direction> s2 = new HashSet<>(s1);
 					s2.add(d2);
 					if (filter.add(s2)) {
-						rooms.add(exampleEnterance(s2));
+						rooms.add(exampleentrance(s2));
 						for (Direction d3 : dir) {
 							Set<Direction> s3 = new HashSet<>(s2);
 							s3.add(d3);
 							if (filter.add(s3)) {
-								rooms.add(exampleEnterance(s3));
+								rooms.add(exampleentrance(s3));
 								for (Direction d4 : dir) {
 									Set<Direction> s4 = new HashSet<>(s3);
 									s4.add(d4);
 									if (filter.add(s4)) {
-										rooms.add(exampleEnterance(s4));
+										rooms.add(exampleentrance(s4));
 									}
 								}
 							}
@@ -668,7 +668,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		return new RoomLayer(generator, 50, rooms);
 	}
 
-	private static final RoomVariant exampleEnterance(Set<Direction> direction) {
+	private static final RoomVariant exampleentrance(Set<Direction> direction) {
 		Object2BooleanArrayMap<Direction> directions = new Object2BooleanArrayMap<>();
 		for (Direction d : direction) {
 			directions.put(d, true);
