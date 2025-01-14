@@ -375,9 +375,7 @@
 		{"room": {
 			"rooms": [
 				{
-					"enterance": false,
 					"count": 5,
-					"layerRange": [],
 					"value": "1",
 					"connections": {
 						"east": true,
@@ -386,9 +384,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "2",
 					"connections": {
 						"south": true,
@@ -396,23 +391,15 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "3",
 					"connections": {"east": true}
 				},
 				{
-					"enterance": false,
 					"count": 3,
-					"layerRange": [],
 					"value": "4",
 					"connections": {"south": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "5",
 					"connections": {
 						"east": true,
@@ -421,16 +408,11 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "6",
 					"connections": {"east": true}
 				},
 				{
-					"enterance": false,
 					"count": 3,
-					"layerRange": [],
 					"value": "7",
 					"connections": {
 						"east": false,
@@ -438,9 +420,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 2,
-					"layerRange": [],
 					"value": "8",
 					"connections": {
 						"east": true,
@@ -450,9 +430,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 3,
-					"layerRange": [],
 					"value": "9",
 					"connections": {
 						"east": true,
@@ -462,16 +440,11 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 4,
-					"layerRange": [],
 					"value": "10",
 					"connections": {"north": false}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "11",
 					"connections": {
 						"east": true,
@@ -480,9 +453,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "12",
 					"connections": {
 						"east": true,
@@ -491,9 +461,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 3,
-					"layerRange": [],
 					"value": "13",
 					"connections": {
 						"east": true,
@@ -503,23 +471,15 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "14",
 					"connections": {"south": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "15",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
 					"count": 2,
-					"layerRange": [],
 					"value": "16",
 					"connections": {
 						"east": true,
@@ -529,16 +489,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "17",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "18",
 					"connections": {
 						"east": true,
@@ -548,9 +502,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "19",
 					"connections": {
 						"east": false,
@@ -558,9 +509,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "20",
 					"connections": {
 						"east": true,
@@ -568,9 +516,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "21",
 					"connections": {
 						"east": false,
@@ -579,16 +524,11 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
-					"layerRange": [],
 					"value": "22",
 					"connections": {"east": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "23",
 					"connections": {
 						"east": true,
@@ -597,16 +537,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "24",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "25",
 					"connections": {
 						"east": true,
@@ -614,9 +548,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
-					"layerRange": [],
 					"value": "26",
 					"connections": {
 						"south": true,
@@ -624,16 +556,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "27",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "28",
 					"connections": {
 						"east": true,
@@ -643,16 +569,11 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 2,
-					"layerRange": [],
 					"value": "29",
 					"connections": {"west": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "30",
 					"connections": {
 						"east": true,
@@ -662,9 +583,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "31",
 					"connections": {
 						"east": true,
@@ -674,9 +592,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "32",
 					"connections": {
 						"east": true,
@@ -685,16 +600,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "33",
 					"connections": {"west": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "34",
 					"connections": {
 						"east": true,
@@ -702,9 +611,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "35",
 					"connections": {
 						"south": false,
@@ -712,9 +618,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
-					"layerRange": [],
 					"value": "36",
 					"connections": {
 						"south": true,
@@ -723,16 +627,11 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 3,
-					"layerRange": [],
 					"value": "37",
 					"connections": {"west": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "38",
 					"connections": {
 						"south": true,
@@ -740,9 +639,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "39",
 					"connections": {
 						"east": true,
@@ -751,9 +647,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "40",
 					"connections": {
 						"east": false,
@@ -762,16 +655,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "41",
 					"connections": {"west": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "42",
 					"connections": {
 						"east": true,
@@ -780,9 +667,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "43",
 					"connections": {
 						"east": true,
@@ -790,16 +674,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "44",
 					"connections": {"east": false}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "45",
 					"connections": {
 						"south": true,
@@ -808,9 +686,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "46",
 					"connections": {
 						"east": true,
@@ -819,16 +694,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "47",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "48",
 					"connections": {
 						"north": true,
@@ -836,9 +705,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "49",
 					"connections": {
 						"east": true,
@@ -846,16 +712,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "50",
 					"connections": {"west": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "51",
 					"connections": {
 						"east": true,
@@ -864,16 +724,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "52",
 					"connections": {"east": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "53",
 					"connections": {
 						"east": true,
@@ -883,9 +737,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "54",
 					"connections": {
 						"east": true,
@@ -894,9 +745,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "55",
 					"connections": {
 						"south": true,
@@ -905,9 +753,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "56",
 					"connections": {
 						"east": false,
@@ -916,9 +761,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "57",
 					"connections": {
 						"east": true,
@@ -928,9 +770,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 2,
-					"layerRange": [],
 					"value": "58",
 					"connections": {
 						"south": true,
@@ -939,23 +779,14 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "59",
 					"connections": {"north": false}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "60",
 					"connections": {"east": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "61",
 					"connections": {
 						"east": false,
@@ -964,9 +795,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "62",
 					"connections": {
 						"east": true,
@@ -976,16 +804,11 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 3,
-					"layerRange": [],
 					"value": "63",
 					"connections": {"west": false}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "64",
 					"connections": {
 						"east": true,
@@ -995,16 +818,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "65",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "66",
 					"connections": {
 						"east": true,
@@ -1014,7 +831,6 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
 					"layerRange": [{"distance": {"value": {"min": 5}}}],
 					"value": "67_boss",
@@ -1026,7 +842,6 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
 					"layerRange": [{"distance": {"value": {"min": 5}}}],
 					"value": "68_boss",
@@ -1036,9 +851,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "69",
 					"connections": {
 						"south": false,
@@ -1046,9 +858,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "70",
 					"connections": {
 						"east": true,
@@ -1057,9 +866,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 3,
-					"layerRange": [],
 					"value": "71",
 					"connections": {
 						"south": true,
@@ -1068,9 +875,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "72",
 					"connections": {
 						"east": true,
@@ -1080,9 +884,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "73",
 					"connections": {
 						"east": false,
@@ -1091,9 +892,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
-					"layerRange": [],
 					"value": "74",
 					"connections": {
 						"east": true,
@@ -1103,7 +902,6 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
 					"layerRange": [{"distance": {"value": {"min": 5}}}],
 					"value": "75_boss",
@@ -1113,9 +911,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "76",
 					"connections": {
 						"east": false,
@@ -1124,9 +919,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 2,
-					"layerRange": [],
 					"value": "77",
 					"connections": {
 						"south": true,
@@ -1134,9 +927,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "78",
 					"connections": {
 						"south": true,
@@ -1144,9 +934,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 4,
-					"layerRange": [],
 					"value": "79",
 					"connections": {
 						"east": true,
@@ -1156,9 +944,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "80",
 					"connections": {
 						"east": true,
@@ -1167,23 +952,14 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "81",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "82",
 					"connections": {"east": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "83",
 					"connections": {
 						"east": false,
@@ -1191,9 +967,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "84",
 					"connections": {
 						"east": true,
@@ -1202,9 +975,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "85",
 					"connections": {
 						"south": true,
@@ -1212,9 +982,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "86",
 					"connections": {
 						"east": true,
@@ -1223,9 +990,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 4,
-					"layerRange": [],
 					"value": "87",
 					"connections": {
 						"south": true,
@@ -1234,16 +999,11 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 3,
-					"layerRange": [],
 					"value": "88",
 					"connections": {"east": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "89",
 					"connections": {
 						"south": true,
@@ -1251,9 +1011,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 5,
-					"layerRange": [],
 					"value": "90",
 					"connections": {
 						"east": true,
@@ -1262,23 +1020,15 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "91",
 					"connections": {"south": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "92",
 					"connections": {"south": false}
 				},
 				{
-					"enterance": false,
 					"count": 4,
-					"layerRange": [],
 					"value": "93",
 					"connections": {
 						"east": true,
@@ -1288,9 +1038,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "94",
 					"connections": {
 						"east": false,
@@ -1299,9 +1046,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 2,
-					"layerRange": [],
 					"value": "95",
 					"connections": {
 						"east": true,
@@ -1311,9 +1056,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "96",
 					"connections": {
 						"east": false,
@@ -1322,16 +1064,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "97",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "98",
 					"connections": {
 						"east": true,
@@ -1341,9 +1077,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 2,
-					"layerRange": [],
 					"value": "99",
 					"connections": {
 						"east": true,
@@ -1353,9 +1087,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "100",
 					"connections": {
 						"east": true,
@@ -1365,9 +1096,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "101",
 					"connections": {
 						"south": true,
@@ -1375,9 +1103,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 3,
-					"layerRange": [],
 					"value": "102",
 					"connections": {
 						"east": true,
@@ -1387,9 +1113,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "103",
 					"connections": {
 						"east": true,
@@ -1398,9 +1121,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "104",
 					"connections": {
 						"east": true,
@@ -1409,9 +1129,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 4,
-					"layerRange": [],
 					"value": "105",
 					"connections": {
 						"east": true,
@@ -1421,16 +1139,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "106",
 					"connections": {"north": false}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "107",
 					"connections": {
 						"east": true,
@@ -1439,16 +1151,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "108",
 					"connections": {"south": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "109",
 					"connections": {
 						"east": true,
@@ -1458,9 +1164,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "110",
 					"connections": {
 						"east": true,
@@ -1470,9 +1173,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 4,
-					"layerRange": [],
 					"value": "111",
 					"connections": {
 						"north": true,
@@ -1480,9 +1181,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "112",
 					"connections": {
 						"south": true,
@@ -1490,9 +1188,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "113",
 					"connections": {
 						"south": true,
@@ -1501,7 +1196,6 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
 					"layerRange": [{"distance": {"value": {"min": 5}}}],
 					"value": "114_boss",
@@ -1511,9 +1205,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "115",
 					"connections": {
 						"south": true,
@@ -1522,16 +1213,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "116",
 					"connections": {"south": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "117",
 					"connections": {
 						"south": true,
@@ -1540,9 +1225,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "118",
 					"connections": {
 						"south": false,
@@ -1551,9 +1233,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "119",
 					"connections": {
 						"east": true,
@@ -1563,16 +1242,13 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
 					"layerRange": [{"distance": {"value": {"min": 5}}}],
 					"value": "120_boss",
 					"connections": {"east": false}
 				},
 				{
-					"enterance": false,
 					"count": 4,
-					"layerRange": [],
 					"value": "121",
 					"connections": {
 						"east": false,
@@ -1581,9 +1257,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "122",
 					"connections": {
 						"east": true,
@@ -1593,9 +1266,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "123",
 					"connections": {
 						"east": true,
@@ -1605,9 +1275,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "124",
 					"connections": {
 						"east": true,
@@ -1616,9 +1283,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "125",
 					"connections": {
 						"east": true,
@@ -1628,9 +1292,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 2,
-					"layerRange": [],
 					"value": "126",
 					"connections": {
 						"east": true,
@@ -1640,9 +1302,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "127",
 					"connections": {
 						"east": false,
@@ -1651,9 +1310,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "128",
 					"connections": {
 						"east": false,
@@ -1661,9 +1317,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 2,
-					"layerRange": [],
 					"value": "129",
 					"connections": {
 						"east": true,
@@ -1671,16 +1325,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "130",
 					"connections": {"east": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "131",
 					"connections": {
 						"east": false,
@@ -1689,16 +1337,10 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "132",
 					"connections": {"west": false}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "133",
 					"connections": {
 						"east": true,
@@ -1708,9 +1350,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "134",
 					"connections": {
 						"east": true,
@@ -1720,9 +1359,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "135",
 					"connections": {
 						"south": false,
@@ -1730,9 +1366,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "136",
 					"connections": {
 						"east": true,
@@ -1741,7 +1374,6 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
 					"layerRange": [{"distance": {"value": {"min": 5}}}],
 					"value": "137_boss",
@@ -1751,9 +1383,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "138",
 					"connections": {
 						"east": false,
@@ -1761,23 +1390,15 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "139",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
 					"count": 1,
-					"layerRange": [],
 					"value": "140",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "141",
 					"connections": {
 						"east": false,
@@ -1785,7 +1406,6 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 1,
 					"layerRange": [{"distance": {"value": {"min": 5}}}],
 					"value": "142_boss",
@@ -1797,9 +1417,7 @@
 					}
 				},
 				{
-					"enterance": false,
 					"count": 5,
-					"layerRange": [],
 					"value": "143",
 					"connections": {
 						"south": false,
@@ -1808,9 +1426,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "144",
 					"connections": {
 						"east": true,
@@ -1819,23 +1434,14 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "145",
 					"connections": {"south": true}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "146",
 					"connections": {"east": false}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "147",
 					"connections": {
 						"south": true,
@@ -1843,9 +1449,6 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "148",
 					"connections": {
 						"north": true,
@@ -1853,16 +1456,11 @@
 					}
 				},
 				{
-					"enterance": false,
-					"count": null,
-					"layerRange": [],
 					"value": "149",
 					"connections": {"north": true}
 				},
 				{
-					"enterance": false,
 					"count": 3,
-					"layerRange": [],
 					"value": "150",
 					"connections": {
 						"east": true,
@@ -1872,15 +1470,11 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {"north": true}
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"south": true,
@@ -1889,8 +1483,6 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"south": true,
@@ -1900,8 +1492,6 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1912,8 +1502,6 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1923,8 +1511,6 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"north": true,
@@ -1933,8 +1519,6 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1944,8 +1528,6 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1954,15 +1536,11 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {"south": true}
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"south": true,
@@ -1971,8 +1549,6 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1982,8 +1558,6 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -1992,15 +1566,11 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {"west": true}
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {
 						"east": true,
@@ -2009,8 +1579,6 @@
 				},
 				{
 					"enterance": true,
-					"count": null,
-					"layerRange": [],
 					"value": "center",
 					"connections": {"east": true}
 				}
@@ -2022,140 +1590,111 @@
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 3,
-				"layerRange": [],
 				"value": "1"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
-				"count": null,
-				"layerRange": [],
 				"value": "2"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 3,
-				"layerRange": [],
 				"value": "3"
 			},
 			{
-				"softRequire": false,
 				"enterance": "FALSE",
 				"count": 3,
-				"layerRange": [],
 				"value": "4"
 			},
 			{
-				"softRequire": false,
 				"enterance": "FALSE",
-				"count": null,
-				"layerRange": [],
 				"value": "5"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 1,
-				"layerRange": [],
 				"value": "6"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 2,
-				"layerRange": [],
 				"value": "7"
 			},
 			{
-				"softRequire": false,
 				"enterance": "TRUE",
-				"count": null,
-				"layerRange": [],
 				"value": "8"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 3,
-				"layerRange": [],
 				"value": "9"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 1,
-				"layerRange": [],
 				"value": "10"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 3,
-				"layerRange": [],
 				"value": "11"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 2,
-				"layerRange": [],
 				"value": "12"
 			},
 			{
-				"softRequire": false,
 				"enterance": "FALSE",
 				"count": 2,
-				"layerRange": [],
 				"value": "13"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
-				"count": null,
-				"layerRange": [],
 				"value": "14"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 2,
-				"layerRange": [],
 				"value": "15"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 2,
-				"layerRange": [],
 				"value": "16"
 			},
 			{
-				"softRequire": false,
 				"enterance": "FALSE",
 				"count": 1,
-				"layerRange": [],
 				"value": "17"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 3,
-				"layerRange": [],
 				"value": "18"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 2,
-				"layerRange": [],
 				"value": "19"
 			},
 			{
 				"softRequire": true,
 				"enterance": "FALSE",
 				"count": 1,
-				"layerRange": [],
 				"value": "20"
 			}
 		]}},

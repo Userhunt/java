@@ -12,6 +12,7 @@ import java.util.stream.Stream;
 
 import net.skds.lib2.io.json.JsonPostDeserializeCall;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.annotation.SkipSerialization;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.w3e.lib.TFNStateEnum;
@@ -24,7 +25,9 @@ import net.w3e.wlib.dungeon.json.IDungeonJsonAdapter;
 import net.w3e.wlib.dungeon.json.ILayerData;
 import net.w3e.wlib.dungeon.layers.RoomLayer.RoomData;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters;
+import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters.RoomLayerFiltersNullPredicate;
 import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder;
+import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder.DungeonInfoCountHolderNullPredicate;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLimitedCount;
 import net.w3e.wlib.log.LogUtil;
@@ -202,7 +205,7 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 		}
 	}
 
-	public record FeatureVariant(RoomLayerFilters layerRange, TFNStateEnum enterance, boolean softRequire, DungeonKeySupplier value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
+	public record FeatureVariant(@SkipSerialization(predicate = RoomLayerFiltersNullPredicate.class) RoomLayerFilters layerRange, TFNStateEnum enterance, @SkipSerialization boolean softRequire, DungeonKeySupplier value, @SkipSerialization(predicate = DungeonInfoCountHolderNullPredicate.class) DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
 		public final boolean notValid() {
 			return this.layerRange.notValid();
@@ -244,7 +247,7 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 		}
 	}
 
-	private static class FeatureLayerJsonAdapter extends JsonReflectiveBuilderCodec<FeatureLayerJsonAdapter.FeatureLayerData> {
+	static class FeatureLayerJsonAdapter extends JsonReflectiveBuilderCodec<FeatureLayerJsonAdapter.FeatureLayerData> {
 
 		public FeatureLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, FeatureLayerData.class, registry);

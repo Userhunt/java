@@ -27,7 +27,7 @@ public class IntData {
 		return String.format("{min:%s,max:%s}", min, max);
 	}
 
-	private static class IntDataJsonAdapter extends AbstractJsonCodec<IntData> {
+	static class IntDataJsonAdapter extends AbstractJsonCodec<IntData> {
 
 		private final JsonCodec<IntDataA> reader;
 

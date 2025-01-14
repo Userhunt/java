@@ -53,7 +53,7 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 		}
 	}
 
-	private static class CompositeTerraLayerJsonAdapter extends JsonReflectiveBuilderCodec<CompositeTerraLayerJsonAdapter.CompositeTerraLayerData> {
+	static class CompositeTerraLayerJsonAdapter extends JsonReflectiveBuilderCodec<CompositeTerraLayerJsonAdapter.CompositeTerraLayerData> {
 
 		public CompositeTerraLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, CompositeTerraLayerData.class, registry);

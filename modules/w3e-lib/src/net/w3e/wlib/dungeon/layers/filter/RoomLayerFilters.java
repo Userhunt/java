@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Predicate;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,6 +20,7 @@ import net.skds.lib2.io.json.codec.JsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.BuiltinCodecFactory.ArrayCodec;
 import net.skds.lib2.utils.ArrayUtils;
+import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -57,7 +59,7 @@ public class RoomLayerFilters implements JsonPostDeserializeCall {
 		this.values.removeIf((e) -> e == null);
 	}
 
-	private static class RoomLayerFiltersJsonAdapter extends AbstractJsonCodec<RoomLayerFilters> {
+	static class RoomLayerFiltersJsonAdapter extends AbstractJsonCodec<RoomLayerFilters> {
 
 		private final JsonCodec<RoomLayerFilter<?>> codec;
 		private final RoomLayerFilter<?>[] array = ArrayUtils.createGenericArray(RoomLayerFilter.class, 0);
@@ -81,5 +83,12 @@ public class RoomLayerFilters implements JsonPostDeserializeCall {
 			return new RoomLayerFilters(Collections.unmodifiableList(filters));
 		}
 		
+	}
+
+	public static class RoomLayerFiltersNullPredicate implements Predicate<RoomLayerFilters> {
+		@Override
+		public boolean test(RoomLayerFilters t) {
+			return t.values.isEmpty();
+		}
 	}
 }

@@ -25,6 +25,7 @@ import net.skds.lib2.io.json.JsonPostDeserializeCall;
 import net.skds.lib2.io.json.JsonWriter;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.annotation.JsonAlias;
+import net.skds.lib2.io.json.annotation.SkipSerialization;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.io.json.codec.SerializeOnlyJsonCodec;
@@ -40,10 +41,12 @@ import net.w3e.wlib.dungeon.json.IDungeonJsonAdapter;
 import net.w3e.wlib.dungeon.json.ILayerData;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilter;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters;
+import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters.RoomLayerFiltersNullPredicate;
 import net.w3e.wlib.dungeon.layers.filter.types.DistanceRoomFilter;
 import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLimitedCount;
+import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder.DungeonInfoCountHolderNullPredicate;
 import net.w3e.wlib.log.LogUtil;
 
 @DefaultJsonCodec(RoomLayer.RoomLayerJsonAdapter.class)
@@ -333,7 +336,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		}
 	}
 
-	public record RoomVariant(@DefaultJsonCodec(RoomVariantFieldJsonAdapter.class) @JsonAlias("connections") Set<Object2BooleanArrayMap<Direction>> directionVariants, RoomLayerFilters layerRange, boolean enterance, DungeonKeySupplier value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
+	public record RoomVariant(@DefaultJsonCodec(RoomVariantFieldJsonAdapter.class) @JsonAlias("connections") Set<Object2BooleanArrayMap<Direction>> directionVariants, @SkipSerialization(predicate = RoomLayerFiltersNullPredicate.class) RoomLayerFilters layerRange, @SkipSerialization boolean enterance, DungeonKeySupplier value, @SkipSerialization(predicate = DungeonInfoCountHolderNullPredicate.class) DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
 		public RoomVariant(Object2BooleanArrayMap<Direction> directionVariants, RoomLayerFilters layerRange, boolean enterance, DungeonKeySupplier value, DungeonInfoCountHolder count) {
 			this(new LinkedHashSet<>(), layerRange, enterance, value, count);
@@ -427,7 +430,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		return name;
 	}
 
-	private static class RoomLayerJsonAdapter extends JsonReflectiveBuilderCodec<RoomLayerJsonAdapter.RoomLayerData> {
+	static class RoomLayerJsonAdapter extends JsonReflectiveBuilderCodec<RoomLayerJsonAdapter.RoomLayerData> {
 
 		public RoomLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, RoomLayerData.class, registry);

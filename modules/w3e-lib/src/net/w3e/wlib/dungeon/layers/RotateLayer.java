@@ -141,7 +141,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 		return rotate(generator, rotation).getRooms();
 	}
 
-	private static class RotateLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<RotateLayerDataJsonAdapter.RotateLayerData> {
+	static class RotateLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<RotateLayerDataJsonAdapter.RotateLayerData> {
 
 		public RotateLayerDataJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, RotateLayerData.class, registry);

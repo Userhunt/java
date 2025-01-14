@@ -155,7 +155,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		}
 	}
 
-	private static class WormLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<WormLayerDataJsonAdapter.WormLayerData> {
+	static class WormLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<WormLayerDataJsonAdapter.WormLayerData> {
 
 		public WormLayerDataJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, WormLayerData.class, registry);

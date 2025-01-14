@@ -11,6 +11,7 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
+import net.skds.lib2.io.json.annotation.SkipSerialization;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.mat.Direction;
@@ -32,9 +33,11 @@ import net.w3e.wlib.dungeon.layers.ListLayer;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilter;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilterValues;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters;
+import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters.RoomLayerFiltersNullPredicate;
 import net.w3e.wlib.dungeon.layers.filter.types.TempRoomFilter;
 import net.w3e.wlib.dungeon.layers.filter.types.WetRoomFilter;
 import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder;
+import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder.DungeonInfoCountHolderNullPredicate;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLimitedCount;
 
@@ -216,7 +219,7 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 		}
 	}
 
-	public static record BiomeInfo(int weight, RoomLayerFilters layerRange, LayerRange impulse, DungeonKeySupplier value, DungeonInfoCountHolder count) implements IDungeonLimitedCount {
+	public static record BiomeInfo(int weight, @SkipSerialization(predicate = RoomLayerFiltersNullPredicate.class) RoomLayerFilters layerRange, LayerRange impulse, DungeonKeySupplier value, @SkipSerialization(predicate = DungeonInfoCountHolderNullPredicate.class) DungeonInfoCountHolder count) implements IDungeonLimitedCount {
 
 		public BiomeInfo(int weight, RoomLayerFilters layerRange, LayerRange impulse, DungeonKeySupplier value) {
 			this(weight, layerRange, impulse, value, DungeonInfoCountHolder.NULL);
@@ -235,7 +238,7 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 		}
 	}
 
-	private static class BiomeLayerJsonAdapter extends JsonReflectiveBuilderCodec<BiomeLayerJsonAdapter.BiomeLayerData> {
+	static class BiomeLayerJsonAdapter extends JsonReflectiveBuilderCodec<BiomeLayerJsonAdapter.BiomeLayerData> {
 
 		public BiomeLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, BiomeLayerData.class, registry);

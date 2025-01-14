@@ -2,6 +2,7 @@ package net.w3e.wlib.dungeon.layers.interfaces;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.function.Predicate;
 
 import net.skds.lib2.io.json.JsonEntryType;
 import net.skds.lib2.io.json.JsonReader;
@@ -62,6 +63,13 @@ public class DungeonInfoCountHolder extends IntHolder {
 				return DungeonInfoCountHolder.NULL;
 			}
 			return new DungeonInfoCountHolder(reader.readInt());
+		}
+	}
+
+	public static class DungeonInfoCountHolderNullPredicate implements Predicate<DungeonInfoCountHolder> {
+		@Override
+		public boolean test(DungeonInfoCountHolder t) {
+			return t.getValue() < 0;
 		}
 	}
 }

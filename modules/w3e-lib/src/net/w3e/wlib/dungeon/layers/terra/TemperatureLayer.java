@@ -26,7 +26,7 @@ public class TemperatureLayer extends NoiseLayer {
 	public static final int MIN = -25;
 	public static final int MAX = 35;
 
-	private static class TemperatureLayerJsonAdapter extends JsonReflectiveBuilderCodec<TemperatureLayerJsonAdapter.TemperatureLayerData> {
+	static class TemperatureLayerJsonAdapter extends JsonReflectiveBuilderCodec<TemperatureLayerJsonAdapter.TemperatureLayerData> {
 
 		public TemperatureLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, TemperatureLayerData.class, registry);

@@ -35,7 +35,7 @@ public class DifficultyLayer extends NoiseLayer {
 	public static final int MIN = 0;
 	public static final int MAX = 100;
 
-	private static class DifficultyLayerJsonAdapter extends JsonReflectiveBuilderCodec<DifficultyLayerJsonAdapter.DifficultyLayerData> {
+	static class DifficultyLayerJsonAdapter extends JsonReflectiveBuilderCodec<DifficultyLayerJsonAdapter.DifficultyLayerData> {
 
 		public DifficultyLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, DifficultyLayerData.class, registry);

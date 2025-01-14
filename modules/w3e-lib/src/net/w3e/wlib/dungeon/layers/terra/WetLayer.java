@@ -26,7 +26,7 @@ public class WetLayer extends NoiseLayer {
 	public static final int MIN = 0;
 	public static final int MAX = 100;
 
-	private static class WetLayerJsonAdapter extends JsonReflectiveBuilderCodec<WetLayerJsonAdapter.WetLayerData> {
+	static class WetLayerJsonAdapter extends JsonReflectiveBuilderCodec<WetLayerJsonAdapter.WetLayerData> {
 
 		public WetLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, WetLayerData.class, registry);

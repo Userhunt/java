@@ -61,7 +61,7 @@ public record LayerRange(int min, int max, @TransientComponent int range) implem
 		return new LayerRange(Math.min(a, b), Math.max(a, b));
 	}
 
-	private static class LayerRangeJsonCodec extends AbstractJsonCodec<LayerRange> {
+	static class LayerRangeJsonCodec extends AbstractJsonCodec<LayerRange> {
 
 		private final JsonCodec<LayerRangeData> reader;
 

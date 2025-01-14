@@ -140,7 +140,7 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 		}
 	}
 
-	private static class PathRepeatJsonAdapter extends JsonReflectiveBuilderCodec<PathRepeatLayerData<?>> {
+	static class PathRepeatJsonAdapter extends JsonReflectiveBuilderCodec<PathRepeatLayerData<?>> {
 
 		public PathRepeatJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, PathRepeatLayerData.class, registry);

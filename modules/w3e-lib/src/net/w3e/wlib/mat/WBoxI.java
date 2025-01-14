@@ -197,7 +197,7 @@ public class WBoxI {
 		return String.format("{min:[%s,%s,%s],max:[%s,%s,%s]}", this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
 	}
 
-	private static class WBoxIJsonAdapter extends JsonReflectiveBuilderCodec<WBoxI> {
+	static class WBoxIJsonAdapter extends JsonReflectiveBuilderCodec<WBoxI> {
 
 		public WBoxIJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, WBoxIData.class, registry);
