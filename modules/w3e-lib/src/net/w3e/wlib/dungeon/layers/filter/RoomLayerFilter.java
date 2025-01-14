@@ -5,7 +5,7 @@ import java.util.Random;
 import net.w3e.wlib.collection.MapT.MapTString;
 import net.w3e.wlib.dungeon.DungeonRegistryElement;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
-import net.w3e.wlib.dungeon.json.sasai.DungeonJsonAdapters;
+import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
 
 public abstract class RoomLayerFilter<V> extends DungeonRegistryElement {
 

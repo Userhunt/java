@@ -8,8 +8,8 @@ import java.util.function.Consumer;
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
+import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
 import net.w3e.wlib.dungeon.json.ILayerData;
-import net.w3e.wlib.dungeon.json.sasai.DungeonJsonAdapters;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilterValues;
 
 public abstract class DungeonLayer extends DungeonRegistryElement {
