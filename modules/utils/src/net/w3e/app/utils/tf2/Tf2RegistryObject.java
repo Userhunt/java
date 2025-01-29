@@ -3,41 +3,13 @@ package net.w3e.app.utils.tf2;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-
-import net.w3e.base.json.BJsonUtil;
-import net.w3e.base.json.adapters.WJsonAdapter;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
+import net.w3e.wlib.json.WJsonBuilder;
 
 public record Tf2RegistryObject(String id, String link, String image, String[] group) implements Tf2IconImpl {
 
 	private static final String[] GROUP = new String[]{"all"};
-
-	public static class Tf2Deserializer extends WJsonAdapter<Tf2RegistryObject> {
-
-		@Override
-		public Tf2RegistryObject deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-			JsonObject jsonObject = BJsonUtil.convertToJsonObject(json, "item");
-
-			String id = Tf2Screen.JSON.readString(jsonObject, "id", null);
-			if (id == null) {
-				throw new UnsupportedOperationException("id is null " + jsonObject);
-			}
-
-			String[] group = Tf2Screen.JSON.readArraySet(jsonObject, "group", new String[0], context, true).toArray(new String[0]);
-			if (group.length == 0) {
-				group = GROUP;
-			}
-
-			String link = Tf2Screen.JSON.readString(jsonObject, "link", id, false);
-
-			String image = Tf2Screen.JSON.readString(jsonObject, "image", null, false);
-
-			return new Tf2RegistryObject(id, link, image, group);
-		}
-	}
 
 	@Override
 	public final Tf2RegistryObject self() {
@@ -70,5 +42,29 @@ public record Tf2RegistryObject(String id, String link, String image, String[] g
 	@Override
 	public final String toString() {
 		return String.format("{class:%s,hash:%s,id:\"%s\",link:\"%s\",image:%s}", this.getClass().getSimpleName(), this.hashCode(), this.id, this.link, this.image != null);
+	}
+
+	static class JsonAdapter extends JsonReflectiveBuilderCodec<Tf2RegistryObject> {
+
+		public JsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, Tf2RegistryObjectData.class, registry);
+		}
+
+		private static class Tf2RegistryObjectData implements WJsonBuilder<Tf2RegistryObject> {
+
+			private String id;
+			private String[] group = GROUP;
+			private String link;
+			private String image;
+
+			@Override
+			public Tf2RegistryObject build() {
+				this.nonNull("id", this.id);
+				this.nonNull("link", this.link);
+				this.nonNull("image", this.image);
+				
+				return new Tf2RegistryObject(this.id, this.link, this.image, this.group);
+			}
+		}
 	}
 }

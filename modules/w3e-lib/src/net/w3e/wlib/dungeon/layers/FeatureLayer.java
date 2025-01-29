@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
-import net.skds.lib2.io.json.JsonPostDeserializeCall;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.annotation.SkipSerialization;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
@@ -21,13 +20,13 @@ import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.json.DungeonKeySupplier;
-import net.w3e.wlib.dungeon.json.IDungeonJsonAdapter;
 import net.w3e.wlib.dungeon.json.ILayerData;
 import net.w3e.wlib.dungeon.layers.RoomLayer.RoomData;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters.RoomLayerFiltersNullPredicate;
 import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder;
 import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder.DungeonInfoCountHolderNullPredicate;
+import net.w3e.wlib.json.WJsonBuilder;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLimitedCount;
 import net.w3e.wlib.log.LogUtil;
@@ -49,7 +48,7 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 	}
 
 	public FeatureLayer(DungeonGenerator generator, Collection<FeatureVariant> features) {
-		super(TYPE, generator);
+		super(JSON_MAP.FEATURE, generator);
 		this.features.addAll(features);
 		this.features.removeIf(FeatureVariant::notValid);
 	}
@@ -247,7 +246,7 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 		}
 	}
 
-	static class FeatureLayerJsonAdapter extends JsonReflectiveBuilderCodec<FeatureLayerJsonAdapter.FeatureLayerData> {
+	static class FeatureLayerJsonAdapter extends JsonReflectiveBuilderCodec<FeatureLayer> {
 
 		public FeatureLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, FeatureLayerData.class, registry);
@@ -258,23 +257,21 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 			@Override
 			public FeatureLayer withDungeon(DungeonGenerator generator) {
 				this.isEmpty("variants", this.features);
-				FeatureVariant[] featuresVariant = Stream.of(this.features).map(e -> {
-					TFNStateEnum entrance = e.entrance != null ? (e.entrance ? TFNStateEnum.TRUE : TFNStateEnum.FALSE) : TFNStateEnum.NOT_STATED;
-					return new FeatureVariant(e.layerRange, entrance, e.softRequire, e.value, e.count);
-				}).toArray(e -> new FeatureVariant[e]);
+				FeatureVariant[] featuresVariant = Stream.of(this.features).map(FeatureVariantData::build).toArray(e -> new FeatureVariant[e]);
 				return new FeatureLayer(generator, featuresVariant);
 			}
 		}
 
-		public static class FeatureVariantData implements JsonPostDeserializeCall, IDungeonJsonAdapter {
+		public static class FeatureVariantData implements WJsonBuilder<FeatureVariant> {
 			public Boolean entrance;
 			public boolean softRequire = false;
 			public DungeonInfoCountHolder count = DungeonInfoCountHolder.NULL;
 	
 			public DungeonKeySupplier value;
 			public RoomLayerFilters layerRange = RoomLayerFilters.NULL;
+
 			@Override
-			public void postDeserializedJson() {
+			public final FeatureVariant build() {
 				this.nonNull("layerRange", layerRange);
 				if (layerRange.notValid()) {
 					throw new IllegalStateException(LogUtil.ILLEGAL.createMsg("layerRange"));
@@ -283,6 +280,9 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 					this.lessThan("count", this.count.getValue());
 				}
 				this.nonNull("value", this.value);
+				
+				TFNStateEnum entrance = this.entrance != null ? (this.entrance ? TFNStateEnum.TRUE : TFNStateEnum.FALSE) : TFNStateEnum.NOT_STATED;
+				return new FeatureVariant(this.layerRange, entrance, this.softRequire, this.value, this.count);
 			}
 		}
 	}

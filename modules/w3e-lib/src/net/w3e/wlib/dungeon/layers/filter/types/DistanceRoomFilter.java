@@ -1,7 +1,6 @@
 package net.w3e.wlib.dungeon.layers.filter.types;
 
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
-import net.w3e.wlib.dungeon.layers.DistanceLayer;
 import net.w3e.wlib.dungeon.layers.LayerRange;
 
 public class DistanceRoomFilter extends LayerRangeRoomFilter {
@@ -11,7 +10,7 @@ public class DistanceRoomFilter extends LayerRangeRoomFilter {
 	}
 	
 	public DistanceRoomFilter(LayerRange range) {
-		super(DistanceLayer.KEY, range);
+		super(JSON_MAP.DISTANCE, range);
 	}
 
 	@Override

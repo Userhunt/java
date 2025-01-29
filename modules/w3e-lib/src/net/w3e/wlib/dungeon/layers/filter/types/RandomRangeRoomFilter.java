@@ -14,7 +14,7 @@ public class RandomRangeRoomFilter extends LayerRangeRoomFilter {
 	}
 	
 	public RandomRangeRoomFilter(LayerRange range) {
-		super(KEY, range);
+		super(JSON_MAP.RANDOM, range);
 	}
 
 	@Override

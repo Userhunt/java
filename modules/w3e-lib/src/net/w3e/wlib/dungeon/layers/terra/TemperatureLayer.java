@@ -15,7 +15,7 @@ public class TemperatureLayer extends NoiseLayer {
 	public static final String KEY = "temperature";
 
 	public TemperatureLayer(DungeonGenerator generator, NoiseData data, int stepRate, boolean fast) {
-		super(TYPE, generator, data.withKey(KEY), stepRate, fast);
+		super(JSON_MAP.TEMPERATURE, generator, data.withKey(KEY), stepRate, fast);
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class TemperatureLayer extends NoiseLayer {
 	public static final int MIN = -25;
 	public static final int MAX = 35;
 
-	static class TemperatureLayerJsonAdapter extends JsonReflectiveBuilderCodec<TemperatureLayerJsonAdapter.TemperatureLayerData> {
+	static class TemperatureLayerJsonAdapter extends JsonReflectiveBuilderCodec<TemperatureLayer> {
 
 		public TemperatureLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, TemperatureLayerData.class, registry);

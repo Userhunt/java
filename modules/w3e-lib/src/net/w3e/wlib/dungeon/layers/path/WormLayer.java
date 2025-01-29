@@ -43,7 +43,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 	private final transient List<DungeonPos>[] entries = CollectionUtils.createArrayOfList(DungeonPos.class, 2);
 
 	public WormLayer(DungeonGenerator generator, DungeonPos[] centers, WormDungeonStepChances stepChances, DungeonChances directionChances, DungeonChances connectionChances) {
-		super(TYPE, generator);
+		super(JSON_MAP.PATH_WORM, generator);
 		this.centers = centers;
 		this.stepChances = stepChances;
 		this.directionChances = directionChances;
@@ -155,7 +155,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		}
 	}
 
-	static class WormLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<WormLayerDataJsonAdapter.WormLayerData> {
+	static class WormLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<WormLayer> {
 
 		public WormLayerDataJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, WormLayerData.class, registry);

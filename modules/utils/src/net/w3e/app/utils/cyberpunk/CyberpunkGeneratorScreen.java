@@ -13,7 +13,7 @@ import java.util.zip.ZipOutputStream;
 import net.w3e.app.FrameObject;
 import net.w3e.app.MainFrame;
 import net.w3e.app.api.window.FrameWin;
-import net.w3e.base.json.FileUtil;
+import net.w3e.lib.utils.FileUtils;
 
 public class CyberpunkGeneratorScreen extends FrameObject {
 
@@ -72,8 +72,8 @@ public class CyberpunkGeneratorScreen extends FrameObject {
 			}
 			""", pages
 		);
-		FileUtil.writeString(new File("C:\\Games\\cyberpunk\\Cyberpunk 2077\\r6\\scripts\\W3ECyberware\\W3ECyberware-atelier-store.reds"), result);
-		FileUtil.writeString(new File("cyberpunk\\W3ECyberware-atelier-store.reds"), result);
+		FileUtils.save(new File("C:\\Games\\cyberpunk\\Cyberpunk 2077\\r6\\scripts\\W3ECyberware\\W3ECyberware-atelier-store.reds"), result.getBytes());
+		FileUtils.save(new File("cyberpunk\\W3ECyberware-atelier-store.reds"), result.getBytes());
 
 		{
 			File f = new File("cyberpunk\\w3e_shop.zip");

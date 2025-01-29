@@ -5,6 +5,7 @@ import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.layers.ISetupLayer;
 import net.w3e.wlib.dungeon.layers.ListLayer;
+import net.w3e.wlib.json.WJsonTypedTypeAdapter;
 
 public abstract class TerraLayer<T> extends ListLayer<DungeonRoomInfo> implements ISetupLayer {
 
@@ -13,8 +14,8 @@ public abstract class TerraLayer<T> extends ListLayer<DungeonRoomInfo> implement
 	protected final int stepRate;
 	protected final boolean fast;
 
-	public TerraLayer(String keyName, DungeonGenerator generator, String defKey, T defValue, int stepRate, boolean fast) {
-		super(keyName, generator);
+	public TerraLayer(WJsonTypedTypeAdapter<? extends TerraLayer<T>> configType, DungeonGenerator generator, String defKey, T defValue, int stepRate, boolean fast) {
+		super(configType, generator);
 		this.defKey = defKey;
 		this.defValue = defValue;
 		this.stepRate = stepRate;

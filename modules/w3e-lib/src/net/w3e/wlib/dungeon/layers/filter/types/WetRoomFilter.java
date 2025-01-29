@@ -1,7 +1,6 @@
 package net.w3e.wlib.dungeon.layers.filter.types;
 
 import net.w3e.wlib.dungeon.layers.LayerRange;
-import net.w3e.wlib.dungeon.layers.terra.WetLayer;
 
 public class WetRoomFilter extends LayerRangeRoomFilter {
 
@@ -10,7 +9,7 @@ public class WetRoomFilter extends LayerRangeRoomFilter {
 	}
 	
 	public WetRoomFilter(LayerRange range) {
-		super(WetLayer.KEY, range);
+		super(JSON_MAP.WET, range);
 	}
 
 	@Override

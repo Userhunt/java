@@ -1,0 +1,24 @@
+[
+	{
+		"type": "java",
+		"name": "Oba",
+		"request": "launch",
+		"cwd": "${workspaceFolder}/run",
+		"console": "internalConsole",
+		"stopOnEntry": false,
+		"mainClass": "net.home.oba.OneBitAdventure",
+		"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
+		"args": "key=OBA display=[map,path,reward,base,step] play=false"
+	},
+	{
+		"type": "java",
+		"name": "Oba2",
+		"request": "launch",
+		"cwd": "${workspaceFolder}/run",
+		"console": "internalConsole",
+		"stopOnEntry": false,
+		"mainClass": "net.home.oba2.OneBitAdventure",
+		"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
+		"args": "key=OBA"
+	}
+]

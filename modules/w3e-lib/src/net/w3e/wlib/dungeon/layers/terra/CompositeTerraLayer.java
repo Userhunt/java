@@ -22,7 +22,7 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 	private final TerraLayer<?>[] layers;
 
 	public CompositeTerraLayer(DungeonGenerator generator, int stepRate, boolean fast, TerraLayer<?>... layers) {
-		super(TYPE, generator, null, null, stepRate, fast);
+		super(JSON_MAP.COMPOSITE, generator, null, null, stepRate, fast);
 		this.layers = layers;
 	}
 
@@ -53,7 +53,7 @@ public class CompositeTerraLayer extends TerraLayer<Object> {
 		}
 	}
 
-	static class CompositeTerraLayerJsonAdapter extends JsonReflectiveBuilderCodec<CompositeTerraLayerJsonAdapter.CompositeTerraLayerData> {
+	static class CompositeTerraLayerJsonAdapter extends JsonReflectiveBuilderCodec<CompositeTerraLayer> {
 
 		public CompositeTerraLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, CompositeTerraLayerData.class, registry);

@@ -9,9 +9,8 @@ import net.skds.lib2.mat.Vec3I;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
-import net.w3e.wlib.dungeon.json.IDungeonJsonAdapter;
 
-public class DistanceLayer extends ListLayer<DungeonRoomInfo> implements IDungeonJsonAdapter {
+public class DistanceLayer extends ListLayer<DungeonRoomInfo> {
 
 	public static final String TYPE = "distance";
 	public static final String KEY = "distance";
@@ -20,11 +19,11 @@ public class DistanceLayer extends ListLayer<DungeonRoomInfo> implements IDungeo
 	 * json
 	 */
 	private DistanceLayer() {
-		super(TYPE, null);
+		super(JSON_MAP.DISTANCE, null);
 	}
 
 	public DistanceLayer(DungeonGenerator generator) {
-		super(TYPE, generator);
+		super(JSON_MAP.DISTANCE, generator);
 	}
 
 	@Override

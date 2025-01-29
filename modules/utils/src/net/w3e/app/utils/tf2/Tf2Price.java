@@ -7,10 +7,12 @@ import java.net.http.HttpResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
+import lombok.CustomLog;
 import net.w3e.app.FrameObject;
 import net.w3e.app.api.ApiSharedConstant;
 import net.w3e.app.api.window.IBackgroundExecutor;
 
+@CustomLog
 public record Tf2Price(Tf2RegistryObject reg, float weapon, float kit, float profit) implements Tf2IconImpl, Comparable<Tf2Price> {
 
 	private static final String SELECTOR = ">div[class=\"market_listing_price_listings_block\"]>div[class=\"market_listing_right_cell market_listing_their_price\"]>span[class=\"market_table_value normal_price\"]>span[class=\"normal_price\"]";
@@ -71,7 +73,7 @@ public record Tf2Price(Tf2RegistryObject reg, float weapon, float kit, float pro
 				return new Tf2Price(reg, weapon, kit, weapon - kit * 1.15f);
 			}
 		} catch (Exception e) {
-			Tf2Screen.JSON.logger().warn(reg);
+			log.warn(reg);
 			System.out.println(uri);
 			if ((e instanceof IndexOutOfBoundsException) || (e instanceof NullPointerException)) {
 				if (e instanceof IndexOutOfBoundsException) {

@@ -36,7 +36,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 	private final transient List<DungeonLayer> layers = new ArrayList<>();
 
 	public RotateLayer(DungeonGenerator generator, Direction rotation) {
-		super(TYPE, generator);
+		super(JSON_MAP.ROTATE, generator);
 		this.rotation = rotation;
 	}
 
@@ -141,7 +141,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 		return rotate(generator, rotation).getRooms();
 	}
 
-	static class RotateLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<RotateLayerDataJsonAdapter.RotateLayerData> {
+	static class RotateLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<RotateLayer> {
 
 		public RotateLayerDataJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, RotateLayerData.class, registry);

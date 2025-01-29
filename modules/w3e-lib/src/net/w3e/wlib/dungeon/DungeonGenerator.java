@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import net.skds.lib2.io.json.JsonUtils;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
@@ -141,7 +142,7 @@ public class DungeonGenerator {
 	}
 
 	public final RoomLayerFilterValues getRoomValues(DungeonRoomInfo room) {
-		return DungeonJsonAdapters.INSTANCE.roomFilter.createFilters(room);
+		return DungeonJsonAdapters.INSTANCE.roomFilterAdapters.createFilters(room);
 	}
 
 	public final void forEach(Consumer<DungeonRoomCreateInfo> function, boolean createIfNotExists) {
@@ -275,7 +276,8 @@ public class DungeonGenerator {
 	}
 
 	public final List<DungeonLayer> layers() {
-		return this.layers.stream().map(e -> e.create(this)).toList();
+		Stream<DungeonLayer> stream = this.layers.stream().map(e -> e.create(this));
+		return stream.toList();
 	}
 
 	public static final SimpleCollectionBuilder<DungeonLayerFactory, ArrayList<DungeonLayerFactory>> factoryCollectionBuilder() {
@@ -287,7 +289,7 @@ public class DungeonGenerator {
 		SimpleCollectionBuilder<DungeonLayerFactory, ArrayList<DungeonLayerFactory>> layers = factoryCollectionBuilder().add(
 			// path
 			gen -> PathRepeatLayer.example(gen, size),
-			//WormLayer::example
+			//WormLayer::example,
 			// distance
 			DistanceLayer::example,
 			// temperature, wet, difficulty

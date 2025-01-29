@@ -17,7 +17,7 @@ public class DifficultyLayer extends NoiseLayer {
 	private final float scale;
 
 	public DifficultyLayer(DungeonGenerator generator, NoiseData data, int stepRate, float add, float scale, boolean fast) {
-		super(TYPE, generator, data.withKey(KEY), stepRate, fast);
+		super(JSON_MAP.DIFFICULTY, generator, data.withKey(KEY), stepRate, fast);
 		this.add = add;
 		this.scale = scale;
 	}
@@ -35,7 +35,7 @@ public class DifficultyLayer extends NoiseLayer {
 	public static final int MIN = 0;
 	public static final int MAX = 100;
 
-	static class DifficultyLayerJsonAdapter extends JsonReflectiveBuilderCodec<DifficultyLayerJsonAdapter.DifficultyLayerData> {
+	static class DifficultyLayerJsonAdapter extends JsonReflectiveBuilderCodec<DifficultyLayer> {
 
 		public DifficultyLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, DifficultyLayerData.class, registry);

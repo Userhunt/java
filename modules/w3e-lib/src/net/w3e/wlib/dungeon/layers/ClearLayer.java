@@ -2,9 +2,8 @@ package net.w3e.wlib.dungeon.layers;
 
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
-import net.w3e.wlib.dungeon.json.IDungeonJsonAdapter;
 
-public class ClearLayer extends DungeonLayer implements IDungeonJsonAdapter {
+public class ClearLayer extends DungeonLayer {
 
 	public static final String TYPE = "clear";
 
@@ -12,11 +11,11 @@ public class ClearLayer extends DungeonLayer implements IDungeonJsonAdapter {
 	 * json
 	 */
 	private ClearLayer() {
-		super(TYPE, null);
+		super(JSON_MAP.CLEAR, null);
 	}
 
 	public ClearLayer(DungeonGenerator generator) {
-		super(TYPE, generator);
+		super(JSON_MAP.CLEAR, generator);
 	}
 
 	@Override

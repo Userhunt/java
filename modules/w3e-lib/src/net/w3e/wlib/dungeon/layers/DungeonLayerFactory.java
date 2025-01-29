@@ -6,6 +6,7 @@ import java.lang.reflect.Type;
 import net.skds.lib2.io.json.JsonWriter;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonSerializer;
 import net.skds.lib2.io.json.codec.SerializeOnlyJsonCodec;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
@@ -17,6 +18,8 @@ public interface DungeonLayerFactory {
 
 	static class DungeonLayerFactoryJsonAdapter extends SerializeOnlyJsonCodec<DungeonLayerFactory> {
 
+		private final JsonSerializer<DungeonLayer> writer = this.registry.getSerializerIndirect(DungeonLayer.class);
+
 		public DungeonLayerFactoryJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, registry);
 		}
@@ -24,7 +27,7 @@ public interface DungeonLayerFactory {
 		@Override
 		public void write(DungeonLayerFactory value, JsonWriter writer) throws IOException {
 			DungeonLayer v = value.create(null);
-			this.registry.getCodec(DungeonLayer.class).write(v, writer);
+			this.writer.write(v, writer);
 		}
 	}
 }

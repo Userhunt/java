@@ -21,7 +21,6 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanMap.Entry;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import net.skds.lib2.io.json.JsonPostDeserializeCall;
 import net.skds.lib2.io.json.JsonWriter;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.annotation.JsonAlias;
@@ -37,7 +36,6 @@ import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.json.DungeonKeySupplier;
-import net.w3e.wlib.dungeon.json.IDungeonJsonAdapter;
 import net.w3e.wlib.dungeon.json.ILayerData;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilter;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilters;
@@ -47,6 +45,7 @@ import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLimitedCount;
 import net.w3e.wlib.dungeon.layers.interfaces.DungeonInfoCountHolder.DungeonInfoCountHolderNullPredicate;
+import net.w3e.wlib.json.WJsonBuilder;
 import net.w3e.wlib.log.LogUtil;
 
 @DefaultJsonCodec(RoomLayer.RoomLayerJsonAdapter.class)
@@ -68,7 +67,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 	}
 
 	public RoomLayer(DungeonGenerator generator, int softChance, Collection<RoomVariant> rooms) {
-		super(TYPE, generator);
+		super(JSON_MAP.ROOM, generator);
 		this.softChance = softChance;
 		this.rooms.addAll(rooms);
 		this.rooms.removeIf(RoomVariant::notValid);
@@ -430,7 +429,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		return name;
 	}
 
-	static class RoomLayerJsonAdapter extends JsonReflectiveBuilderCodec<RoomLayerJsonAdapter.RoomLayerData> {
+	static class RoomLayerJsonAdapter extends JsonReflectiveBuilderCodec<RoomLayer> {
 
 		public RoomLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, RoomLayerData.class, registry);
@@ -446,12 +445,12 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 			public RoomLayer withDungeon(DungeonGenerator generator) {
 				this.isEmpty("room variants", this.rooms);
 				this.lessThan("softChance", this.softChance, -1);
-				RoomVariant[] roomsVariants = Stream.of(this.rooms).map(e -> new RoomVariant(e.connections.map(), e.layerRange, e.entrance, e.value, e.count)).toArray(RoomVariant[]::new);
+				RoomVariant[] roomsVariants = Stream.of(this.rooms).map(RoomVariantData::build).toArray(RoomVariant[]::new);
 				return new RoomLayer(generator, this.softChance, roomsVariants);
 			}
 		}
 
-		private static class RoomVariantData implements JsonPostDeserializeCall, IDungeonJsonAdapter {
+		private static class RoomVariantData implements WJsonBuilder<RoomVariant> {
 			public ConnectionsData connections = new ConnectionsData();
 			public boolean entrance = false;
 			public DungeonInfoCountHolder count = DungeonInfoCountHolder.NULL;
@@ -460,7 +459,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 			public RoomLayerFilters layerRange = RoomLayerFilters.NULL;
 
 			@Override
-			public final void postDeserializedJson() {
+			public final RoomVariant build() {
 				this.nonNull("layerRange", this.layerRange);
 				if (layerRange.notValid()) {
 					throw new IllegalStateException(LogUtil.ILLEGAL.createMsg("layerRange"));
@@ -475,6 +474,8 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 				if (map.isEmpty()) {
 					this.isEmpty("connections");
 				}
+
+				return new RoomVariant(map, this.layerRange, this.entrance, this.value, this.count);
 			}
 		}
 	}

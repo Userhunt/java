@@ -14,6 +14,7 @@ import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.json.ILayerData;
+import net.w3e.wlib.json.WJsonTypedTypeAdapter;
 import net.w3e.wlib.mat.WMatUtil;
 
 public abstract class NoiseLayer extends TerraLayer<Integer> {
@@ -21,12 +22,12 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 	protected final NoiseData noise;
 	private transient long seed;
 
-	public NoiseLayer(String keyName, DungeonGenerator generator, NoiseData noies, boolean fast) {
-		this(keyName, generator, noies, 50, fast);
+	public NoiseLayer(WJsonTypedTypeAdapter<? extends NoiseLayer> configType, DungeonGenerator generator, NoiseData noies, boolean fast) {
+		this(configType, generator, noies, 50, fast);
 	}
 
-	public NoiseLayer(String keyName, DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
-		super(keyName, generator, noise.defKey, noise.defValue, stepRate, fast);
+	public NoiseLayer(WJsonTypedTypeAdapter<? extends NoiseLayer> configType, DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
+		super(configType, generator, noise.defKey, noise.defValue, stepRate, fast);
 		this.noise = noise;
 	}
 
@@ -70,7 +71,7 @@ public abstract class NoiseLayer extends TerraLayer<Integer> {
 		}
 	}
 	
-	private static class NoiseDataJsonAdapter extends JsonReflectiveBuilderCodec<NoiseData> {
+	private static class NoiseDataJsonAdapter extends JsonReflectiveBuilderCodec<NoiseLayer> {
 
 		public NoiseDataJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, NoiseDataBuilder.class, registry);

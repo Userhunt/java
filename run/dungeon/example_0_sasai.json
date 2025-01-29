@@ -1588,8 +1588,8 @@
 		{"feature": {"features": [
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 3,
+				"entrance": "FALSE",
 				"value": "1"
 			},
 			{
@@ -1599,13 +1599,13 @@
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 3,
+				"entrance": "FALSE",
 				"value": "3"
 			},
 			{
-				"entrance": "FALSE",
 				"count": 3,
+				"entrance": "FALSE",
 				"value": "4"
 			},
 			{
@@ -1614,14 +1614,14 @@
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 1,
+				"entrance": "FALSE",
 				"value": "6"
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 2,
+				"entrance": "FALSE",
 				"value": "7"
 			},
 			{
@@ -1630,31 +1630,31 @@
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 3,
+				"entrance": "FALSE",
 				"value": "9"
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 1,
+				"entrance": "FALSE",
 				"value": "10"
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 3,
+				"entrance": "FALSE",
 				"value": "11"
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 2,
+				"entrance": "FALSE",
 				"value": "12"
 			},
 			{
-				"entrance": "FALSE",
 				"count": 2,
+				"entrance": "FALSE",
 				"value": "13"
 			},
 			{
@@ -1664,37 +1664,37 @@
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 2,
+				"entrance": "FALSE",
 				"value": "15"
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 2,
+				"entrance": "FALSE",
 				"value": "16"
 			},
 			{
-				"entrance": "FALSE",
 				"count": 1,
+				"entrance": "FALSE",
 				"value": "17"
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 3,
+				"entrance": "FALSE",
 				"value": "18"
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 2,
+				"entrance": "FALSE",
 				"value": "19"
 			},
 			{
 				"softRequire": true,
-				"entrance": "FALSE",
 				"count": 1,
+				"entrance": "FALSE",
 				"value": "20"
 			}
 		]}},

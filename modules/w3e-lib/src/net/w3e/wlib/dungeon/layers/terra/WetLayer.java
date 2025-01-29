@@ -15,7 +15,7 @@ public class WetLayer extends NoiseLayer {
 	public static final String KEY = "wet";
 
 	public WetLayer(DungeonGenerator generator, NoiseData data, int stepRate, boolean fast) {
-		super(TYPE, generator, data.withKey(KEY), stepRate, fast);
+		super(JSON_MAP.WET, generator, data.withKey(KEY), stepRate, fast);
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class WetLayer extends NoiseLayer {
 	public static final int MIN = 0;
 	public static final int MAX = 100;
 
-	static class WetLayerJsonAdapter extends JsonReflectiveBuilderCodec<WetLayerJsonAdapter.WetLayerData> {
+	static class WetLayerJsonAdapter extends JsonReflectiveBuilderCodec<WetLayer> {
 
 		public WetLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, WetLayerData.class, registry);

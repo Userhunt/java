@@ -1,11 +1,12 @@
 package net.w3e.app.utils.tf2;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import lombok.CustomLog;
 
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -23,19 +24,22 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import net.skds.lib2.io.json.JsonPostDeserializeCall;
+import net.skds.lib2.io.json.JsonUtils;
+import net.skds.lib2.utils.Holders.IntHolder;
+import net.skds.lib2.utils.Holders.ObjectHolder;
 import net.w3e.app.FrameObject;
 import net.w3e.app.MainFrame;
-import net.w3e.app.api.ApiJsonHelper;
 import net.w3e.app.api.window.BackgroundExecutor.BackgroundExecutorBuilder;
 import net.w3e.app.api.window.FrameWin;
 import net.w3e.app.api.window.IBackgroundExecutor;
-import net.w3e.base.collection.ArraySet;
-import net.w3e.base.holders.ObjectHolder;
-import net.w3e.base.holders.number.IntHolder;
-import net.w3e.base.json.BJsonUtil;
-import net.w3e.base.json.FileUtil;
-import net.w3e.base.message.MessageUtil;
+import net.w3e.lib.utils.FileUtils;
+import net.w3e.lib.utils.ResourceUtil;
+import net.w3e.wlib.collection.ArraySet;
+import net.w3e.wlib.json.WJsonHelper;
+import net.w3e.wlib.log.LogUtil;
 
+@CustomLog
 public class Tf2Screen extends FrameObject {
 
 	public static void main(String[] args) {
@@ -46,9 +50,6 @@ public class Tf2Screen extends FrameObject {
 	private final File INDEX = new File("tf2/index.html");
 	private final File CALCULATED = new File("tf2/calculate.html");
 	private final File GENERATED = new File("tf2/generate.html");
-
-	public static final ApiJsonHelper JSON = new ApiJsonHelper("Tf2");
-	public static final Gson GSON = BJsonUtil.GSON().registerTypeAdapter(Tf2RegistryObject.class, new Tf2RegistryObject.Tf2Deserializer()).create();
 
 	private final Map<String, List<Tf2RegistryObject>> GROUPS = new LinkedHashMap<>();
 	private final List<JCheckBox> BUTTONS = new ArrayList<>();
@@ -67,6 +68,7 @@ public class Tf2Screen extends FrameObject {
 		initButtons(fw);
 	}
 
+	@Deprecated
 	private final void copyFromJar() {
 		replaceFile("tf2/style.css");
 		replaceFile("tf2/script.js");
@@ -74,33 +76,39 @@ public class Tf2Screen extends FrameObject {
 		replaceFile("tf2/index.html");
 		File config = new File("tf2/config.json");
 		if (!config.exists()) {
-			FileUtil.copyFromJar(JSON.logger(), config);
+			copyFromJar(config, "tf2/config.json");
+		}
+	}
+
+	private final void copyFromJar(File file, String resource) {
+		InputStream in = ResourceUtil.getResourceAsStream("tf2/config.json");
+		FileUtils.createParentDirs(file);
+		try {
+			Files.copy(in, file.toPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new IllegalStateException(e);
 		}
 	}
 
 	private final void replaceFile(String path) {
 		File file = new File(path);
 		file.delete();
-		FileUtil.copyFromJar(JSON.logger(), file);
+		copyFromJar(file, "tf2/" + file.getName());
 	}
 
 	private final void initJson() {
-		JsonObject json = FileUtil.readObject("tf2/config.json");
-		//JsonObject json = FileUtil.readObjectFromJar("tf2/config.json");
+		Config config = JsonUtils.readJson("tf2/config.json", Config.class);
 
-		this.min = JSON.readFloat(json, "min", 0.0f, true);
-		if (this.min < 0) {
-			this.min = 0;
-		}
-		this.dollar = JSON.readFloat(json, "dollar", 1.0f, true);
-		this.attempt = JSON.readInt(json, "attempt", 3, true);
+		this.min = config.min;
+		this.dollar = config.dollar;
+		this.attempt = config.attempt;
 
-		List<Tf2RegistryObject> list = JSON.readList(json, "items", e -> BJsonUtil.load(GSON, e, Tf2RegistryObject.class), "Tf2RegistryObject");
 		Map<String, Tf2RegistryObject> MAP = new LinkedHashMap<>();
 		this.GROUPS.clear();
-		for (Tf2RegistryObject object : list) {
+		for (Tf2RegistryObject object : config.list) {
 			if (MAP.containsKey(object.id())) {
-				JSON.logger().warn(MessageUtil.KEY_DUPLICATE.createMsg(MAP.keySet(), object.id()));
+				log.warn(LogUtil.KEY_DUPLICATE.createMsg(MAP.keySet(), object.id()));
 			} else {
 				MAP.put(object.id(), object);
 			}
@@ -108,13 +116,28 @@ public class Tf2Screen extends FrameObject {
 		for (Entry<String, Tf2RegistryObject> entry : MAP.entrySet()) {
 			Tf2RegistryObject value = entry.getValue();
 			for (String group : value.group()) {
-				list = this.GROUPS.get(group);
+				List<Tf2RegistryObject> list = this.GROUPS.get(group);
 				if (list == null) {
 					list = new ArrayList<>();
 					this.GROUPS.put(group, list);
 				}
 				list.add(value);
 			}
+		}
+	}
+
+	private static class Config implements JsonPostDeserializeCall, WJsonHelper {
+		private float min = 0;
+		private float dollar = 1;
+		private int attempt = 3;
+		private List<Tf2RegistryObject> list = new ArrayList<>();
+
+		@Override
+		public void postDeserializedJson() {
+			this.lessThan("min", min);
+			this.lessThan("dollar", dollar);
+			this.lessThan("attempt", attempt);
+			this.isEmpty("list", list);
 		}
 	}
 
@@ -205,7 +228,7 @@ public class Tf2Screen extends FrameObject {
 	}
 
 	private final void saveDocument(File path, Document document) {
-		FileUtil.writeString(path, document.toString());
+		FileUtils.save(path, document.toString().getBytes());
 	}
 
 	private final void calculate(FrameWin fw) {
@@ -234,9 +257,9 @@ public class Tf2Screen extends FrameObject {
 				}
 				// первый элемент
 				String next = map.keySet().iterator().next();
-				if (!holder.get().equals(next)) {
+				if (!holder.getValue().equals(next)) {
 					System.out.println("group " + next);
-					holder.set(next);
+					holder.setValue(next);
 				}
 				List<Tf2RegistryObject> list = map.get(next);
 				// пусто, продолжаем
@@ -265,16 +288,16 @@ public class Tf2Screen extends FrameObject {
 				}
 
 				// сохранить
-				progress.add(1);
+				progress.increment();
 				prices.add(price);
 
 				// результ
-				if (progress.getAsInt() == size)	{
+				if (progress.getValue() == size)	{
 					return 100;
 				}
 
 				// результат
-				return progress.getAsInt() * 100 / size;
+				return progress.getValue() * 100 / size;
 			}).setDone(exe -> {
 				setCalculated(prices);
 			}).run();

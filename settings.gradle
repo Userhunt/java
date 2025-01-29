@@ -4,7 +4,7 @@ include(
 	'w3e-lib',
 	'skds-lib',
 	':app',
-	//':utils',
+	':utils',
 	//':oba',depr
 )
 

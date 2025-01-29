@@ -5,13 +5,14 @@ import java.util.Random;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.layers.LayerRange;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilter;
+import net.w3e.wlib.json.WJsonTypedTypeAdapter;
 
 public abstract class LayerRangeRoomFilter extends RoomLayerFilter<Integer> {
 
 	protected LayerRange value = null;
 
-	public LayerRangeRoomFilter(String keyName, LayerRange value) {
-		super(keyName);
+	public LayerRangeRoomFilter(WJsonTypedTypeAdapter<? extends LayerRangeRoomFilter> configType, LayerRange value) {
+		super(configType);
 		this.value = value;
 	}
 

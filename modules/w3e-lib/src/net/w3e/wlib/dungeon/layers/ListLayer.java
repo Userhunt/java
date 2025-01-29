@@ -9,18 +9,16 @@ import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
+import net.w3e.wlib.json.WJsonTypedTypeAdapter;
 
-public abstract class ListLayer<L> extends DungeonLayer {
+public abstract class ListLayer<E> extends DungeonLayer {
 
-	protected final transient List<L> list = new ArrayList<>();
+	protected final transient List<E> list = new ArrayList<>();
 	protected transient int filled = -1;
 
-	protected ListLayer(String keyName, DungeonGenerator generator) {
+	protected ListLayer(WJsonTypedTypeAdapter<? extends ListLayer<E>> keyName, DungeonGenerator generator) {
 		super(keyName, generator);
 	}
-
-	@Override
-	public abstract ListLayer<L> withDungeon(DungeonGenerator generator);
 
 	@Override
 	public void regenerate(boolean composite) throws DungeonException {
@@ -28,14 +26,14 @@ public abstract class ListLayer<L> extends DungeonLayer {
 		this.list.clear();
 	}
 
-	protected final void generateList(Function<DungeonRoomCreateInfo, GenerateListHolder<L>> filter) {
+	protected final void generateList(Function<DungeonRoomCreateInfo, GenerateListHolder<E>> filter) {
 		this.generateList(filter, false);
 	}
 
-	protected final void generateList(Function<DungeonRoomCreateInfo, GenerateListHolder<L>> filter, boolean createIfNotExists) {
+	protected final void generateList(Function<DungeonRoomCreateInfo, GenerateListHolder<E>> filter, boolean createIfNotExists) {
 		this.filled = 0;
 		this.forEach(room -> {
-			GenerateListHolder<L> holder = filter.apply(room);
+			GenerateListHolder<E> holder = filter.apply(room);
 			if (holder.add) {
 				this.list.add(holder.l);
 			}

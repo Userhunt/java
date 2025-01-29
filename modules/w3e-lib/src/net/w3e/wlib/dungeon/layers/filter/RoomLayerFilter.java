@@ -3,18 +3,18 @@ package net.w3e.wlib.dungeon.layers.filter;
 import java.util.Random;
 
 import net.w3e.wlib.collection.MapT.MapTString;
-import net.w3e.wlib.dungeon.DungeonRegistryElement;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
+import net.w3e.wlib.dungeon.json.RoomLayerJsonAdaptersMap;
+import net.w3e.wlib.json.WJsonRegistryElement;
+import net.w3e.wlib.json.WJsonTypedTypeAdapter;
 
-public abstract class RoomLayerFilter<V> extends DungeonRegistryElement {
+public abstract class RoomLayerFilter<V> extends WJsonRegistryElement {
 
-	public RoomLayerFilter(String keyName) {
-		super(keyName, DungeonJsonAdapters.INSTANCE.roomFilter);
-	}
+	protected static final RoomLayerJsonAdaptersMap JSON_MAP = DungeonJsonAdapters.INSTANCE.roomFilterAdapters;
 
-	public final String keyName() {
-		return this.configType.keyName();
+	public RoomLayerFilter(WJsonTypedTypeAdapter<? extends RoomLayerFilter<V>> configType) {
+		super(configType);
 	}
 
 	public abstract boolean notValid();

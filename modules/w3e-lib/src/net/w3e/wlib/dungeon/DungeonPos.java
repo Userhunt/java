@@ -4,15 +4,13 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Random;
 
-import net.skds.lib2.io.json.JsonPostDeserializeCall;
-import net.skds.lib2.io.json.JsonReader;
 import net.skds.lib2.io.json.JsonWriter;
-import net.skds.lib2.io.json.codec.AbstractJsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
-import net.w3e.wlib.dungeon.json.IDungeonJsonAdapter;
+import net.w3e.wlib.json.WJsonBuilder;
 
 public record DungeonPos(Vec3I pos, Direction direction, boolean entrance) {
 	public static final DungeonPos EMPTY_POS = new DungeonPos();
@@ -48,15 +46,13 @@ public record DungeonPos(Vec3I pos, Direction direction, boolean entrance) {
 		};
 	}
 
-	public static class DungeonPosentranceCodec extends AbstractJsonCodec<DungeonPos> {
+	public static class DungeonPosentranceCodec extends JsonReflectiveBuilderCodec<DungeonPos> {
 
 		private final JsonCodec<Vec3I> posCodec;
-		private final JsonCodec<DungeonCenterPos> reader;
 
 		public DungeonPosentranceCodec(Type type, JsonCodecRegistry registry) {
-			super(type, registry);
+			super(type, DungeonCenterPos.class, registry);
 			this.posCodec = registry.getCodec(Vec3I.class);
-			this.reader = registry.getCodecIndirect(DungeonCenterPos.class);
 		}
 
 		@Override
@@ -73,18 +69,14 @@ public record DungeonPos(Vec3I pos, Direction direction, boolean entrance) {
 			writer.endObject();
 		}
 
-		@Override
-		public DungeonPos read(JsonReader reader) throws IOException {
-			DungeonCenterPos data = this.reader.read(reader);
-			return new DungeonPos(data.pos, data.direction, true);
-		}
-
-		private static class DungeonCenterPos implements JsonPostDeserializeCall, IDungeonJsonAdapter {
+		private static class DungeonCenterPos implements WJsonBuilder<DungeonPos> {
 			public Vec3I pos = Vec3I.ZERO;
 			public Direction direction = null;
+
 			@Override
-			public void postDeserializedJson() {
+			public final DungeonPos build() {
 				this.nonNull("pos", this.pos);
+				return new DungeonPos(this.pos, this.direction, true);
 			}
 		}
 	}

@@ -9,15 +9,26 @@ import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.Vec3I;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
+import net.w3e.wlib.dungeon.json.DungeonJsonLayerAdapters;
 import net.w3e.wlib.dungeon.json.ILayerData;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilterValues;
+import net.w3e.wlib.json.WJsonRegistryElement;
+import net.w3e.wlib.json.WJsonTypedTypeAdapter;
 
-public abstract class DungeonLayer extends DungeonRegistryElement {
+public abstract class DungeonLayer extends WJsonRegistryElement {
+
+	protected static final DungeonJsonLayerAdapters JSON_MAP = DungeonJsonAdapters.INSTANCE.layerAdapters;
 
 	private final transient DungeonGenerator generator;
 
+	@Deprecated
 	protected DungeonLayer(String keyName, DungeonGenerator generator) {
-		super(keyName, DungeonJsonAdapters.INSTANCE.layerAdapters);
+		super(keyName, JSON_MAP);
+		this.generator = generator;
+	}
+
+	protected DungeonLayer(WJsonTypedTypeAdapter<?> configType, DungeonGenerator generator) {
+		super(configType);
 		this.generator = generator;
 	}
 

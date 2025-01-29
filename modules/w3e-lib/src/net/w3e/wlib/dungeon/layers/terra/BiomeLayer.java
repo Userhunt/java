@@ -61,7 +61,7 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 	}
 
 	public BiomeLayer(DungeonGenerator generator, DungeonKeySupplier def, int percent, Collection<BiomeInfo> biomes) {
-		super(TYPE, generator);
+		super(JSON_MAP.BIOME, generator);
 		this.def = def;
 		this.percent = percent;
 		this.biomes.addAll(biomes);
@@ -238,7 +238,7 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 		}
 	}
 
-	static class BiomeLayerJsonAdapter extends JsonReflectiveBuilderCodec<BiomeLayerJsonAdapter.BiomeLayerData> {
+	static class BiomeLayerJsonAdapter extends JsonReflectiveBuilderCodec<BiomeLayer> {
 
 		public BiomeLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, BiomeLayerData.class, registry);

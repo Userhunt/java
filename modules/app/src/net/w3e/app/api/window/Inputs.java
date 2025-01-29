@@ -118,6 +118,15 @@ public class Inputs {
 		key(KeyEvent.VK_ESCAPE);
 	}
 
+	public static final void ctrl(Runnable run) {
+		ROBOT.keyPress(KeyEvent.VK_CONTROL);
+		int sleep = 10;
+		sleep(sleep);
+		run.run();
+		sleep(sleep);
+		ROBOT.keyRelease(KeyEvent.VK_CONTROL);
+	}
+
 	public static final void key(int key) {
 		ROBOT.keyPress(key);
 		sleep(100);
