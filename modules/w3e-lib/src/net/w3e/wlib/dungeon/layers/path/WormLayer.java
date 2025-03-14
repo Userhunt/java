@@ -15,9 +15,8 @@ import net.skds.lib2.io.json.codec.JsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.io.json.codec.BuiltinCodecFactory.ArrayCodec;
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.Vec3I;
-import net.w3e.wlib.collection.CollectionUtils;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3I;
 import net.w3e.wlib.collection.ArraySet.ArraySetStrict;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
@@ -40,7 +39,8 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 	public final WormDungeonStepChances stepChances;
 	public final DungeonChances directionChances;
 	public final DungeonChances connectionChances;
-	private final transient List<DungeonPos>[] entries = CollectionUtils.createArrayOfList(DungeonPos.class, 2);
+	@SuppressWarnings("unchecked")
+	private final transient List<DungeonPos>[] entries = new ArrayList[2];
 
 	public WormLayer(DungeonGenerator generator, DungeonPos[] centers, WormDungeonStepChances stepChances, DungeonChances directionChances, DungeonChances connectionChances) {
 		super(JSON_MAP.PATH_WORM, generator);
@@ -48,6 +48,14 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		this.stepChances = stepChances;
 		this.directionChances = directionChances;
 		this.connectionChances = connectionChances;
+
+		this.entries[0] = new ArraySetStrict<>();
+		this.entries[1] = new ArraySetStrict<>();
+		if (generator != null) {
+			for(DungeonPos pos : this.centers) {
+				this.add(pos.pos(), pos.getDirection(this.random()), true);
+			}
+		}
 	}
 
 	@Override
@@ -56,17 +64,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
-		this.entries[0] = new ArraySetStrict<>();
-		this.entries[1] = new ArraySetStrict<>();
-		for(DungeonPos pos : this.centers) {
-			this.add(pos);
-		}
-	}
-
-	private final void add(DungeonPos pos) throws DungeonException {
-		this.add(pos.pos(), pos.getDirection(this.random()), true);
-	}
+	public final void setupLayer(boolean composite) throws DungeonException {}
 
 	@Override
 	public final void add(Vec3I pos, Direction direction) throws DungeonException {
@@ -74,40 +72,59 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 	}
 
 	private final void add(Vec3I pos, Direction direction, boolean entrance) throws DungeonException {
-		this.assertInside(pos);
+		this.assertIsInside(pos);
 		this.entries[1].add(new DungeonPos(pos, direction, entrance));
 	}
 
 	@Override
-	public final int generate() throws DungeonException {
+	public final float generate() throws DungeonException {
 		this.entries[0] = this.entries[1];
 		this.entries[1] = new ArraySetStrict<>();
 		for (DungeonPos entry : this.entries[0]) {
+			// позиция
 			Vec3I pos = entry.pos();
 
+			// длинна шага
 			int d = this.stepChances.get(this.random());
+			// направление. Рандомизируется если не задано. По умолчанию оно задается в момент создания точки
 			Direction direction = entry.getDirection(this.random());
+			// соединения с соседями
 			Collection<Direction> connections = new ArrayList<>();
+			// соединение по направлению "вперед"
 			connections.add(direction);
+			// не столкнулся ли я с препятсвием.
 			boolean success = true;
 
+			// callback создания комнаты, содержит саму комнату, и два флага - существовала ли комната и входит ли она в допустимую площадь
 			DungeonRoomCreateInfo info = this.putOrGet(pos);
+			// сылка на комнату
 			DungeonRoomInfo room = info.room();
+			// пометка что комната является комнатой. По умолчанию вся площадь считается "стенами"
 			room.setWall(false);
+			// алгоритм для "входа"
 			if (entry.entrance()) {
+				// пометить комнату как вход
 				info.room().setentrance(true);
+				// получить соседнюю комнату и узнать существует ли эта комната и входит ли она в допустимую площаль
 				if (!this.get(pos.addI(direction)).notExistsOrWall()) {
 					Direction old = direction;
+					// позиция следующей комнаты
 					entry = new DungeonPos(pos, null, true);
+					// рандомизация направления движения из центра
 					while((direction = entry.getDirection(this.random())) == old) {}
+					// создания списка соединений
 					connections.clear();
 					connections.add(direction);
 				}
 			}
+			// установить соединения с соседними комнаты
 			room.setConnections(connections, true, true);
+			// проверка что координата комнаты в допустимом диапозоне и это не "стена"
 			if (info.isInside() && info.notExistsOrWall()) {
+				// сохранить соединения для комнаты из которой начиналась генерация
 				room.setConnections(connections, true, true);
 			}
+			// добавить соедиение в список для всех последующих точек в линии
 			connections.add(direction.getOpposite());
 			while(d > 0) {
 				d--;
@@ -116,11 +133,10 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 				}
 				pos = pos.addI(direction);
 				info = this.putOrGet(pos);
-				if (info.isInside()) {
+				if (info.isInside() && info.isWall()) {
 					room = info.room();
 					room.setWall(false);
 					room.setConnections(this.connectionChances.generate(this.random(), direction), true, false);
-					success = info.isWall();
 					info.room().setConnections(connections, true, true);
 				} else {
 					room.setConnection(direction, false, false);
@@ -141,7 +157,8 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 				}
 			}
 		}
-		return Math.max(10 - this.entries[1].size(), 0) * 10;
+		float max = 20;
+		return Math.max(max - this.entries[1].size(), 0) / max;
 	}
 
 	public static record WormDungeonStepChances(int min, int max) {

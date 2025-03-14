@@ -5,7 +5,7 @@ include(
 	'skds-lib',
 	':app',
 	':utils',
-	//':oba',depr
+	':poe',
 )
 
 rootProject.children.each { project ->

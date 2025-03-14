@@ -32,15 +32,14 @@ import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLimitedCount;
 import net.w3e.wlib.log.LogUtil;
 
 @DefaultJsonCodec(FeatureLayer.FeatureLayerJsonAdapter.class)
-public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implements ISetupLayer {
+public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implements ISetupRoomLayer {
 
 	public static final String TYPE = "feature";
 
 	public static final String KEY = "features";
 
 	private final List<FeatureVariant> features = new ArrayList<>();
-	private final transient List<FeatureVariant> workList = new ArrayList<>();
-	private transient Progress progress;
+	private transient Progress progress = Progress.createArray;
 
 	@SafeVarargs
 	public FeatureLayer(DungeonGenerator generator, FeatureVariant... features) {
@@ -59,28 +58,19 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 	}
 
 	@Override
-	public final void setup(DungeonRoomInfo room) {
+	public final void setupRoom(DungeonRoomInfo room) {
 		room.data().put(KEY, null);
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
-		this.list.clear();
-		this.filled = -1;
-
-		this.progress = Progress.createArray;
-
-		this.workList.clear();
-		this.features.stream().map(FeatureVariant::copy).forEach(this.workList::add);
-		if (this.workList.isEmpty()) {
-			throw new DungeonException(LogUtil.IS_EMPTY.createMsg("Feature layer"));
-		}
+	public final void setupLayer(boolean composite) throws DungeonException {
+		copyList(this.features, FeatureVariant::copy);
 	}
 
 	@Override
-	public final int generate() throws DungeonException {
+	public final float generate() throws DungeonException {
 		Progress prevProgress = this.progress;
-		float i = 100;
+		float i = 1;
 
 		switch (this.progress) {
 			case createArray -> {
@@ -106,7 +96,7 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 					}
 					point.softCount.setValue(soft);
 
-					for (FeatureVariant feature : this.workList) {
+					for (FeatureVariant feature : this.features) {
 						if (feature.test(this, room, point.canSoft())) {
 							point.variants.add(feature);
 						}
@@ -136,7 +126,7 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 				int size = this.size();
 
 				if (size != this.filled) {
-					i = this.size() * 100f / this.filled;
+					i = this.size() * 1f / this.filled;
 				}
 			}
 		}
@@ -214,7 +204,7 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 			if (this.softRequire && !canSoft) {
 				return false;
 			}
-			if (this.entrance.isStated() && !((this.entrance.isTrue()) == room.isentrance())) {
+			if (this.entrance.isStated() && !((this.entrance.isTrue()) == room.isEntrance())) {
 				return false;
 			}
 			return this.layerRange.test(layer.random(), layer.getRoomValues(room));

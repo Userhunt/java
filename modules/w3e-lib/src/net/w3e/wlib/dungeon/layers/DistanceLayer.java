@@ -4,8 +4,9 @@ import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMap.Entry;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.Vec3I;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3I;
+import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
@@ -32,13 +33,16 @@ public class DistanceLayer extends ListLayer<DungeonRoomInfo> {
 	}
 
 	@Override
-	public final int generate() {
+	public final void setupLayer(boolean composite) throws DungeonException {}
+
+	@Override
+	public final float generate() {
 		if (this.filled == -1) {
 			this.generateList(room -> {
 				room.room().setDistance(-1);
 				return room.isentrance() ? GenerateListHolder.success(room.room()) : GenerateListHolder.fail();
 			});
-			return 1;
+			return 0.001f;
 		}
 		if (!this.list.isEmpty()) {
 			DungeonRoomInfo entrance = this.list.remove(0);

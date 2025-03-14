@@ -12,6 +12,7 @@ shadowJar {
 	dependencies {
 		include(dependency { it.moduleGroup == 'net.skds' })
 	}
+	//exclude('net.skds.lib2/natives/**')
 	relocate 'net.skds.lib2', 'net.w3e.include.skds'
 	relocate 'net.sdteam', 'net.w3e.include.sdteam'
 	relocate 'net.w3e.lib', 'net.w3e.include.lib'

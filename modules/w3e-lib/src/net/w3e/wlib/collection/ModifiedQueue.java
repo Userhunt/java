@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import net.skds.lib2.utils.logger.SKDSLogger;
 import net.skds.lib2.utils.logger.SKDSLoggerFactory;
 
+@Deprecated
 public class ModifiedQueue<T extends ModifiedQueue.QueueTask> {
 
 	public final SKDSLogger LOGGER = SKDSLoggerFactory.getLogger(ModifiedQueue.class);
@@ -67,7 +68,7 @@ public class ModifiedQueue<T extends ModifiedQueue.QueueTask> {
 	}
 
 	public final void forEach(Predicate<T> function) {
-		forEach(function, false);
+		forEach(function, true);
 	}
 
 	@SuppressWarnings("unchecked")

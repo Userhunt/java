@@ -3,13 +3,24 @@
 	"configurations": [
 		{
 			"type": "java",
-			"name": "JsonTest",
+			"name": "SasaiTest",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",
 			"console": "internalConsole",
 			"stopOnEntry": false,
-			"mainClass": "net.skds.lib2.io.json.JsonTest",
-			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
+			"mainClass": "net.skds.lib2.demo.DemoFrame",
+			"vmArgs": "\"-Xmx1G\"",
+			"args": ""
+		},
+		{
+			"type": "java",
+			"name": "PoeGui",
+			"request": "launch",
+			"cwd": "${workspaceFolder}/run",
+			"console": "internalConsole",
+			"stopOnEntry": false,
+			"mainClass": "net.w3e.poe.PoeGui",
+			"vmArgs": "\"-Xmx1G\"",
 			"args": ""
 		},
 		{
@@ -19,41 +30,9 @@
 			"cwd": "${workspaceFolder}/run",
 			"console": "internalConsole",
 			"stopOnEntry": false,
-			"mainClass": "net.home.MainFrame",
-			"vmArgs": "\"-Xmx1G\" \"-Xdebug\""
-		},
-		{
-			"type": "java",
-			"name": "Random Generator GSON",
-			"request": "launch",
-			"cwd": "${workspaceFolder}/run",
-			"console": "internalConsole",
-			"stopOnEntry": false,
-			"mainClass": "net.w3e.wlib.dungeon.DungeonGenerator",
-			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
-			"args": ""
-		},
-		{
-			"type": "java",
-			"name": "Test",
-			"request": "launch",
-			"cwd": "${workspaceFolder}/run",
-			"console": "internalConsole",
-			"stopOnEntry": false,
-			"mainClass": "net.w3e.app.MainFrame",
-			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
-			"args": "key=test x=1675"
-		},
-		{
-			"type": "java",
-			"name": "Poe Helper",
-			"request": "launch",
-			"cwd": "${workspaceFolder}/run",
-			"console": "internalConsole",
-			"stopOnEntry": false,
-			"mainClass": "net.w3e.app.utils.poe2.PoeCreaftHelper",
-			"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
-			"args": ""
+			"mainClass": "net.w3e.app.main.MainFrame",
+			"vmArgs": "\"-Xmx1G\"",
+			"args": "app=\"Dungeon Generator1\" screen=0 fullScreen=false align=LT x=0 y=0"
 		}
 	]
 }

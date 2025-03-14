@@ -28,9 +28,9 @@ import net.skds.lib2.io.json.annotation.SkipSerialization;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.io.json.codec.SerializeOnlyJsonCodec;
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.Vec3I;
-import net.skds.lib2.mat.Direction.Axis;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3I;
+import net.skds.lib2.mat.vec3.Direction.Axis;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
@@ -49,7 +49,7 @@ import net.w3e.wlib.json.WJsonBuilder;
 import net.w3e.wlib.log.LogUtil;
 
 @DefaultJsonCodec(RoomLayer.RoomLayerJsonAdapter.class)
-public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupLayer {
+public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupRoomLayer {
 
 	public static final String TYPE = "room";
 
@@ -57,9 +57,8 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 
 	private final int softChance;
 	private final List<RoomVariant> rooms = new ArrayList<>();
-	private final transient List<RoomVariant> workList = new ArrayList<>();
 	private final transient List<RoomSoftData> softList = new ArrayList<>();
-	private transient Progress progress;
+	private transient Progress progress = Progress.createArray;
 
 	@SafeVarargs
 	public RoomLayer(DungeonGenerator generator, int softChance, RoomVariant... rooms) {
@@ -79,29 +78,19 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 	}
 
 	@Override
-	public final void setup(DungeonRoomInfo room) {
+	public final void setupRoom(DungeonRoomInfo room) {
 		room.data().put(KEY, null);
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
-		this.list.clear();
-		this.filled = -1;
-
-		this.progress = Progress.createArray;
-
-		this.workList.clear();
-		this.rooms.stream().map(RoomVariant::copy).forEach(this.workList::add);
-		if (this.workList.isEmpty()) {
-			throw new DungeonException(LogUtil.IS_EMPTY.createMsg("Room layer"));
-		}
-		this.softList.clear();
+	public final void setupLayer(boolean composite) throws DungeonException {
+		copyList(this.rooms, RoomVariant::copy);
 	}
 
 	@Override
-	public final int generate() throws DungeonException {
+	public final float generate() throws DungeonException {
 		Progress prevProgress = this.progress;
-		float i = 100;
+		float i = 1;
 
 		switch (this.progress) {
 			case createArray -> {
@@ -114,7 +103,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 			}
 			case fillRooms -> {
 				for (RoomPoint point : this.list) {
-					for (RoomVariant info : this.workList) {
+					for (RoomVariant info : this.rooms) {
 						if (info.test(this, point.room)) {
 							point.variants.add(info);
 						}
@@ -169,7 +158,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 						this.removeLimitReachedFromVariants();
 					}
 					float size = this.filled;
-					i = (size - limited.size()) * 100 / size;
+					i = (size - limited.size()) * 1f / size;
 					if (remove) {
 						i = Math.min(0, i - 1);
 					}
@@ -366,7 +355,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 		}
 
 		public final boolean test(RoomLayer layer, DungeonRoomInfo room) {
-			if (this.entrance == room.isentrance() && this.layerRange.test(layer.random(), layer.getRoomValues(room))) {
+			if (this.entrance == room.isEntrance() && this.layerRange.test(layer.random(), layer.getRoomValues(room))) {
 				if (this.directionVariants.iterator().next().values().stream().filter(e -> e).count() != room.connectCount(true)) {
 					return false;
 				}
@@ -398,7 +387,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 			if (this.entrance) {
 				builder.append(",entrance");
 			}
-			builder.append(String.format(",value:%s", this.value));
+			builder.append(String.format(",value:%s", this.value.getRaw()));
 			if (!this.isUnlimitedCount()) {
 				builder.append(String.format(",count:%s", this.count.getValue()));
 			}
@@ -415,7 +404,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupL
 
 		@Override
 		public final String toString() {
-			return String.format("{value:%s,variant:%s,soft:%s}", this.value, this.variant.object2BooleanEntrySet().stream().map(RoomLayer::directionToString).toList(), this.soft.stream().map(e -> e.name().substring(0, 1)).toList());
+			return String.format("{value:%s,variant:%s,soft:%s}", this.value.getRaw(), this.variant.object2BooleanEntrySet().stream().map(RoomLayer::directionToString).toList(), this.soft.stream().map(e -> e.name().substring(0, 1)).toList());
 		}
 	}
 

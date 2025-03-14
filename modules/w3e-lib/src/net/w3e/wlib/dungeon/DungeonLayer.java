@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.Vec3I;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3I;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
 import net.w3e.wlib.dungeon.json.DungeonJsonLayerAdapters;
@@ -21,20 +21,14 @@ public abstract class DungeonLayer extends WJsonRegistryElement {
 
 	private final transient DungeonGenerator generator;
 
-	@Deprecated
-	protected DungeonLayer(String keyName, DungeonGenerator generator) {
-		super(keyName, JSON_MAP);
-		this.generator = generator;
-	}
-
 	protected DungeonLayer(WJsonTypedTypeAdapter<?> configType, DungeonGenerator generator) {
 		super(configType);
 		this.generator = generator;
 	}
 
 	public abstract DungeonLayer withDungeon(DungeonGenerator generator);
-	public abstract void regenerate(boolean composite) throws DungeonException;
-	public abstract int generate() throws DungeonException;
+	public abstract void setupLayer(boolean composite) throws DungeonException;
+	public abstract float generate() throws DungeonException;
 	public void rotate(Direction rotation, DungeonRoomInfo room, Map<Direction, Direction> wrapRotation) throws DungeonException {}
 
 	protected final Random random() {
@@ -43,8 +37,11 @@ public abstract class DungeonLayer extends WJsonRegistryElement {
 	protected final int random100() {
 		return this.random().nextInt(100) + 1;
 	}
-	protected final void assertInside(Vec3I pos) throws DungeonException {
-		if (!this.generator.testDimension(pos)) {
+	protected final boolean testIsInside(Vec3I pos) throws DungeonException {
+		return this.generator.testPosIsInside(pos);
+	}
+	protected final void assertIsInside(Vec3I pos) throws DungeonException {
+		if (!this.testIsInside(pos)) {
 			throw new DungeonException("Something went wrong. Pos is not insisde dungeon " + pos.toString());
 		}
 	}

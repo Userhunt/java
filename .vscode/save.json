@@ -20,5 +20,37 @@
 		"mainClass": "net.home.oba2.OneBitAdventure",
 		"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
 		"args": "key=OBA"
+	},
+	{
+		"type": "java",
+		"name": "Run",
+		"request": "launch",
+		"cwd": "${workspaceFolder}/run",
+		"console": "internalConsole",
+		"stopOnEntry": false,
+		"mainClass": "net.home.MainFrame",
+		"vmArgs": "\"-Xmx1G\" \"-Xdebug\""
+	},
+	{
+		"type": "java",
+		"name": "Random Generator GSON",
+		"request": "launch",
+		"cwd": "${workspaceFolder}/run",
+		"console": "internalConsole",
+		"stopOnEntry": false,
+		"mainClass": "net.w3e.wlib.dungeon.DungeonGenerator",
+		"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
+		"args": ""
+	},
+	{
+		"type": "java",
+		"name": "Test",
+		"request": "launch",
+		"cwd": "${workspaceFolder}/run",
+		"console": "internalConsole",
+		"stopOnEntry": false,
+		"mainClass": "net.w3e.app.MainFrame",
+		"vmArgs": "\"-Xmx1G\" \"-Xdebug\"",
+		"args": "key=test x=1675"
 	}
 ]

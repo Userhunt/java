@@ -1,6 +1,6 @@
 package net.w3e.wlib.dungeon;
 
-import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -8,63 +8,51 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import net.skds.lib2.io.json.JsonUtils;
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.elements.JsonArray;
-import net.skds.lib2.io.json.elements.JsonElement;
-import net.skds.lib2.io.json.elements.JsonObject;
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.FastMath;
-import net.skds.lib2.mat.Vec3I;
+import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.json.codec.JsonDeserializeBuilder;
+import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
+import net.skds.lib2.mat.vec3.Vec3I;
 import net.skds.lib2.utils.Holders.BooleanHolder;
 import net.skds.lib2.utils.logger.SKDSLogger;
 import net.skds.lib2.utils.logger.SKDSLoggerFactory;
-import net.w3e.wlib.collection.CollectionBuilder;
-import net.w3e.wlib.collection.CollectionBuilder.SimpleCollectionBuilder;
 import net.w3e.wlib.collection.MapT.MapTString;
 import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
-import net.w3e.wlib.dungeon.json.DungeonJsonAdaptersString;
-import net.w3e.wlib.dungeon.json.DungeonJsonAdaptersString.DungeonGeneratorJsonAdapter;
-import net.w3e.wlib.dungeon.layers.ClearLayer;
-import net.w3e.wlib.dungeon.layers.DistanceLayer;
 import net.w3e.wlib.dungeon.layers.DungeonLayerFactory;
-import net.w3e.wlib.dungeon.layers.FeatureLayer;
-import net.w3e.wlib.dungeon.layers.ISetupLayer;
-import net.w3e.wlib.dungeon.layers.RoomLayer;
-import net.w3e.wlib.dungeon.layers.RotateLayer;
+import net.w3e.wlib.dungeon.layers.ISetupRoomLayer;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilterValues;
-import net.w3e.wlib.dungeon.layers.path.PathRepeatLayer;
-import net.w3e.wlib.dungeon.layers.terra.BiomeLayer;
-import net.w3e.wlib.dungeon.layers.terra.CompositeTerraLayer;
-import net.w3e.wlib.json.CompareJsonUtil;
 import net.w3e.wlib.mat.VecUtil;
 import net.w3e.wlib.mat.WBoxI;
 
-@DefaultJsonCodec(DungeonGeneratorJsonAdapter.class)
 public class DungeonGenerator {
 
 	public static final SKDSLogger LOGGER = SKDSLoggerFactory.getLogger();
 
 	private final transient Map<Vec3I, Map<Vec3I, DungeonRoomInfo>> map = new HashMap<>();
 
-	private final long seed;
+	private final Random random;
 	private final WBoxI dimension;
 	private final MapTString dataFactory;
-	private final List<DungeonLayerFactory> layers = new ArrayList<>();
 
-	private transient Random random;
+	private final int layerCount;
 	private final transient List<DungeonLayer> queue = new LinkedList<>();
-	private final transient List<ISetupLayer> setup = new LinkedList<>();
-	private transient boolean regenerate = true;
+	private final transient List<ISetupRoomLayer> roomSetup = new LinkedList<>();
+	private transient boolean setupLayer = true;
 
 	public DungeonGenerator(long seed, WBoxI dimension, MapTString dataFactory, List<DungeonLayerFactory> layers) {
-		this.seed = seed;
+		this.random = new Random(seed);
 		this.dimension = dimension;
 		this.dataFactory = dataFactory;
-		this.layers.addAll(layers);
+		this.layerCount = layers.size();
+		layers.stream().map(e -> e.create(this)).forEach(l -> {
+			this.queue.add(l);
+			if (l instanceof ISetupRoomLayer s) {
+				this.roomSetup.add(s);
+			}
+		});
 	}
 
 	public final Random random() {
@@ -75,29 +63,19 @@ public class DungeonGenerator {
 		return this.dimension;
 	}
 
-	public final void regenerate() {
-		this.map.clear();
-		this.queue.clear();
-		this.setup.clear();
-		this.random = new Random(this.seed);
-		this.queue.addAll(this.layers.stream().map(e -> e.create(this)).toList());
-		this.regenerate = true;
-		this.queue.stream().filter(e -> e instanceof ISetupLayer).map(e -> (ISetupLayer)e).forEach(this.setup::add);
-	}
-
 	public final DungeonRoomCreateInfo putOrGet(Vec3I pos) {
-		if (!this.testDimension(pos)) {
+		if (!this.testPosIsInside(pos)) {
 			return this.createFailRoom(pos, false);
 		}
 		Vec3I chunk = VecUtil.pos2Chunk(pos);
 		BooleanHolder exists = new BooleanHolder(true);
-		DungeonRoomInfo room = map.computeIfAbsent(chunk, key -> new HashMap<>()).computeIfAbsent(pos, key -> {
+		DungeonRoomInfo room = map.computeIfAbsent(chunk, p -> new HashMap<>()).computeIfAbsent(pos, p -> {
 			exists.setValue(false);
 			return DungeonRoomInfo.create(pos, chunk, this.dataFactory);
 		});
 		if (!exists.isValue()) {
-			for (ISetupLayer setup : this.setup) {
-				setup.setup(room);
+			for (ISetupRoomLayer setup : this.roomSetup) {
+				setup.setupRoom(room);
 			}
 		}
 		return DungeonRoomCreateInfo.success(room, exists.isValue());
@@ -114,7 +92,7 @@ public class DungeonGenerator {
 	}
 
 	public final DungeonRoomCreateInfo get(Vec3I pos) {
-		if (this.testDimension(pos)) {
+		if (this.testPosIsInside(pos)) {
 			Vec3I chunk = VecUtil.pos2Chunk(pos);
 
 			Map<Vec3I, DungeonRoomInfo> m = this.map.get(chunk);
@@ -130,7 +108,7 @@ public class DungeonGenerator {
 	}
 
 	public final DungeonRoomCreateInfo removeRoom(Vec3I pos) {
-		if (this.testDimension(pos)) {
+		if (this.testPosIsInside(pos)) {
 			Vec3I chunk = VecUtil.pos2Chunk(pos);
 			Map<Vec3I, DungeonRoomInfo> m = this.map.get(chunk);
 			if (m != null) {
@@ -204,31 +182,15 @@ public class DungeonGenerator {
 			return !this.exists || this.room.isWall();
 		}
 		public final boolean isentrance() {
-			return this.room.isentrance();
+			return this.room.isEntrance();
 		}
 		public final boolean isWall() {
 			return this.room.isWall();
 		}
 	}
 
-	public final boolean testDimension(Vec3I pos) {
+	public final boolean testPosIsInside(Vec3I pos) {
 		return this.dimension.contains(pos);
-	}
-
-	public final DungeonGenerator copy(Long seed, WBoxI dimension, boolean data) {
-		DungeonGenerator dungeon = new DungeonGenerator(seed == null ? this.seed : seed, dimension == null ? this.dimension : dimension, this.dataFactory, this.layers);
-		if (data) {
-			for (Map<Vec3I, DungeonRoomInfo> chunk : this.map.values()) {
-				for (Entry<Vec3I, DungeonRoomInfo> entry : chunk.entrySet()) {
-					DungeonRoomCreateInfo info = dungeon.putOrGet(entry.getKey());
-					if (info.isInside) {
-						info.room.copyFrom(entry.getValue());
-					}
-				}
-			}
-		}
-
-		return dungeon;
 	}
 
 	public final Map<Vec3I, Map<Vec3I, DungeonRoomInfo>> getChunks() {
@@ -245,30 +207,52 @@ public class DungeonGenerator {
 		return map;
 	}
 
-	public final int generate() throws DungeonException {
-		if (this.layers.isEmpty()) {
-			return 100;
-		}
-		int i = 100;
-		if (!queue.isEmpty()) {
+	public final CompletableFuture<DungeonGeneratorResult> generateAsync(DungeonGenerationCallback callback) {
+		return CompletableFuture.supplyAsync(() -> {
+			return generate(callback);
+		});
+	}
+
+	public DungeonGeneratorResult generate(DungeonGenerationCallback callback) {
+		DungeonGeneratorResult result = null;
+		while (!queue.isEmpty()) {
+			float progress = 1;
 			DungeonLayer layer = this.queue.getFirst();
-			if (this.regenerate) {
-				layer.regenerate(false);
-				this.regenerate = false;
-				i = 1;
-			} else {
-				i = layer.generate();
-				if (i == 100) {
-					i = 0;
-					this.queue.removeFirst();
-					this.regenerate = true;
-				}
+			if (this.setupLayer) {
+				layer.setupLayer(false);
+				this.setupLayer = false;
+			}
+			progress = layer.generate();
+			if (progress >= 1f) {
+				progress = 0;
+				this.queue.removeFirst();
+				this.setupLayer = true;
+			}
+
+			float prev = (this.layerCount - this.queue.size());
+			progress = (prev + progress) / this.layerCount;
+			progress = Math.max(0.001f, progress);
+
+			result = new DungeonGeneratorResult(this.dimension, this.map, progress, layer);
+
+			CompletableFuture<Boolean> next;
+			try {
+				next = callback.callback(result);
+			} catch (InterruptedException e) {
+				return result.cancel();
+			}
+			if (!next.join()) {
+				return result.cancel();
 			}
 		}
+		return result;
+	}
 
-		float prev = (this.layers.size() - this.queue.size()) * 100f;
+	public static interface DungeonGenerationCallback {
+		CompletableFuture<Boolean> callback(DungeonGeneratorResult result) throws InterruptedException;
 
-		return FastMath.round((prev + i) / this.layers.size());
+		CompletableFuture<Boolean> DONE = CompletableFuture.completedFuture(true);
+		DungeonGenerationCallback CONTINUE = (_) -> DONE;
 	}
 
 	public final DungeonLayer getFirst() {
@@ -276,175 +260,36 @@ public class DungeonGenerator {
 	}
 
 	public final List<DungeonLayer> layers() {
-		Stream<DungeonLayer> stream = this.layers.stream().map(e -> e.create(this));
+		Stream<DungeonLayer> stream = this.queue.stream().map(e -> e);
 		return stream.toList();
 	}
 
-	public static final SimpleCollectionBuilder<DungeonLayerFactory, ArrayList<DungeonLayerFactory>> factoryCollectionBuilder() {
-		return CollectionBuilder.list(DungeonLayerFactory.class);
-	}
-
-	public static final DungeonGenerator example(long seed, Direction direction, boolean debug) {
-		int size = 8;
-		SimpleCollectionBuilder<DungeonLayerFactory, ArrayList<DungeonLayerFactory>> layers = factoryCollectionBuilder().add(
-			// path
-			gen -> PathRepeatLayer.example(gen, size),
-			//WormLayer::example,
-			// distance
-			DistanceLayer::example,
-			// temperature, wet, difficulty
-			CompositeTerraLayer::example,
-			// biomes
-			BiomeLayer::example,
-			// rooms
-			RoomLayer::example,
-			// features - spawners, chests, ?
-			FeatureLayer::example,
-			// clear for save
-			ClearLayer::example
-		);
-		if (direction != Direction.SOUTH) {
-			layers.add(gen -> new RotateLayer(gen, direction));
-		}
-		DungeonGenerator generator = new DungeonGenerator(seed, new WBoxI(-size, 0, -size, size, 0, size), new MapTString(), layers.build());
-		return exampleSave(generator, debug);
-	}
-
-	public static final DungeonGenerator exampleSave(DungeonGenerator generator, boolean debug) {
-		DungeonGenerator data;
-
-		/*data = exampleGson(jsonObject, debug);
-		if (data != null) {
-			generator = data;
-		}*/
-
-		data = exampleSasaiGson(generator, debug);
-		if (data != null) {
-			generator = data;
+	public static class DungeonGeneratorJsonAdapter extends JsonReflectiveBuilderCodec<DungeonGenerator> {
+		public DungeonGeneratorJsonAdapter(Type type, JsonCodecRegistry registry) {
+			super(type, EDungeon.class, registry);
 		}
 
-		return generator;
-	}
-
-	/*private static DungeonGenerator exampleGson(DungeonGenerator generator, boolean debug) {
-		System.out.println("gson start");
-		Gson gson = JsonUtils.getGSON_COMPACT();
-
-		final JsonObject jsonObject = JsonParser.parseString(JsonUtils.getGSON_COMPACT().toJson(generator)).getAsJsonObject();
-		JsonUtils.saveConfig(new File(String.format("dungeon/example_%s.json", generator.seed)), jsonObject);
-
-		DungeonGenerator data = gson.fromJson(jsonObject, DungeonGenerator.class);
-
-		JsonObject result = JsonParser.parseString(gson.toJson(data)).getAsJsonObject();
-
-		if (!jsonObject.equals(result)) {
-			JsonArray jsonSave = jsonObject.remove("layers").getAsJsonArray();
-			JsonArray jsonRead = result.remove("layers").getAsJsonArray();
-			if (!jsonObject.equals(result)) {
-				System.out.println(jsonObject);
-				System.out.println(result);
-			}
-			if (!jsonSave.equals(jsonRead)) {
-				if (jsonSave.size() != jsonRead.size()) {
-					System.out.println("wrong size");
-				} else {
-					for (int i = 0; i < jsonSave.size(); i++) {
-						JsonElement js = jsonSave.get(i);
-						JsonElement jr = jsonRead.get(i);
-						if (!js.equals(jr)) {
-							System.err.println(String.format("layer[%s]", i));
-							System.err.println(js);
-							System.err.println(jr);
-						}
-					}
-				}
-			}
-			return null;
-		} else {
-			return data;
-		}
-	}*/
-
-	private static DungeonGenerator exampleSasaiGson(DungeonGenerator generator, boolean debug) {
-		System.out.println("sasai start");
-		final JsonObject jsonObject = JsonUtils.parseJson(JsonUtils.toJson(generator), JsonObject.class);
-		JsonUtils.saveJson(new File(String.format("dungeon/example_%s_sasai.json", generator.seed)), jsonObject);
-
-		if (!debug) {
-			return generator;
-		}
-
-		DungeonGenerator data = JsonUtils.parseJson(jsonObject, DungeonGenerator.class);
-
-		JsonObject result = JsonUtils.parseJson(JsonUtils.toJson(data), JsonObject.class);
-
-		CompareJsonUtil.CompareResult compare = CompareJsonUtil.compare(jsonObject, result);
-		System.out.println(compare.print(true));
-
-		if (!jsonObject.equals(result)) {
-			JsonArray jsonSave = jsonObject.remove("layers").getAsJsonArray();
-			JsonArray jsonRead = result.remove("layers").getAsJsonArray();
-			if (!jsonObject.equals(result)) {
-				System.out.println(jsonObject);
-				System.out.println(result);
-			}
-			if (!jsonSave.equals(jsonRead)) {
-				if (jsonSave.size() != jsonRead.size()) {
-					System.out.println("wrong size");
-				} else {
-					for (int i = 0; i < jsonSave.size(); i++) {
-						JsonElement js = jsonSave.get(i);
-						JsonElement jr = jsonRead.get(i);
-						if (!js.equals(jr)) {
-							System.err.println(String.format("layer[%s]", i));
-							System.err.println(js);
-							System.err.println(jr);
-						}
-					}
-				}
-			}
-			return data;
-		}
-
-		return null;
-	}
-
-	public static void main(String[] args) {
-		SKDSLogger.replaceOuts();
-
-		DungeonJsonAdaptersString.initString();
-
-		//InnerDungeonGenerator inner = new InnerDungeonGenerator();
-
-		example(0, Direction.SOUTH, true);
-		System.out.println("done dungeon generator");
-	}
-
-	/*private static class InnerDungeonGenerator {
+		private static class EDungeon implements JsonDeserializeBuilder<DungeonGenerator> {
+			private long seed = 0;
+			private WBoxI dimension = new WBoxI(0, 0, 0, 0, 0, 0).expand(4, 0, 4);
+			private MapTString data = new MapTString();
+			private DungeonLayer[] layers = new DungeonLayer[0];
+			private final transient List<DungeonLayerFactory> layerFactories = new ArrayList<>();
 	
-		transient List<String> list = new ArrayList<>();
-		transient Set<String> set = new HashSet<>();
-		Set<Object2BooleanArrayMap<Direction>> directionVariants = new HashSet<>();
-		Object2BooleanArrayMap<Direction> map = new Object2BooleanArrayMap<>();
-
-		public InnerDungeonGenerator() {
-			list.add("null");
-			list.add("1");
-
-			set.addAll(list);
-
-			Object2BooleanArrayMap<Direction> map1 = new Object2BooleanArrayMap<>();
-			map1.put(Direction.DOWN, false);
-			map1.put(null, true);
-			map1.put(Direction.UP, true);
-			
-			directionVariants.add(null);
-			directionVariants.add(map1);
-
-			this.map.putAll(map1);
-
-			System.out.println(JsonUtils.toJson(this));
-			System.out.println(JsonUtils.getFancyRegistry().getSerializer(map1.getClass()));
+			@Override
+			public final DungeonGenerator build() {
+				if (this.layerFactories.size() != this.layers.length) {
+					this.layerFactories.clear();
+					for (DungeonLayer layer : this.layers) {
+						if (layer == null) {
+							throw new NullPointerException();
+						}
+						this.layerFactories.add(generator -> layer.withDungeon(generator));
+					}
+				}
+				MapTString map = this.data != null ? new MapTString(this.data) : new MapTString();
+				return new DungeonGenerator(this.seed, this.dimension, map, this.layerFactories);
+			}
 		}
-	}*/
+	}
 }

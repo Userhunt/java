@@ -14,13 +14,13 @@ public class WetLayer extends NoiseLayer {
 
 	public static final String KEY = "wet";
 
-	public WetLayer(DungeonGenerator generator, NoiseData data, int stepRate, boolean fast) {
-		super(JSON_MAP.WET, generator, data.withKey(KEY), stepRate, fast);
+	public WetLayer(DungeonGenerator generator, NoiseData data, int stepRate, boolean createRoomIfNotExists) {
+		super(JSON_MAP.WET, generator, KEY, data, stepRate, createRoomIfNotExists);
 	}
 
 	@Override
 	public final WetLayer withDungeon(DungeonGenerator generator) {
-		return new WetLayer(generator, this.noise, this.stepRate, this.fast);
+		return new WetLayer(generator, this.noise, this.stepRate, this.createRoomIfNotExists);
 	}
 
 	public static final int MIN = 0;
@@ -34,13 +34,13 @@ public class WetLayer extends NoiseLayer {
 
 		private static class WetLayerData extends NoiseLayerData<WetLayer> {
 			@Override
-			protected final WetLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
-				return new WetLayer(generator, noise, stepRate, fast);
+			protected final WetLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean createRoomIfNotExists) {
+				return new WetLayer(generator, noise, stepRate, createRoomIfNotExists);
 			}
 		}
 	}
 
 	public static final WetLayer example(DungeonGenerator generator) {
-		return new WetLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50, false);
+		return new WetLayer(generator, new NoiseData.NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50, true);
 	}
 }

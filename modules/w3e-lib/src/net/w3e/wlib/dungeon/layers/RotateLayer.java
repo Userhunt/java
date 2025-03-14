@@ -12,9 +12,9 @@ import java.util.function.BiFunction;
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.Vec3I;
-import net.skds.lib2.mat.Direction.Axis;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3I;
+import net.skds.lib2.mat.vec3.Direction.Axis;
 import net.w3e.wlib.collection.MapT.MapTString;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
@@ -50,9 +50,8 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
+	public void setupLayer(boolean composite) throws DungeonException {
 		if (this.isValidRotation()) {
-			super.regenerate(composite);
 			this.forEach(room -> {
 				this.list.add(room.room());
 				this.removeRoom(room.pos());
@@ -66,7 +65,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 				rot = rot.rotateCounterclockwise(Axis.Y);
 				size += 1;
 			}
-	
+
 			this.wrapRotation.clear();
 			for (Direction direction : Direction.values()) {
 				if (direction.isHorizontal()) {
@@ -77,16 +76,13 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 					this.wrapRotation.put(direction, out);
 				}
 			}
-
-			this.layers.clear();
-			this.layers.addAll(this.layers());
 		}
 	}
 
 	@Override
-	public final int generate() throws DungeonException {
+	public final float generate() throws DungeonException {
 		if (!this.isValidRotation()) {
-			return 100;
+			return 1;
 		}
 
 		for (int index = 0; index < 10 && !this.list.isEmpty(); index++) {
@@ -97,7 +93,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 				throw EXCEPTION.apply(old, pos);
 			}
 			DungeonRoomInfo room = info.room();
-			room.setentrance(old.isentrance());
+			room.setentrance(old.isEntrance());
 			room.setWall(old.isWall());
 			room.setDistance(old.getDistance());
 
@@ -125,8 +121,8 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 
 	public static final DungeonGenerator rotate(DungeonGenerator generator, Direction rotation) throws DungeonException {
 		RotateLayer layer = new RotateLayer(generator, rotation);
-		layer.regenerate(false);
-		while (layer.generate() < 100) {}
+		layer.setupLayer(false);
+		while (layer.generate() < 1f) {}
 		return generator;
 	}
 

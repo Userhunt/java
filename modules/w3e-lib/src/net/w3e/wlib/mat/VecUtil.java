@@ -1,15 +1,15 @@
 package net.w3e.wlib.mat;
 
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.Direction.Axis;
-import net.skds.lib2.mat.Vec2;
-import net.skds.lib2.mat.Vec2D;
-import net.skds.lib2.mat.Vec2F;
-import net.skds.lib2.mat.Vec2I;
-import net.skds.lib2.mat.Vec3;
-import net.skds.lib2.mat.Vec3D;
-import net.skds.lib2.mat.Vec3F;
-import net.skds.lib2.mat.Vec3I;
+import net.skds.lib2.mat.vec2.Vec2;
+import net.skds.lib2.mat.vec2.Vec2D;
+import net.skds.lib2.mat.vec2.Vec2F;
+import net.skds.lib2.mat.vec2.Vec2I;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3;
+import net.skds.lib2.mat.vec3.Vec3D;
+import net.skds.lib2.mat.vec3.Vec3F;
+import net.skds.lib2.mat.vec3.Vec3I;
+import net.skds.lib2.mat.vec3.Direction.Axis;
 
 public class VecUtil {
 

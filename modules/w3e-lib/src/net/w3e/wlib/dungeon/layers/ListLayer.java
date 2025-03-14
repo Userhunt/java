@@ -4,26 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import net.skds.lib2.mat.FastMath;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.json.WJsonTypedTypeAdapter;
+import net.w3e.wlib.log.LogUtil;
 
 public abstract class ListLayer<E> extends DungeonLayer {
 
 	protected final transient List<E> list = new ArrayList<>();
 	protected transient int filled = -1;
 
-	protected ListLayer(WJsonTypedTypeAdapter<? extends ListLayer<E>> keyName, DungeonGenerator generator) {
-		super(keyName, generator);
-	}
-
-	@Override
-	public void regenerate(boolean composite) throws DungeonException {
-		this.filled = -1;
-		this.list.clear();
+	protected ListLayer(WJsonTypedTypeAdapter<? extends ListLayer<E>> configType, DungeonGenerator generator) {
+		super(configType, generator);
 	}
 
 	protected final void generateList(Function<DungeonRoomCreateInfo, GenerateListHolder<E>> filter) {
@@ -55,6 +49,15 @@ public abstract class ListLayer<E> extends DungeonLayer {
 		}
 	}
 
+	protected final <T> void copyList(List<T> list, Function<T, T> copy) {
+		if (list.isEmpty()) {
+			throw new DungeonException(LogUtil.IS_EMPTY.createMsg(this.getClass().getSimpleName()));
+		}
+		List<T> values = new ArrayList<>(list);
+		list.clear();
+		values.stream().map(copy).forEach(list::add);
+	}
+
 	public final int size() {
 		return this.filled - this.list.size();
 	}
@@ -63,7 +66,7 @@ public abstract class ListLayer<E> extends DungeonLayer {
 		return this.filled;
 	}
 
-	public final int progress() {
-		return FastMath.round(this.size() * 100f / this.filled);
+	public final float progress() {
+		return this.size() * 1f / this.filled;
 	}
 }

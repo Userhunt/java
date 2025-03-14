@@ -3,37 +3,37 @@ package net.w3e.wlib.dungeon.layers.terra;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
-import net.w3e.wlib.dungeon.layers.ISetupLayer;
+import net.w3e.wlib.dungeon.layers.ISetupRoomLayer;
 import net.w3e.wlib.dungeon.layers.ListLayer;
 import net.w3e.wlib.json.WJsonTypedTypeAdapter;
 
-public abstract class TerraLayer<T> extends ListLayer<DungeonRoomInfo> implements ISetupLayer {
+public abstract class TerraLayer<T> extends ListLayer<DungeonRoomInfo> implements ISetupRoomLayer {
 
 	protected final transient String defKey;
 	protected final T defValue;
 	protected final int stepRate;
-	protected final boolean fast;
+	protected final boolean createRoomIfNotExists;
 
-	public TerraLayer(WJsonTypedTypeAdapter<? extends TerraLayer<T>> configType, DungeonGenerator generator, String defKey, T defValue, int stepRate, boolean fast) {
+	public TerraLayer(WJsonTypedTypeAdapter<? extends TerraLayer<T>> configType, DungeonGenerator generator, String defKey, T defValue, int stepRate, boolean createRoomIfNotExists) {
 		super(configType, generator);
 		this.defKey = defKey;
 		this.defValue = defValue;
 		this.stepRate = stepRate;
-		this.fast = fast;
+		this.createRoomIfNotExists = createRoomIfNotExists;
 	}
 
 	@Override
-	public void setup(DungeonRoomInfo room) {
+	public void setupRoom(DungeonRoomInfo room) {
 		room.data().put(this.defKey, this.defValue);
 	}
 
 	@Override
-	public final int generate() throws DungeonException {
+	public final float generate() throws DungeonException {
 		if (filled == -1) {
 			this.generateList(room -> {
 				return GenerateListHolder.success(room.room());
-			}, !this.fast);
-			return 1;
+			}, this.createRoomIfNotExists);
+			return 0.001f;
 		}
 
 		for (int i = 0; i < this.stepRate; i++) {

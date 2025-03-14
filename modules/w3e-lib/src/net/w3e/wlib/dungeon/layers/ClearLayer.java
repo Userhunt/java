@@ -24,16 +24,16 @@ public class ClearLayer extends DungeonLayer {
 	}
 
 	@Override
-	public final void regenerate(boolean composite) {}
+	public final void setupLayer(boolean composite) {}
 
 	@Override
-	public final int generate() {
+	public final float generate() {
 		this.forEach(room -> {
 			if (room.isWall()) {
 				this.removeRoom(room.pos());
 			}
 		});
-		return 100;
+		return 1f;
 	}
 
 	public static final ClearLayer example(DungeonGenerator generator) {

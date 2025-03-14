@@ -7,7 +7,7 @@ public interface IDungeonLayerProgress<T extends Enum<T>> {
 	@SuppressWarnings("unchecked")
 	default T next(float progress) {
 		T self = (T)this;
-		if (progress < 100) {
+		if (progress < 1) {
 			return self;
 		}
 		int ordinal = self.ordinal();
@@ -19,8 +19,8 @@ public interface IDungeonLayerProgress<T extends Enum<T>> {
 		}
 	}
 
-	default int progress(IDungeonLayerProgress<T> prevProgress, float i) {
-		float partScale = 100f / this.getValues().length;
-		return (int)Math.floor(prevProgress.ordinal() * partScale + i * partScale / 100 + 0.001f);
+	default float progress(IDungeonLayerProgress<T> prevProgress, float i) {
+		float partScale = 1f / this.getValues().length;
+		return prevProgress.ordinal() * partScale + i * partScale / 1f;
 	}
 }

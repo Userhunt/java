@@ -1,7 +1,5 @@
 package net.w3e.wlib.attribute;
 
-import com.google.common.collect.Multimap;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,16 +52,16 @@ public class WAttributeMap<V extends WAttributeInstance, R extends WAttributeSup
 		return attributeInstance != null ? attributeInstance.getModifier(name).getAmount() : this.supplier.getModifierValue(attribute, name);
 	}
 
-	public final void removeAttributeModifiers(Multimap<WAttribute, WAttributeModifier> multimap) {
+	/*public final void removeAttributeModifiers(Multimap<WAttribute, WAttributeModifier> multimap) {
 		multimap.asMap().forEach((attribute, collection) -> {
 			V attributeInstance = this.attributes.get(attribute);
 			if (attributeInstance != null) {
 				collection.forEach(attributeInstance::removeModifier);
 			}
 		});
-	}
+	}*/
 
-	public final void addTransientAttributeModifiers(Multimap<WAttribute, WAttributeModifier> multimap) {
+	/*public final void addTransientAttributeModifiers(Multimap<WAttribute, WAttributeModifier> multimap) {
 		multimap.forEach((attribute, attributeModifier) -> {
 			V attributeInstance = this.getInstance(attribute);
 			if (attributeInstance != null) {
@@ -71,7 +69,7 @@ public class WAttributeMap<V extends WAttributeInstance, R extends WAttributeSup
 				attributeInstance.addTransientModifier(attributeModifier);
 			}
 		});
-	}
+	}*/
 
 	public final void assignValues(WAttributeMap<V, R> attributeMap) {
 		attributeMap.attributes.values().forEach(attributeInstance -> {

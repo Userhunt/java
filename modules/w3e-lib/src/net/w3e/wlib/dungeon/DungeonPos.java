@@ -8,8 +8,8 @@ import net.skds.lib2.io.json.JsonWriter;
 import net.skds.lib2.io.json.codec.JsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.Vec3I;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3I;
 import net.w3e.wlib.json.WJsonBuilder;
 
 public record DungeonPos(Vec3I pos, Direction direction, boolean entrance) {
@@ -29,13 +29,17 @@ public record DungeonPos(Vec3I pos, Direction direction, boolean entrance) {
 	}
 
 	@Deprecated
-	public final Direction direction() {
+	public Direction direction() {
 		return this.direction;
 	}
 
-	public final Direction getDirection(Random random) {
-		if (this.direction != null) {
-			return this.direction;
+	public Direction getDirection(Random random) {
+		return getDirectionOrRandom(this.direction, random);
+	}
+
+	public static Direction getDirectionOrRandom(Direction direction, Random random) {
+		if (direction != null) {
+			return direction;
 		}
 		return switch (random.nextInt(4)) {
 			case 0 -> Direction.EAST;

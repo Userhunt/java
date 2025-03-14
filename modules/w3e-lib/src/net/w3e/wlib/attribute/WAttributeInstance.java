@@ -31,6 +31,7 @@ public class WAttributeInstance {
 		this.baseValue = this.defaultValue;
 	}
 
+	@SuppressWarnings("unchecked")
 	public final <T extends WAttribute> T getAttribute() {
 		return (T)this.attribute;
 	}

@@ -2,9 +2,9 @@ package net.w3e.wlib.mat;
 
 import java.util.Random;
 
-import net.skds.lib2.mat.Direction.Axis;
+import net.skds.lib2.mat.vec3.Vec3;
+import net.skds.lib2.mat.vec3.Direction.Axis;
 import net.skds.lib2.mat.FastMath;
-import net.skds.lib2.mat.Vec3;
 
 public class WMatUtil {
 

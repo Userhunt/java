@@ -11,9 +11,9 @@ import javax.swing.table.DefaultTableModel;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import net.w3e.app.FrameObject;
-import net.w3e.app.MainFrame;
-import net.w3e.app.api.window.FrameWin;
+import net.w3e.app.old.FrameObject;
+import net.w3e.app.old.MainFrame;
+import net.w3e.app.old.api.window_old.FrameWin;
 
 public class InfinitodeScreen extends FrameObject {
 

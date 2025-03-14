@@ -14,12 +14,14 @@ import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.annotation.SkipSerialization;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
-import net.skds.lib2.mat.Direction;
 import net.skds.lib2.mat.FastMath;
-import net.skds.lib2.mat.Vec3I;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3I;
 import net.skds.lib2.utils.Holders.ObjectHolder;
+import net.skds.lib2.utils.collection.WeightedPool;
+import net.skds.lib2.utils.linkiges.Obj2FloatPair;
+import net.skds.lib2.utils.linkiges.Obj2FloatPairRecord;
 import net.w3e.wlib.collection.CollectionBuilder;
-import net.w3e.wlib.collection.RandomCollection;
 import net.w3e.wlib.collection.MapT.MapTString;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
@@ -27,7 +29,7 @@ import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.json.DungeonKeySupplier;
 import net.w3e.wlib.dungeon.json.ILayerData;
-import net.w3e.wlib.dungeon.layers.ISetupLayer;
+import net.w3e.wlib.dungeon.layers.ISetupRoomLayer;
 import net.w3e.wlib.dungeon.layers.LayerRange;
 import net.w3e.wlib.dungeon.layers.ListLayer;
 import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilter;
@@ -42,15 +44,14 @@ import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLayerProgress;
 import net.w3e.wlib.dungeon.layers.interfaces.IDungeonLimitedCount;
 
 @DefaultJsonCodec(BiomeLayer.BiomeLayerJsonAdapter.class)
-public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISetupLayer {
+public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISetupRoomLayer {
 
 	public static final String TYPE = "terra/biome";
 
 	public static final String KEY = "biome";
 
 	private final List<BiomeInfo> biomes = new ArrayList<>();
-	private final transient List<BiomeInfo> workList = new ArrayList<>();
-	private transient Progress progress = Progress.createPoint;
+	private transient Progress progress = Progress.createArray;
 
 	private final int percent;
 	private final DungeonKeySupplier def;
@@ -74,25 +75,19 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 	}
 
 	@Override
-	public final void setup(DungeonRoomInfo room) {
+	public final void setupRoom(DungeonRoomInfo room) {
 		room.data().put(KEY, this.def);
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
-		this.list.clear();
-		this.filled = -1;
-
-		this.progress = Progress.createArray;
-
-		this.workList.clear();
-		this.biomes.stream().map(BiomeInfo::copy).forEach(this.workList::add);
+	public final void setupLayer(boolean composite) throws DungeonException {
+		copyList(this.biomes, BiomeInfo::copy);
 	}
 
 	@Override
-	public final int generate() throws DungeonException {
+	public final float generate() throws DungeonException {
 		Progress prevProgress = this.progress;
-		float i = 100;
+		float i = 1;
 
 		switch (this.progress) {
 			case createArray -> {
@@ -113,24 +108,24 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 					BiomePoint point = iterator.next();
 					MapTString data = point.room.data();
 					RoomLayerFilterValues values = this.getRoomValues(point.room);
-					RandomCollection<BiomeInfo> random = new RandomCollection<>(this.random());
-					for (BiomeInfo biomeData : this.workList) {
+					List<Obj2FloatPair<BiomeInfo>> randomCollection = new ArrayList<>();
+					for (BiomeInfo biomeData : this.biomes) {
 						if (biomeData.test(this, values)) {
-							random.add(biomeData.weight, biomeData);
+							randomCollection.add(new Obj2FloatPairRecord<>(biomeData.weight, biomeData));
 						}
 					}
-					if (!random.isEmpty()) {
-						BiomeInfo info = random.getRandom();
+					if (!randomCollection.isEmpty()) {
+						BiomeInfo info = new WeightedPool<>(randomCollection).get(this.random().nextFloat());
 						data.put(KEY, info.value());
 						point.info.setValue(info);
 						if (info.substractCount()) {
-							this.workList.remove(info);
+							this.biomes.remove(info);
 						}
 					} else {
 						iterator.remove();
 					}
 				}
-				this.workList.clear();
+				this.biomes.clear();
 			}
 			case spread -> {
 				Collections.shuffle(this.list, this.random());

@@ -8,9 +8,9 @@ import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonDeserializeBuilder;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.Vec3;
-import net.skds.lib2.mat.Vec3I;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3;
+import net.skds.lib2.mat.vec3.Vec3I;
 
 @DefaultJsonCodec(WBoxI.WBoxIJsonAdapter.class)
 public class WBoxI {

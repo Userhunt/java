@@ -24,8 +24,6 @@ public class WJsonTypedTypeAdapter<CT> implements ConfigType<CT> {
 		return this.keyName;
 	}
 
-	public void registerJson() {}
-
 	public static class WJsonAdaptersMap<V extends WJsonRegistryElement> {
 
 		private final Map<String, WJsonTypedTypeAdapter<? extends V>> map = new HashMap<>();
@@ -48,10 +46,13 @@ public class WJsonTypedTypeAdapter<CT> implements ConfigType<CT> {
 			}
 			return (T)empty;
 		}
+
+		public final <T extends V> WJsonTypedTypeAdapter<T> registerConfigType(String keyName, Class<T> configClass) {
+			return registerConfigType(new WJsonTypedTypeAdapter<>(keyName, configClass));
+		}
 		
 		public final <T extends V> WJsonTypedTypeAdapter<T> registerConfigType(WJsonTypedTypeAdapter<T> configType) {
-			this.map.computeIfAbsent(configType.keyName(), e -> {
-				configType.registerJson();
+			this.map.computeIfAbsent(configType.keyName(), ct -> {
 				this.registerAdapter(configType);
 				return configType;
 			});

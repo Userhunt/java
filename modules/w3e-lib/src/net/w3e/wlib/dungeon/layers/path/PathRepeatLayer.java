@@ -4,16 +4,15 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.JsonSyntaxException;
-
 import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
 import net.skds.lib2.io.json.codec.JsonCodecRegistry;
 import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.FastMath;
-import net.skds.lib2.mat.Vec3I;
+import net.skds.lib2.io.json.exception.JsonIllegalStateException;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3I;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
+import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.DungeonLayer;
 import net.w3e.wlib.dungeon.DungeonPos;
 import net.w3e.wlib.dungeon.DungeonRoomInfo;
@@ -50,14 +49,14 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {
-		this.layer.regenerate(composite);
+	public final void setupLayer(boolean composite) throws DungeonException {
+		this.layer.setupLayer(composite);
 	}
 
 	@Override
-	public final int generate() throws DungeonException {
-		int value = this.layer.generate();
-		if (value >= 100) {
+	public final float generate() throws DungeonException {
+		float value = this.layer.generate();
+		if (value >= 1) {
 			List<DungeonRoomInfo> rooms = new ArrayList<>();
 			this.forEach(room -> {
 				if (!room.room().isWall()) {
@@ -66,40 +65,31 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 			});
 			Vec3I size = this.dungeonSize().addI(Vec3I.SINGLE);
 			int s = size.xi() * size.yi() * size.zi();
-			float p = rooms.size() * 100f / s;
+			final float p = rooms.size() * 100f / s;
 			if (p <= this.minumumPercent) {
 				int i = this.countPerStep;
+				boolean complete = false;
 				while (i > 0 && !rooms.isEmpty()) {
 					DungeonRoomInfo room = rooms.remove(this.random().nextInt(rooms.size()));
-					this.add(room.pos(), new DungeonPos().getDirection(this.random()));
+					Direction direction = DungeonPos.getDirectionOrRandom(null, this.random());
+					DungeonRoomCreateInfo next = this.get(room.pos().addI(direction));
+					if (!next.exists()) {
+						this.add(room.pos(), direction);
+						complete = true;
+						i--;
+						continue;
+					}
 				}
-				return Math.min(FastMath.round(p / this.minumumPercent * 100), 99);
+				if (!complete) {
+					throw new DungeonException("Path repeat layer cant create new way");
+				}
+				return Math.min(p / this.minumumPercent * 1f, 0.999f);
 			}
 		}
 		return value;
 	}
 
 	static class PathRepeatJsonAdapter extends JsonReflectiveBuilderCodec<PathRepeatLayer<?>> {
-	//static class PathRepeatJsonAdapter extends AbstractJsonCodec<PathRepeatLayer<?>> {
-
-		/*public PathRepeatJsonAdapter(Type type, JsonCodecRegistry registry) {
-			super(type, registry);
-		}
-
-		@Override
-		public void write(PathRepeatLayer<?> value, JsonWriter writer) throws IOException {
-			writer.beginObject();
-			writer.writeInt("countPerStep", value.countPerStep);
-			writer.writeFloat("minumumPercent", value.minumumPercent);
-			writer.writeName("layer");
-			this.registry.getSerializer(DungeonLayer.class).write(value.layer, writer);
-			writer.endObject();
-		}
-
-		@Override
-		public PathRepeatLayer<?> read(JsonReader reader) throws IOException {
-			return (PathRepeatLayer<?>)this.registry.getDeserializer(PathRepeatLayerData.class).read(reader).build();
-		}*/
 
 		public PathRepeatJsonAdapter(Type type, JsonCodecRegistry registry) {
 			super(type, PathRepeatLayerData.class, registry);
@@ -118,7 +108,7 @@ public class PathRepeatLayer<T extends DungeonLayer & IPathLayer> extends Dungeo
 					this.lessThan("minimumPercent", this.minumumPercent);
 					this.lessThan("countPerStep", this.countPerStep);
 				} else {
-					throw new JsonSyntaxException(LogUtil.EXPECTED.createMsg("layer", "path layer", this.layer.getClass().getSimpleName()));
+					throw new JsonIllegalStateException(LogUtil.EXPECTED.createMsg("layer", "path layer", this.layer.getClass().getSimpleName()));
 				}
 				return new PathRepeatLayer<>(generator, (T)this.layer.withDungeon(generator), this.minumumPercent, this.countPerStep);
 			}

@@ -1,5 +1,6 @@
 package net.w3e.wlib.mat;
 
+import lombok.AllArgsConstructor;
 import net.skds.lib2.mat.FastMath;
 
 @FunctionalInterface
@@ -93,5 +94,31 @@ public interface WAlign {
 		public String toString() {
 			return String.format("{x:%s,y:%s}", x, y);
 		}
+	}
+
+	@AllArgsConstructor
+	public static enum WAlignEnum {
+		LT(leftTop),
+		LC(leftCenter),
+		LC_E(leftCenterExt),
+		LB(leftBottom),
+
+		CT(centerTop),
+		CT_E(centerTopExt),
+		CC(centerCenter),
+		CC_E(centerCenterExt),
+		CC_EW(centerCenterExtWidth),
+		CC_EH(centerCenterExtHeight),
+		CB_E(centerBottomExt),
+		CB(centerBottom),
+
+		RT(rightTop),
+		RC(rightCenter),
+		RC_E(rightCenterExt),
+		RB(rightBottom),
+
+		;
+
+		public final WAlign function;
 	}
 }

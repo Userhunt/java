@@ -14,6 +14,8 @@ import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import net.w3e.wlib.collection.identity.IdentityLinkedHashMap;
+
 public class CollectionOfCollections<E> implements Collection<E> {
 
 	private final Collection<E> collection;

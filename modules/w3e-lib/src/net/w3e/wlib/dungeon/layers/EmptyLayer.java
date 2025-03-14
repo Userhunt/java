@@ -24,11 +24,11 @@ public class EmptyLayer extends DungeonLayer {
 	}
 
 	@Override
-	public final void regenerate(boolean composite) throws DungeonException {}
+	public final void setupLayer(boolean composite) throws DungeonException {}
 
 	@Override
-	public final int generate() throws DungeonException {
-		return 100;
+	public final float generate() throws DungeonException {
+		return 1;
 	}
 
 	static class EmptyLayerJsonAdapter extends WJSonEmptyAdapter {

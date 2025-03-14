@@ -1,11 +1,17 @@
 package net.w3e.wlib.dungeon;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import net.skds.lib2.mat.Direction;
-import net.skds.lib2.mat.Vec3I;
+import net.skds.lib2.mat.vec3.Direction;
+import net.skds.lib2.mat.vec3.Vec3I;
 import net.w3e.lib.utils.PackUtil;
+import net.w3e.wlib.collection.CollectionBuilder;
 import net.w3e.wlib.collection.MapT.MapTString;
+import net.w3e.wlib.dungeon.json.DungeonKeySupplier;
 import net.w3e.wlib.mat.VecUtil;
 
 public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString data) {
@@ -15,7 +21,7 @@ public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString da
 	}
 
 	public static final DungeonRoomInfo create(Vec3I pos, Vec3I chunk, MapTString factory) {
-		return new DungeonRoomInfo(pos, chunk, new int[]{-1, 0}, factory).setWall(true);
+		return new DungeonRoomInfo(pos, chunk, new int[]{-1, 0}, new MapTString(factory)).setWall(true);
 	}
 
 	@Deprecated
@@ -41,7 +47,7 @@ public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString da
 		return this;
 	}
 
-	public final boolean isentrance() {
+	public final boolean isEntrance() {
 		return PackUtil.test(this.flags[1], 1);
 	}
 
@@ -131,6 +137,24 @@ public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString da
 		return this;
 	}
 
+	public final List<Direction> getNotConnected() {
+		return getNotConnected(Direction.VALUES, true);
+	}
+
+	public final List<Direction> getNotConnected(Direction[] directions) {
+		return getNotConnected(directions, true);
+	}
+
+	public final List<Direction> getNotConnected(Direction[] directions, boolean hard) {
+		List<Direction> dirs = new ArrayList<>();
+		for (Direction direction : directions) {
+			if (!this.isConnect(direction, hard)) {
+				dirs.add(direction);
+			}
+		}
+		return dirs;
+	}
+
 	public final void copyFrom(DungeonRoomInfo info) {
 		this.flags[0] = info.flags[0];
 		this.flags[1] = info.flags[1];
@@ -140,5 +164,80 @@ public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString da
 	@Override
 	public final boolean equals(Object obj) {
 		return obj instanceof DungeonRoomInfo room && this.pos.equals(room.pos);
+	}
+
+	public List<String> displayString() {
+		List<String> list = new ArrayList<>();
+		list.add(String.format("Pos: %s", this.pos()));
+		list.add(String.format("Chunk: %s", this.chunk()));
+		list.add(String.format("Distance: %s", this.getDistance()));
+		list.add(String.format("IsWall: %s", this.isWall()));
+		list.add(String.format("Isentrance: %s", this.isEntrance()));
+		list.add(String.format("Connections: %s", CollectionBuilder.list(String.class)
+			.add(this.dataStringConnection(Direction.UP))
+			.add(this.dataStringConnection(Direction.DOWN))
+			.add(this.dataStringConnection(Direction.NORTH))
+			.add(this.dataStringConnection(Direction.SOUTH))
+			.add(this.dataStringConnection(Direction.WEST))
+			.add(this.dataStringConnection(Direction.EAST))
+		.removeNull().build()));
+		list.add(String.format("Data: %s", this.dataString()));
+		return list;
+	}
+
+	private String dataStringConnection(Direction direction) {
+		String name = null;
+		if (this.isConnect(direction)) {
+			name = direction.getName();
+			if (this.isConnect(direction, true)) {
+				name = name.toUpperCase();
+			}
+		}
+		return name;
+	}
+		
+	public String dataString() {
+		StringBuilder builder = new StringBuilder("");
+
+		appendDataString(builder, this.data);
+
+		return builder.toString();
+	}
+
+	private void appendDataString(StringBuilder builder, Object value) {
+		if (value instanceof Map map) {
+			@SuppressWarnings("unchecked")
+			Iterator<Map.Entry<Object, Object>> iterator = map.entrySet().iterator();
+			builder.append("{");
+			while (iterator.hasNext()) {
+				Map.Entry<Object, Object> next = iterator.next();
+				appendDataString(builder, next.getKey());
+				builder.append("=");
+				appendDataString(builder, next.getValue());
+				if (iterator.hasNext()) {
+					builder.append(", ");
+				}
+			}
+			builder.append("}");
+			return;
+		}
+
+		if (value instanceof Collection collection) {
+			builder.append("[");
+			Iterator<?> iterator = collection.iterator();
+			while (iterator.hasNext()) {
+				Object next = iterator.next();
+				appendDataString(builder, next);
+				if (iterator.hasNext()) {
+					builder.append(", ");
+				}
+			}
+			builder.append("]");
+			return;
+		}
+		if (value instanceof DungeonKeySupplier keySupplier) {
+			value = keySupplier.getRaw();
+		}
+		builder.append(value);
 	}
 }

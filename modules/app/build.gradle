@@ -9,7 +9,7 @@ dependencies {
 	implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.13.0'
 }
 
-mainClassName = 'net.w3e.app.MainFrame'
+mainClassName = 'net.w3e.app.gui.MainFrame'
 
 shadowJar {
 	archiveBaseName.set('w3e-app')

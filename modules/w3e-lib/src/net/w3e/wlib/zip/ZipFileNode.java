@@ -1,5 +1,6 @@
 package net.w3e.wlib.zip;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -8,10 +9,9 @@ import java.io.UnsupportedEncodingException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
+import net.skds.lib2.io.chars.BufferedReaderCharInput;
+import net.skds.lib2.io.json.JsonUtils;
+import net.skds.lib2.io.json.elements.JsonElement;
 
 public class ZipFileNode extends ZipNode {
 
@@ -33,9 +33,10 @@ public class ZipFileNode extends ZipNode {
 		}
 	}
 
-	public final JsonElement getAsJson() throws JsonIOException, JsonSyntaxException, UnsupportedEncodingException {
+	public final JsonElement getAsJson() throws UnsupportedEncodingException {
 		if (!(this.object instanceof JsonElement)) {
-			this.object = JsonParser.parseReader(new InputStreamReader(this.data, "UTF-8"));
+			BufferedReaderCharInput input = new BufferedReaderCharInput(new BufferedReader(new InputStreamReader(this.data, "UTF-8")));
+			this.object = JsonUtils.getFancyRegistry().getDeserializer(JsonElement.class).parse(input);
 		}
 		return (JsonElement)this.object;
 	}

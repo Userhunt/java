@@ -16,15 +16,15 @@ public class DifficultyLayer extends NoiseLayer {
 	private final float add;
 	private final float scale;
 
-	public DifficultyLayer(DungeonGenerator generator, NoiseData data, int stepRate, float add, float scale, boolean fast) {
-		super(JSON_MAP.DIFFICULTY, generator, data.withKey(KEY), stepRate, fast);
+	public DifficultyLayer(DungeonGenerator generator, NoiseData data, int stepRate, float add, float scale, boolean createRoomIfNotExists) {
+		super(JSON_MAP.DIFFICULTY, generator, KEY, data, stepRate, createRoomIfNotExists);
 		this.add = add;
 		this.scale = scale;
 	}
 
 	@Override
 	public final DifficultyLayer withDungeon(DungeonGenerator generator) {
-		return new DifficultyLayer(generator, this.noise, this.stepRate, this.add, this.scale, this.fast);
+		return new DifficultyLayer(generator, this.noise, this.stepRate, this.add, this.scale, this.createRoomIfNotExists);
 	}
 
 	@Override
@@ -47,13 +47,13 @@ public class DifficultyLayer extends NoiseLayer {
 			private float scale = 1;
 	
 			@Override
-			protected final DifficultyLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean fast) {
-				return new DifficultyLayer(generator, noise, stepRate, this.add, this.scale, fast);
+			protected final DifficultyLayer withDungeon(DungeonGenerator generator, NoiseData noise, int stepRate, boolean createRoomIfNotExists) {
+				return new DifficultyLayer(generator, noise, stepRate, this.add, this.scale, createRoomIfNotExists);
 			}
 		}
 	}
 
 	public static final DifficultyLayer example(DungeonGenerator generator) {
-		return new DifficultyLayer(generator, new NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50, 0, 1, false);
+		return new DifficultyLayer(generator, new NoiseData.NoiseDataBuilder().setMinMax(MIN, MAX).build(), 50, 0, 1, true);
 	}
 }

@@ -1,6 +1,6 @@
 package net.w3e.wlib.dungeon;
 
-public class DungeonException extends Exception {
+public class DungeonException extends RuntimeException {
 
 	public DungeonException() {
 		super();

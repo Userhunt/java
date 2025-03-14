@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import net.w3e.app.FrameObject;
-import net.w3e.app.MainFrame;
-import net.w3e.app.api.window.FrameWin;
+import net.w3e.app.old.FrameObject;
+import net.w3e.app.old.MainFrame;
+import net.w3e.app.old.api.window_old.FrameWin;
 import net.w3e.lib.utils.FileUtils;
 
 public class CyberpunkGeneratorScreen extends FrameObject {
