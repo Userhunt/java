@@ -1,5 +1,7 @@
 package net.w3e.wlib.mat;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Random;
 
 import net.skds.lib2.mat.vec3.Vec3;
@@ -73,6 +75,14 @@ public class WMatUtil {
 		return (value - oldMin) * (newMax - newMin) / (oldMax - oldMin) + newMin;
 	}
 
+	public static float round(float value, int places) {
+		return BigDecimal.valueOf(value).setScale(Math.max(places, 0), RoundingMode.HALF_UP).floatValue();
+	}
+
+	public static double round(double value, int places) {
+ 		return BigDecimal.valueOf(value).setScale(Math.max(places, 0), RoundingMode.HALF_UP).doubleValue();
+ 	}
+ 
 	/* ======================== hashCode ======================== */
 	public static long hashCode(int x, int y, int z) {
 		long l = (long)(x * 3129871) ^ (long)z * 116129781L ^ (long)y;

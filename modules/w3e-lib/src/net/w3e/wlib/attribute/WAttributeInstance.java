@@ -31,9 +31,8 @@ public class WAttributeInstance {
 		this.baseValue = this.defaultValue;
 	}
 
-	@SuppressWarnings("unchecked")
-	public final <T extends WAttribute> T getAttribute() {
-		return (T)this.attribute;
+	public WAttribute getAttribute() {
+		return this.attribute;
 	}
 
 	public final boolean isEmptyBase() {
@@ -110,13 +109,14 @@ public class WAttributeInstance {
 		return attributeModifier;
 	}
 
-	public final void addTransientModifier(WAttributeModifier attributeModifier) {
-		this.addModifier(attributeModifier);
+	public final WAttributeModifier addTransientModifier(WAttributeModifier attributeModifier) {
+		return this.addModifier(attributeModifier);
 	}
 
-	public final void addPermanentModifier(WAttributeModifier attributeModifier) {
+	public final WAttributeModifier addPermanentModifier(WAttributeModifier attributeModifier) {
 		attributeModifier = this.addModifier(attributeModifier);
 		this.permanentModifiers.add(attributeModifier);
+		return attributeModifier;
 	}
 
 	public final void removeModifier(WAttributeModifier attributeModifier) {

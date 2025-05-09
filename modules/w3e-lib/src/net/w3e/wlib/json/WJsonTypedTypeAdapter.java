@@ -1,32 +1,21 @@
 package net.w3e.wlib.json;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
-import lombok.Getter;
 import net.skds.lib2.io.json.JsonUtils;
 import net.skds.lib2.io.json.codec.typed.ConfigType;
 
-public class WJsonTypedTypeAdapter<CT> implements ConfigType<CT> {
-
-	private final String keyName;
-	@Getter(onMethod_ = {@Override})
-	private final Class<CT> typeClass;
-
-	public WJsonTypedTypeAdapter(String keyName, Class<CT> typeClass) {
-		this.keyName = keyName;
-		this.typeClass = typeClass;
-	}
-
-	@Override
-	public final String keyName() {
-		return this.keyName;
-	}
+public record WJsonTypedTypeAdapter<CT>(String keyName, Class<CT> getTypeClass) implements ConfigType<CT> {
 
 	public static class WJsonAdaptersMap<V extends WJsonRegistryElement> {
 
 		private final Map<String, WJsonTypedTypeAdapter<? extends V>> map = new HashMap<>();
+		private final Set<String> keySet = Collections.unmodifiableSet(this.map.keySet());
+		private Set<Class<? extends V>> values;
 		private WJsonRegistryElement empty;
 		private boolean isEmptyInit = true;
 
@@ -36,6 +25,18 @@ public class WJsonTypedTypeAdapter<CT> implements ConfigType<CT> {
 
 		protected V createEmpty() {
 			return null;
+		}
+
+		public final Set<String> keySet() {
+			return this.keySet;
+		}
+
+		@SuppressWarnings("unchecked")
+		public final Set<Class<? extends V>> values() {
+			if (this.values == null) {
+				this.values = Set.of(this.map.values().stream().map(e -> e.getTypeClass).toArray(Class[]::new));
+			}
+			return this.values;
 		}
 
 		@SuppressWarnings("unchecked")
@@ -50,9 +51,10 @@ public class WJsonTypedTypeAdapter<CT> implements ConfigType<CT> {
 		public final <T extends V> WJsonTypedTypeAdapter<T> registerConfigType(String keyName, Class<T> configClass) {
 			return registerConfigType(new WJsonTypedTypeAdapter<>(keyName, configClass));
 		}
-		
+
 		public final <T extends V> WJsonTypedTypeAdapter<T> registerConfigType(WJsonTypedTypeAdapter<T> configType) {
-			this.map.computeIfAbsent(configType.keyName(), ct -> {
+			this.map.computeIfAbsent(configType.keyName(), _ -> {
+				this.values = null;
 				this.registerAdapter(configType);
 				return configType;
 			});
@@ -62,8 +64,8 @@ public class WJsonTypedTypeAdapter<CT> implements ConfigType<CT> {
 		protected void registerAdapter(WJsonTypedTypeAdapter<? extends V> configType) {}
 
 		@SuppressWarnings("unchecked")
-		public final <T extends WJsonTypedTypeAdapter<V>> T getConfigType(String keyName) {
-			return (T)Objects.requireNonNull(this.map.get(keyName), keyName);
+		public final WJsonTypedTypeAdapter<V> getConfigType(String keyName) {
+			return (WJsonTypedTypeAdapter<V>)Objects.requireNonNull(this.map.get(keyName), keyName);
 		}
 	}
 
