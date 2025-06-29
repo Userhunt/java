@@ -4,22 +4,22 @@
 	"items": [
 		{
 			"id": "Conscientious Objector",
-			"group": ["universal","scout","soldier","pyro","demo","heavy","engineer","medic","sniper","spy"],
+			"group": ["universal"],
 			"image": "9xgEIUxcYXhDnrAdPidrhCLzUUbVWytkw48kB3WQ6xVYoNufsYjRjdAKWWPVYWfZuow7oDSNn7ZUwGse48BBZlnRK"
 		},
 		{
 			"id": "Freedom Staff",
-			"group": ["universal","scout","soldier","pyro","demo","heavy","engineer","medic","sniper","spy"],
+			"group": ["universal"],
 			"image": "9xgEIUxMGYh7jvzRGt8TnH_WJRuQEyN5ns8UNiWE7wVN-ZLPtZTY3IVOUWKNaWaxvrVC-DXNluJYyUNX457UB7fV5D7Y"
 		},
 		{
 			"id": "Bat Outta Hell",
-			"group": ["universal","scout","soldier","pyro","demo","heavy","engineer","medic","sniper","spy"],
+			"group": ["universal"],
 			"image": "9xgEIUxQaSBfuujlXt8TnH_WJRuMBzo8345MMi2M9yAMtZrCxNmQwIFbBUfBfBaRsoli-XiFrsJ8wV9b457UBL4BMVk0"
 		},
 		{
 			"id": "Ham Shank",
-			"group": ["universal","scout","soldier","pyro","demo","heavy","engineer","medic","sniper","spy"],
+			"group": ["universal"],
 			"image": "9xgEIUw8QUCTuuSpEjYa-VKuOXrRUytszsZYA3GM9yVh9MbDlNmAwIweQV_dbC_ZorAy1XnBrptdtU4darXRp"
 		},
 

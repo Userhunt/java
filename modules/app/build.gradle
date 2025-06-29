@@ -5,7 +5,7 @@ plugins {
 dependencies {
 	implementation project(":skds-lib")
 	implementation project(":w3e-lib")
-	implementation group: 'org.jsoup', name: 'jsoup', version:'1.17.2'
+	implementation group: 'org.jsoup', name: 'jsoup', version:'1.20.1'
 	implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.13.0'
 }
 

@@ -15,6 +15,7 @@ import net.w3e.app.old.FrameObject;
 import net.w3e.app.old.MainFrame;
 import net.w3e.app.old.api.window_old.FrameWin;
 
+@Deprecated
 public class InfinitodeScreen extends FrameObject {
 
 	private final JTable display = new JTable();

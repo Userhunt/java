@@ -1,4 +1,4 @@
-package net.w3e.poe;
+package net.w3e.app.utils.poe;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;

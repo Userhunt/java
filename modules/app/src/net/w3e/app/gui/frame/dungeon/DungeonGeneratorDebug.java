@@ -41,11 +41,9 @@ public class DungeonGeneratorDebug {
 
 	// TODO
 	/**
-	 * <pre>BimeLayer - not fill all layer</pre>
-	 * <pre>DelvePathLayer (poe 2)</pre>
+	 * <pre>BiomeLayer - not fill all rooms</pre>
+	 * <pre>DelvePathLayer (poe)</pre>
 	 * <pre>DLALayer https://youtu.be/gsJHzBTPG0Y?t=588</pre>
-	 * <pre>Lab https://www.youtube.com/watch?v=uctN47p_KVk
-	 * 	lab Origin Shift</pre>
 	 * 
 	 */
 	public static final DungeonGenerator example(long seed, Direction direction, boolean debug, Mode mode) {

@@ -4,8 +4,7 @@ include(
 	'w3e-lib',
 	'skds-lib',
 	':app',
-	':utils',
-	':poe',
+	':utils'
 )
 
 rootProject.children.each { project ->

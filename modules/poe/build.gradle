@@ -1,5 +1,0 @@
-dependencies {
-	implementation project(":skds-lib")
-	implementation project(":w3e-lib")
-	implementation project(":app")
-}

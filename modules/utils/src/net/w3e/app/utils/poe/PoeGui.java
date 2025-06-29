@@ -1,4 +1,4 @@
-package net.w3e.poe;
+package net.w3e.app.utils.poe;
 
 import net.skds.lib2.utils.logger.SKDSLogger;
 import net.w3e.app.gui.AppJFrame;

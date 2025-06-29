@@ -15,6 +15,7 @@ import net.w3e.app.old.MainFrame;
 import net.w3e.app.old.api.window_old.FrameWin;
 import net.w3e.lib.utils.FileUtils;
 
+@Deprecated
 public class CyberpunkGeneratorScreen extends FrameObject {
 
 	public static void main(String[] args) {
