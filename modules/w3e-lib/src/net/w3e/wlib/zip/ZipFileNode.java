@@ -1,44 +1,77 @@
 package net.w3e.wlib.zip;
 
-import java.io.BufferedReader;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-import net.skds.lib2.io.chars.BufferedReaderCharInput;
 import net.skds.lib2.io.json.JsonUtils;
 import net.skds.lib2.io.json.elements.JsonElement;
+import net.skds.lib2.utils.ImageUtils;
 
 public class ZipFileNode extends ZipNode {
 
-	private final ByteArrayInputStream data;
+	private final byte[] data;
 	private Object object;
 
-	public ZipFileNode(ZipInputStream stream, ZipEntry entry) throws IOException {
-		this.data = new CopyStream(stream).toInputStream();
+	public ZipFileNode(InputStream stream, ZipEntry entry) throws IOException {
+		super(entry.getName());
+		this.data = stream.readAllBytes();
 	}
 
-	private class CopyStream extends ByteArrayOutputStream {
-	
-		public CopyStream(ZipInputStream stream) throws IOException {
-			stream.transferTo(this);
-		}
-
-		public ByteArrayInputStream toInputStream() {
-			return new ByteArrayInputStream(this.buf, 0, this.count);
-		}
+	public boolean isImage() {
+		String extension = this.getExtension();
+		return "jpg".equals(extension) || "png".equals(extension);
 	}
 
+	public byte[] getAsData() {
+		return this.data;
+	}
+
+	public String getExtension() {
+		int i = this.name.lastIndexOf('.');
+		if (i > 0) {
+			return this.name.substring(i+1);
+		}
+		return null;
+	}
+
+	public final BufferedImage getAsImage() {
+		if (this.object instanceof BufferedImage as) {
+			return as;
+		}
+		if (this.isImage()) {
+			String extension = this.getExtension();
+			if ("jpg".equals(extension)) {
+				this.object = ImageUtils.readJPG(new ByteArrayInputStream(this.data));
+			}
+			if ("png".equals(extension)) {
+				this.object = ImageUtils.readPNG(new ByteArrayInputStream(this.data));
+			}
+		}
+		return (BufferedImage)this.object;
+	}
+
+	@Deprecated
 	public final JsonElement getAsJson() throws UnsupportedEncodingException {
-		if (!(this.object instanceof JsonElement)) {
-			BufferedReaderCharInput input = new BufferedReaderCharInput(new BufferedReader(new InputStreamReader(this.data, "UTF-8")));
-			this.object = JsonUtils.getFancyRegistry().getDeserializer(JsonElement.class).parse(input);
+		if (this.object instanceof JsonElement as) {
+			return as;
+		}
+		if ("json".equals(this.getExtension())) {
+			this.object = JsonUtils.getFancyRegistry().getDeserializer(JsonElement.class).parse(new String(this.data));
 		}
 		return (JsonElement)this.object;
 	}
 	
+	@Override
+	public void close() throws IOException {
+
+	}
+
+	@Override
+	public String toString() {
+		return "{name:\"%s\",read:%s}".formatted(this.name, this.object != null);
+	}
 }

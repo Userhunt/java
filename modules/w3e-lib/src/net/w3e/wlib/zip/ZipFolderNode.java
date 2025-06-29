@@ -1,29 +1,33 @@
 package net.w3e.wlib.zip;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
-public class ZipFolderNode extends ZipNode {
+public class ZipFolderNode extends ZipNode implements Iterable<Map.Entry<String, ZipNode>> {
 
-	private final Map<String, ZipNode> nodes = new HashMap<>();
+	private final Map<String, ZipNode> nodes = new LinkedHashMap<>();
 
-	public final void add(ZipInputStream stream, ZipEntry entry) throws IOException {
-		this.add(stream, new LinkedList<>(Arrays.asList(entry.getName().split("/"))), entry);
+	public ZipFolderNode(String name) {
+		super(name);
 	}
 
-	private final void add(ZipInputStream stream, List<String> names, ZipEntry entry) throws IOException {
+	public void add(InputStream inputStream, ZipEntry entry) throws IOException {
+		this.add(inputStream, new LinkedList<>(Arrays.asList(entry.getName().split("/"))), entry);
+	}
+
+	private void add(InputStream inputStream, List<String> names, ZipEntry entry) throws IOException {
 		if (names.size() == 1) {
-			if (!entry.isDirectory()) {
-				this.nodes.put(names.get(0), new ZipFileNode(stream, entry));
-			}
+			this.nodes.put(names.getFirst(), new ZipFileNode(inputStream, entry));
 		} else {
-			((ZipFolderNode)this.nodes.computeIfAbsent(names.remove(0), key -> new ZipFolderNode())).add(stream, names, entry);
+			((ZipFolderNode)this.nodes.computeIfAbsent(names.removeFirst(), ZipFolderNode::new)).add(inputStream, names, entry);
 		}
 	}
 
@@ -41,5 +45,25 @@ public class ZipFolderNode extends ZipNode {
 			return null;
 		}
 	}
-	
+
+	@Override
+	public final Iterator<Map.Entry<String, ZipNode>> iterator() {
+		return this.nodes.entrySet().iterator();
+	}
+
+	public int size() {
+		return this.nodes.size();
+	}
+
+	@Override
+	public void close() throws IOException {
+		for (Entry<String, ZipNode> entry : this) {
+			entry.getValue().close();
+		}
+	}
+
+	@Override
+	public String toString() {
+		return this.nodes.toString();
+	}
 }
