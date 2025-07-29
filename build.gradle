@@ -23,12 +23,14 @@ subprojects {
 			java.srcDir 'src'
 			resources.srcDir 'resources'
 		}
+		test {
+			java.srcDir 'test_src'
+			resources.srcDir 'test_resources'
+		}
 	}
 	dependencies {
 		compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
 		annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
-		implementation group: 'org.jetbrains', name: 'annotations', version:'24.1.0'
-		annotationProcessor group: 'org.jetbrains', name: 'annotations', version:'24.1.0'
 
 		implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.13'
 
