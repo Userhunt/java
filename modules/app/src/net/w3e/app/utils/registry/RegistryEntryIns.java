@@ -1,7 +1,5 @@
 package net.w3e.app.utils.registry;
 
-import org.jetbrains.annotations.Nullable;
-
 public class RegistryEntryIns<T> implements RegistryEntry<T> {
 
 	private String registryName = null;
@@ -14,7 +12,6 @@ public class RegistryEntryIns<T> implements RegistryEntry<T> {
 		return this;
 	}
 
-	@Nullable
 	public final String getRegistryName() {
 		return this.registryName;
 	}

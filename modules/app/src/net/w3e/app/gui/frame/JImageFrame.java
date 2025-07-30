@@ -42,7 +42,7 @@ public class JImageFrame extends JFrame implements JFrameGuiUtils, JImageGuiUtil
 	public final void updateImage() {
 		this.imagePanel.updateImage();
 	}
-	
+
 	public static class JImageScreenBuilder {
 
 		private String title = "";

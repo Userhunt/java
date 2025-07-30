@@ -9,5 +9,5 @@ public class Main {
 	public static void main(String[] args) throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		MainFrame.main(args);
 	}
-	
+
 }

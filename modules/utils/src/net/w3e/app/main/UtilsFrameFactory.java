@@ -48,5 +48,5 @@ public class UtilsFrameFactory implements AppJFrameFactoryMultiple {
 		frame.setVisible(true);
 		return null;
 	}
-	
+
 }

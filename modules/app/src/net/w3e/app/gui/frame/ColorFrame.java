@@ -35,7 +35,7 @@ public class ColorFrame extends JFrame implements JFrameGuiUtils {
 
 	private final HuePanel hue = new HuePanel();
 	private final RGBAPanel rgba = new RGBAPanel();
-	
+
 	public ColorFrame() {
 		super("Color");
 
@@ -174,7 +174,7 @@ public class ColorFrame extends JFrame implements JFrameGuiUtils {
 			lines.add(line1);
 			lines.add(line2);
 			this.add(lines, BorderLayout.CENTER);
-	
+
 			this.colorPanel = new JPanel() {
 				@Override
 				public Dimension getSize() {

@@ -85,9 +85,8 @@ public class AppJFrame extends JFrame implements JFrameGuiUtils {
 		}
 	}
 
-	
+
 	public interface AppJFrameAbstractFactory {
-		
 	}
 	public interface AppJFrameFactoryMultiple extends AppJFrameAbstractFactory {
 		Collection<Object> values();
@@ -104,7 +103,7 @@ public class AppJFrame extends JFrame implements JFrameGuiUtils {
 
 		private final String name;
 		private final AppJFrameFactory factory;
-		
+
 		@Override
 		public String keyName() {
 			return this.name;

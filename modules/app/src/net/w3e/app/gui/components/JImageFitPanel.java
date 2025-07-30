@@ -58,5 +58,5 @@ public class JImageFitPanel extends JImagePanel {
 		rect.height = height;
 		return rect;
 	}
-	
+
 }

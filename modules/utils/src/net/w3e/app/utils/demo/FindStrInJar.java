@@ -1,4 +1,4 @@
-package net.w3e.app.utils;
+package net.w3e.app.utils.demo;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -86,7 +86,7 @@ public class FindStrInJar {
 		FindStrInJar findInJar = new FindStrInJar("TIMEOUT_DISCONNECTION_MESSAGE"); // String to be looking for
 
 		//List<String> jarFiles = findInJar.find("D:/Minecraft/fabric/data-pack-mod-template-1.20.1/.gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-92f061055d/24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true, true);
-		
+
 		List<String> jarFiles = findInJar.find("D:/sd/SD-World-Mod-skydex-server/modules/skydex-client/.gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-02b89d809d/1.20.6-loom.mappings.1_20_6.layered+hash.2198-v2", true, true);
 		//List<String> jarFiles = findInJar.find("D:/Universal-Core/.gradle/loom-cache/minecraftMaven/net/minecraft/minecraft-merged-f3559f27f0/24w19b-loom.mappings.24w19b.layered+hash.2198-v2", true, true);
 

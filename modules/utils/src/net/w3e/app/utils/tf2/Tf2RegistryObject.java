@@ -66,7 +66,7 @@ public record Tf2RegistryObject(String id, String link, String image, String[] g
 					this.link = id.replace(" ", "%20");
 				}
 				this.nonNull("image " + this.id, this.image);
-				
+
 				return new Tf2RegistryObject(this.id, this.link, this.image, this.group);
 			}
 		}

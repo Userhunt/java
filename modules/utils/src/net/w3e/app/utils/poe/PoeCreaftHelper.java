@@ -22,7 +22,7 @@ public class PoeCreaftHelper {
 	private static final int Y = 591;
 	private static final int SIZE = 49;
 	private static final int HALF_SIZE = SIZE / 2;
-	
+
 	public static void main(String[] args) throws IOException {
 		SKDSLogger.replaceOuts();
 		System.out.println("poe");

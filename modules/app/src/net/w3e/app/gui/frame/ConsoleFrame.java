@@ -93,7 +93,7 @@ public class ConsoleFrame extends AppJFrame {
 	}
 
 	private class ConsoleOutputStream extends CustomAbstractPrintStream {
-	
+
 		public ConsoleOutputStream() {
 			super(STREAM);
 		}
@@ -112,13 +112,13 @@ public class ConsoleFrame extends AppJFrame {
 
 			while (true) {
 				int index = x.indexOf(AnsiEscape.getStartKeyCodeStyle());
-				
+
 				if (index != -1) {
 					if (index == 0) {
 						index = x.indexOf("m") + 1;
 						String ansi = x.substring(2, index - 1);
 						x = x.substring(index);
-						
+
 						if (ansi.equals(AnsiEscape.getDefaultStyle())) {
 							keyWord = new SimpleAttributeSet();
 							continue;

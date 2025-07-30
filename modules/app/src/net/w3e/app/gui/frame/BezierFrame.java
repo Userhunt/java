@@ -48,7 +48,7 @@ public class BezierFrame extends JFrame implements MouseListener, MouseMotionLis
 	private Vec2I second = new Vec2I(SIZE / 2 - 50, 0);
 	private final List<Vec2I> points = new ArrayList<>();
 	private SelectedPoint selected = null; 
-	
+
 	public BezierFrame() {
 		super("Bezier");
 

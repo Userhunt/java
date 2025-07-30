@@ -28,7 +28,7 @@ public final class ProgressFrame extends ConsoleFrame {
 	private final JProgressBar bar = new JProgressBar();
 
 	private final LinkedBlockingQueue<ProgressTask> tasks = new LinkedBlockingQueue<>();
-	
+
 	private final ProgressThread thread = new ProgressThread();
 
 	private final JCheckBox pauseBox;
@@ -124,7 +124,7 @@ public final class ProgressFrame extends ConsoleFrame {
 		SKDSLogger.detachPrintStream(this.printStream);
 		resumePaused();
 	}
-	
+
 	public void stopAndWait() {
 		if (this.stop) {
 			resumePaused();

@@ -47,6 +47,7 @@ public class JNAWindow {
 		}
 	}
 
+	// TODO пернести в User32
 	public static WindowInfo getWindowInfo(String title) {
 		return getWindowInfo(User32.instance.FindWindowA(null, title));
 	}

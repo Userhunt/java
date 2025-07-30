@@ -210,7 +210,7 @@ public class DungeonGeneratorFrame extends AppJFrame {
 		private final LinkedBlockingQueue<Boolean> future;
 		private final ProgressFrame progressFrame;
 		private final DungeonImagePainter imageFrame;
-		
+
 		@Override
 		public void run() {
 			try {
@@ -278,7 +278,7 @@ public class DungeonGeneratorFrame extends AppJFrame {
 			}
 
 			DungeonLayer layer = result.lastLayer();
-	
+
 			if (layer instanceof IPathLayer) {
 				this.printString("path", String.format("paths %s, connections:[%s,%s]", data[0], data[1], data[2]));
 				return;
@@ -286,10 +286,10 @@ public class DungeonGeneratorFrame extends AppJFrame {
 			if (layer instanceof ListLayer list) {
 				String listProgress = String.format(" %s/%s", list.size(), list.filled());
 				String roomsProgress = "rooms" + listProgress;
-	
+
 				String layerName = null;
 				String arg = roomsProgress;
-	
+
 				if (list instanceof DistanceLayer) {
 					layerName = "distance";
 					arg = "entrances" + listProgress;
@@ -324,7 +324,7 @@ public class DungeonGeneratorFrame extends AppJFrame {
 			}
 			this.printString("unhandled", layer.getClass().getSimpleName());
 		}
-	
+
 		private void printString(String name, String args) {
 			SKDSLoggerConfig config = SKDSLoggerConfig.getInstance();
 			String time = config.getTimeFormat().format(new Date(System.currentTimeMillis()));
@@ -418,7 +418,7 @@ public class DungeonGeneratorFrame extends AppJFrame {
 					this.setColor(xS, z, Color.GRAY);
 				}
 				this.setColor(xS, zS, Color.GRAY);
-	
+
 			}
 			if (this.result == null) {
 				return data;
