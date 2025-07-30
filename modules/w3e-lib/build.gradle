@@ -1,0 +1,41 @@
+plugins {
+	id 'com.gradleup.shadow' version '9.0.0-beta4'
+}
+
+dependencies {
+	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
+	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
+
+	implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.13'
+
+	implementation project(":skds-lib")
+}
+
+mainClassName = 'null'
+
+shadowJar {
+	dependencies {
+		include(dependency { it.moduleGroup == 'net.skds' })
+	}
+
+	exclude('net/skds/lib2/awtutils/**')
+	exclude('net/skds/lib2/benchmark/**')
+	exclude('net/skds/lib2/event/**')
+	exclude('net/skds/lib2/io/json/test/**')
+	exclude('net/skds/lib2/misc/font/**')
+	exclude('net/skds/lib2/misc/graph/**')
+	exclude('net/skds/lib2/natives/**')
+	exclude('net/skds/lib2/network/**')
+	exclude('net/skds/lib2/storage/**')
+	exclude('net/skds/lib2/unsafe/**')
+	exclude('net/skds/lib2/utils/classloader/**')
+	exclude('net/skds/lib2/utils/functester/**')
+	exclude('net/skds/lib2/utils/platforms/**')
+
+	exclude('net/w3e/lib/awtutils/**')
+
+	relocate 'net.skds.lib2', 'net.w3e.include.skds'
+	relocate 'net.sdteam', 'net.w3e.include.sdteam'
+	relocate 'net.w3e.lib', 'net.w3e.include.lib'
+	//relocate 'net.w3e.wlib', 'net.w3e.lib'
+}
