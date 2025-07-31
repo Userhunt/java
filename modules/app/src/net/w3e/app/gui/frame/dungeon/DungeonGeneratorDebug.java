@@ -32,6 +32,7 @@ public class DungeonGeneratorDebug {
 
 	public enum Mode {
 		DEFAULT,
+		DEFAULT_NO_CLEAR,
 		LAB_HAK,
 		LAB_DFS,
 		NOISE_W3E,
@@ -50,24 +51,28 @@ public class DungeonGeneratorDebug {
 		final int size = SIZE;
 		SimpleCollectionBuilder<DungeonLayerFactory, ArrayList<DungeonLayerFactory>> layers = factoryCollectionBuilder();
 		switch (mode) {
-			case DEFAULT -> {
+			case DEFAULT, DEFAULT_NO_CLEAR -> {
 				layers.add(
+					// temperature, wet, difficulty
+					CompositeTerraLayer::example,
+					// biomes
+					BiomeLayer::example,
 					// path
 					gen -> PathRepeatLayer.example(gen, size),
 					//WormLayer::example//,
 					// distance
 					DistanceLayer::example,
-					// temperature, wet, difficulty
-					CompositeTerraLayer::example,
-					// biomes
-					BiomeLayer::example,
 					// rooms
 					RoomLayer::example,
 					// features - spawners, chests, ?
-					FeatureLayer::example,
-					// clear for save
-					ClearLayer::example
+					FeatureLayer::example
 				);
+				if (mode != DungeonGeneratorDebug.Mode.DEFAULT_NO_CLEAR) {
+					layers.add(
+						// clear for save
+						ClearLayer::example
+					);
+				}
 			}
 			case LAB_HAK -> {
 				layers.add(LabHAKLayer::example);

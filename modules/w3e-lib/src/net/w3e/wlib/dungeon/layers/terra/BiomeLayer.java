@@ -17,7 +17,6 @@ import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.mat.FastMath;
 import net.skds.lib2.mat.vec3.Direction;
 import net.skds.lib2.mat.vec3.Vec3I;
-import net.skds.lib2.utils.Holders.ObjectHolder;
 import net.skds.lib2.utils.collection.WeightedPool;
 import net.skds.lib2.utils.linkiges.Obj2FloatPair;
 import net.skds.lib2.utils.linkiges.Obj2FloatPairRecord;
@@ -98,32 +97,26 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 				int size = poses.size();
 				this.filled = 0;
 				while (this.filled * 10f * 100 / size <= this.percent) {
-					this.list.add(new BiomePoint(poses.remove(this.random().nextInt(size - this.filled))));
-					this.filled++;
-				}
-			}
-			case createPoint -> {
-				Iterator<BiomePoint> iterator = this.list.iterator();
-				while (iterator.hasNext()) {
-					BiomePoint point = iterator.next();
-					MapTString data = point.room.data();
-					RoomLayerFilterValues values = this.getRoomValues(point.room);
+					DungeonRoomInfo room = poses.remove(this.random().nextInt(size - this.filled));
+					MapTString data = room.data();
+					RoomLayerFilterValues values = this.getRoomValues(room);
 					List<Obj2FloatPair<BiomeInfo>> randomCollection = new ArrayList<>();
 					for (BiomeInfo biomeData : this.biomes) {
 						if (biomeData.test(this, values)) {
 							randomCollection.add(new Obj2FloatPairRecord<>(biomeData.weight, biomeData));
 						}
 					}
-					if (!randomCollection.isEmpty()) {
-						BiomeInfo info = new WeightedPool<>(randomCollection).get(this.random().nextFloat());
-						data.put(KEY, info.value());
-						point.info.setValue(info);
-						if (info.substractCount()) {
-							this.biomes.remove(info);
-						}
-					} else {
-						iterator.remove();
+					if (randomCollection.isEmpty()) {
+						continue;
 					}
+					BiomeInfo info = new WeightedPool<>(randomCollection).get(this.random().nextFloat());
+					data.put(KEY, info.value());
+					if (info.substractCount()) {
+						this.biomes.remove(info);
+					}
+
+					this.list.add(new BiomePoint(room, info));
+					this.filled++;
 				}
 				this.biomes.clear();
 			}
@@ -151,7 +144,6 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 
 	private enum Progress implements IDungeonLayerProgress<Progress> {
 		createArray,
-		createPoint,
 		spread
 		;
 
@@ -161,34 +153,36 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 		}
 	}
 
-	public record BiomePoint(DungeonRoomInfo room, ObjectHolder<BiomeInfo> info, List<DungeonRoomInfo> rooms) {
+	public record BiomePoint(DungeonRoomInfo room, BiomeInfo info, List<DungeonRoomInfo> rooms) {
 
-		private BiomePoint(DungeonRoomInfo room) {
-			this(room, new ObjectHolder<>(), CollectionBuilder.list(DungeonRoomInfo.class).add(room).build());
+		private BiomePoint(DungeonRoomInfo room, BiomeInfo info) {
+			this(room, info, CollectionBuilder.list(DungeonRoomInfo.class).add(room).build());
 		}
 
 		public final boolean fill(BiomeLayer layer) {
-			BiomeInfo info = this.info.getValue();
 			Random random = layer.random();
 			Collections.shuffle(this.rooms, random);
 
+			// TODO импульс считать единожды
 			int impulse = 0;
 			try {
-				impulse = info.impulse.random(random);
+				impulse = this.info.impulse.random(random);
 			} catch (Exception e) {
 				throw e;
 			}
+			// TODO рандомизация единожды
 			for (int i = 0; i < impulse; i++) {
 				DungeonRoomInfo room = this.rooms.get(random.nextInt(this.rooms.size()));
 				Vec3I pos = room.pos();
 
+				// TODO долгий цикл
 				for (Direction direction : Direction.values()) {
 					if (random.nextInt(3) != 0) {
 						DungeonRoomCreateInfo target = layer.putOrGet(pos.addI(direction));
 						DungeonRoomInfo targetRoom = target.room();
 						MapTString targetData = target.data();
-						if (target.isInside() && targetData.get(KEY) == layer.def) {
-							targetData.put(KEY, info.value);
+						if (target.isInside() && targetData.get(KEY) == layer.def && this.info.test(layer, layer.getRoomValues(targetRoom))) {
+							targetData.put(KEY, this.info.value);
 							this.rooms.add(targetRoom);
 						}
 					}
@@ -275,14 +269,14 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 				int minTemp = name;
 				int maxTemp = minTemp + 5;
 				int weight = random.nextInt(10) + 5;
-				minTemp += random.nextInt(5) - 2;
-				maxTemp += random.nextInt(5) - 2;
+				minTemp += random.nextInt(10) - 9;
+				maxTemp += random.nextInt(10) - 5;
 
 				int minImpulse = random.nextInt(4);
 				int maxImpulse = random.nextInt(6);
 
-				int minWet = random.nextInt(25) + 26;
-				int maxWet = random.nextInt(25) + 51;
+				int minWet = random.nextInt(25);
+				int maxWet = random.nextInt(50) + 51;
 
 				List<RoomLayerFilter<?>> filters = new ArrayList<>();
 
@@ -294,11 +288,11 @@ public class BiomeLayer extends ListLayer<BiomeLayer.BiomePoint> implements ISet
 
 				String key = String.format("%s-%s", name, j);
 
-				biomes.add(new BiomeInfo(weight, new RoomLayerFilters(filters), new LayerRange(minImpulse, maxImpulse), () -> key, new DungeonInfoCountHolder(1 + random.nextInt(3))));
+				biomes.add(new BiomeInfo(weight, new RoomLayerFilters(filters), new LayerRange(minImpulse, maxImpulse), new DungeonKeySupplier(key), new DungeonInfoCountHolder(1 + random.nextInt(3))));
 			}
 		}
 
-		return new BiomeLayer(generator, () -> "void", 11, biomes);
+		return new BiomeLayer(generator, new DungeonKeySupplier("void"), 11, biomes);
 	}
 
 }

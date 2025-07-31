@@ -282,7 +282,7 @@ public class FeatureLayer extends ListLayer<FeatureLayer.FeaturePoint> implement
 		Random random = new Random(0);
 		for (int i = 0; i < 20; i++) {
 			String name = String.valueOf(i + 1);
-			features.add(new FeatureVariant(RoomLayerFilters.NULL, random.nextInt(100) + 1 <= 5 ? TFNStateEnum.TRUE : TFNStateEnum.FALSE, random.nextInt(100) + 1 <= 70, () -> name, new DungeonInfoCountHolder(random.nextInt(100) + 1 <= 75 ? random.nextInt(3) + 1 : -1)));
+			features.add(new FeatureVariant(RoomLayerFilters.NULL, random.nextInt(100) + 1 <= 5 ? TFNStateEnum.TRUE : TFNStateEnum.FALSE, random.nextInt(100) + 1 <= 70, new DungeonKeySupplier(name), new DungeonInfoCountHolder(random.nextInt(100) + 1 <= 75 ? random.nextInt(3) + 1 : -1)));
 		}
 
 		return new FeatureLayer(generator, features);

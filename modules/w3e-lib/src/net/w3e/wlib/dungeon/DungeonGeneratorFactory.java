@@ -36,12 +36,12 @@ public class DungeonGeneratorFactory {
 		return create(seed, dimension).generateAsync(callback);
 	}
 
-	public static class JCodec extends JsonReflectiveBuilderCodec<DungeonGenerator> {
+	public static class JCodec extends JsonReflectiveBuilderCodec<DungeonGeneratorFactory> {
 		public JCodec(Type type, JsonCodecRegistry registry) {
 			super(type, DGFData.class, registry);
 		}
 
-		private static class DGFData implements JsonDeserializeBuilder<DungeonGenerator> {
+		private static class DGFData implements JsonDeserializeBuilder<DungeonGeneratorFactory> {
 			private long seed = 0;
 			private WBoxI dimension = new WBoxI(0, 0, 0, 0, 0, 0).expand(4, 0, 4);
 			private MapTString data = new MapTString();
@@ -49,7 +49,7 @@ public class DungeonGeneratorFactory {
 			private final transient List<DungeonLayerFactory> layerFactories = new ArrayList<>();
 
 			@Override
-			public final DungeonGenerator build() {
+			public final DungeonGeneratorFactory build() {
 				if (this.layerFactories.size() != this.layers.length) {
 					this.layerFactories.clear();
 					for (DungeonLayer layer : this.layers) {
@@ -60,7 +60,7 @@ public class DungeonGeneratorFactory {
 					}
 				}
 				MapTString map = this.data != null ? new MapTString(this.data) : new MapTString();
-				return new DungeonGenerator(this.seed, this.dimension, map, this.layerFactories);
+				return new DungeonGeneratorFactory(this.seed, this.dimension, map, this.layerFactories);
 			}
 		}
 	}

@@ -2,16 +2,14 @@ package net.w3e.wlib.dungeon;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
+import net.skds.lib2.io.json.JsonUtils;
 import net.skds.lib2.mat.vec3.Direction;
 import net.skds.lib2.mat.vec3.Vec3I;
 import net.w3e.lib.utils.PackUtil;
 import net.w3e.wlib.collection.CollectionBuilder;
 import net.w3e.wlib.collection.MapT.MapTString;
-import net.w3e.wlib.dungeon.json.DungeonKeySupplier;
 import net.w3e.wlib.mat.VecUtil;
 
 public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString data) {
@@ -51,7 +49,7 @@ public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString da
 		return PackUtil.test(this.flags[1], 1);
 	}
 
-	public final DungeonRoomInfo setentrance(boolean value) {
+	public final DungeonRoomInfo setEntrance(boolean value) {
 		this.flags[1] = PackUtil.set(this.flags[1], 1, value);
 		return this;
 	}
@@ -174,18 +172,23 @@ public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString da
 		list.add(String.format("IsWall: %s", this.isWall()));
 		list.add(String.format("Isentrance: %s", this.isEntrance()));
 		list.add(String.format("Connections: %s", CollectionBuilder.list(String.class)
-			.add(this.dataStringConnection(Direction.UP))
-			.add(this.dataStringConnection(Direction.DOWN))
-			.add(this.dataStringConnection(Direction.NORTH))
-			.add(this.dataStringConnection(Direction.SOUTH))
-			.add(this.dataStringConnection(Direction.WEST))
-			.add(this.dataStringConnection(Direction.EAST))
+			.add(this.connectionDisplayString(Direction.UP))
+			.add(this.connectionDisplayString(Direction.DOWN))
+			.add(this.connectionDisplayString(Direction.NORTH))
+			.add(this.connectionDisplayString(Direction.SOUTH))
+			.add(this.connectionDisplayString(Direction.WEST))
+			.add(this.connectionDisplayString(Direction.EAST))
 		.removeNull().build()));
-		list.add(String.format("Data: %s", this.dataString()));
+
+		String[] dataArray = JsonUtils.toJson(this.data).replace("\t", "  ").split("\n");
+		list.add("Data: " + dataArray[0]);
+		for (int i = 1; i < dataArray.length; i++) {
+			list.add(dataArray[i]);
+		}
 		return list;
 	}
 
-	private String dataStringConnection(Direction direction) {
+	private String connectionDisplayString(Direction direction) {
 		String name = null;
 		if (this.isConnect(direction)) {
 			name = direction.getName();
@@ -196,48 +199,4 @@ public record DungeonRoomInfo(Vec3I pos, Vec3I chunk, int[] flags, MapTString da
 		return name;
 	}
 
-	public String dataString() {
-		StringBuilder builder = new StringBuilder("");
-
-		appendDataString(builder, this.data);
-
-		return builder.toString();
-	}
-
-	private void appendDataString(StringBuilder builder, Object value) {
-		if (value instanceof Map map) {
-			@SuppressWarnings("unchecked")
-			Iterator<Map.Entry<Object, Object>> iterator = map.entrySet().iterator();
-			builder.append("{");
-			while (iterator.hasNext()) {
-				Map.Entry<Object, Object> next = iterator.next();
-				appendDataString(builder, next.getKey());
-				builder.append("=");
-				appendDataString(builder, next.getValue());
-				if (iterator.hasNext()) {
-					builder.append(", ");
-				}
-			}
-			builder.append("}");
-			return;
-		}
-
-		if (value instanceof Collection collection) {
-			builder.append("[");
-			Iterator<?> iterator = collection.iterator();
-			while (iterator.hasNext()) {
-				Object next = iterator.next();
-				appendDataString(builder, next);
-				if (iterator.hasNext()) {
-					builder.append(", ");
-				}
-			}
-			builder.append("]");
-			return;
-		}
-		if (value instanceof DungeonKeySupplier keySupplier) {
-			value = keySupplier.getRaw();
-		}
-		builder.append(value);
-	}
 }

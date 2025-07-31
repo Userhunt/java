@@ -73,7 +73,7 @@ public abstract class LabSimpleLayer extends DungeonLayer {
 		}, true);
 		this.point = ArrayUtils.getRandom(rooms, this.random());
 		this.point.setWall(false);
-		this.point.setentrance(true);
+		this.point.setEntrance(true);
 		this.addRoom(this.point.pos());
 		this.roomCount = rooms.size();
 		return rooms;

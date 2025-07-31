@@ -3,6 +3,7 @@ package net.w3e.app.gui.frame.dungeon;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -112,11 +113,11 @@ public class DungeonGeneratorFrame extends AppJFrame {
 		this.showWetBox.addItemListener(CHANGE);
 		settings.add(this.showWetBox);
 
-		this.rotateBox.addItemListener(CHANGE);
-		settings.add(this.rotateBox);
-
 		this.showBiomeBox.addItemListener(CHANGE);
 		settings.add(this.showBiomeBox);
+
+		this.rotateBox.addItemListener(CHANGE);
+		settings.add(this.rotateBox);
 
 		this.fastBox.addItemListener(CHANGE);
 		settings.add(this.fastBox);
@@ -140,12 +141,15 @@ public class DungeonGeneratorFrame extends AppJFrame {
 
 		for (JComponent jComponent : LongStream
 			.range(0, settings.size() - 0)
-			.mapToObj(seed -> this.createButton(String.valueOf(seed), e -> 
+			.mapToObj(seed -> this.createButton(String.valueOf(seed), e -> {
+				Direction direction = this.rotateBox.isSelected() ? Direction.WEST : Direction.SOUTH;
+				boolean debugSave = this.debugSaveBox.isSelected();
+				DungeonGeneratorDebug.Mode mode = DungeonGeneratorDebug.Mode.values()[box.getSelectedIndex()];
 				this.creteDungeon(
 					((JButton)e.getSource()).getText(),
-					DungeonGeneratorDebug.example(seed, this.rotateBox.isSelected() ? Direction.WEST : Direction.SOUTH, this.debugSaveBox.isSelected(), DungeonGeneratorDebug.Mode.values()[box.getSelectedIndex()])
-				)
-			))
+					DungeonGeneratorDebug.example(seed, direction, debugSave, mode)
+				);
+			}))
 			.toList()) {
 			buttonsPanel.add(jComponent);
 		}
@@ -172,7 +176,7 @@ public class DungeonGeneratorFrame extends AppJFrame {
 		WBoxI dimension = dungeon.dimension();
 		Vec3I size = dimension.size().addI(Vec3I.SINGLE);
 
-		DungeonImagePainter imageFrame = new JImageFrame.JImageScreenBuilder().setLocationUnder(this).setSize(size.xi() * 4 + 1, size.zi() * 4 + 1).setScale(9).buildWith((frameTitle, width, height, scale, background) -> 
+		DungeonImagePainter imageFrame = new JImageFrame.JImageScreenBuilder().setLocationUnder(this).setSize(size.xi() * 4 + 1, size.zi() * 4 + 1).setScale(9).setTitle(name).buildWith((frameTitle, width, height, scale, background) -> 
 			new DungeonImagePainter(frameTitle, width, height, scale, background, dungeon, progressFrame)
 		);
 		this.dungeons.add(imageFrame);
@@ -520,7 +524,13 @@ public class DungeonGeneratorFrame extends AppJFrame {
 
 				frame.setLocation(event.getXOnScreen() - (event.getXOnScreen() % this.scale) + 18, event.getYOnScreen() - (event.getYOnScreen() % this.scale) + 18);
 
-				List<JLabel> list = room.displayString().stream().map(JLabel::new).toList();
+				List<JLabel> list = room.displayString().stream().map(e -> {
+					JLabel label = new JLabel(e);
+					Font font = label.getFont();
+					font = font.deriveFont(font.getSize() + 5f);
+					label.setFont(font);
+					return label;
+				}).toList();
 
 				FrameWin.simpleColumn(frame, list);
 

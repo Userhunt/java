@@ -93,7 +93,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 				throw EXCEPTION.apply(old, pos);
 			}
 			DungeonRoomInfo room = info.room();
-			room.setentrance(old.isEntrance());
+			room.setEntrance(old.isEntrance());
 			room.setWall(old.isWall());
 			room.setDistance(old.getDistance());
 

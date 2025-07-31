@@ -599,7 +599,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupR
 				count = random.nextInt(100) + 1 <= 20 ? random.nextInt(5) + 1 : -1;
 			}
 
-			rooms.add(new RoomVariant(directions, baseLayerRange, false, name::toString, new DungeonInfoCountHolder(count)));
+			rooms.add(new RoomVariant(directions, baseLayerRange, false, new DungeonKeySupplier(name), new DungeonInfoCountHolder(count)));
 		}
 
 		boolean print = false;
@@ -663,7 +663,7 @@ public class RoomLayer extends ListLayer<RoomLayer.RoomPoint> implements ISetupR
 		for (Direction d : direction) {
 			directions.put(d, true);
 		}
-		return new RoomVariant(directions, RoomLayerFilters.NULL, true, () -> "center", DungeonInfoCountHolder.NULL);
+		return new RoomVariant(directions, RoomLayerFilters.NULL, true, new DungeonKeySupplier("center"), DungeonInfoCountHolder.NULL);
 	}
 
 }

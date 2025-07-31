@@ -104,7 +104,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 			// алгоритм для "входа"
 			if (entry.entrance()) {
 				// пометить комнату как вход
-				info.room().setentrance(true);
+				info.room().setEntrance(true);
 				// получить соседнюю комнату и узнать существует ли эта комната и входит ли она в допустимую площаль
 				if (!this.get(pos.addI(direction)).notExistsOrWall()) {
 					Direction old = direction;
