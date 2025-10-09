@@ -10,11 +10,11 @@ import java.util.Map.Entry;
 public class MapBuilder<T, V, R extends Map<T, V>> {
 
 	public static <T, V> MapBuilder<T, V, Map<T, V>> hashMap(Class<T> t, Class<V> v) {
-		return new MapBuilder<T, V, Map<T, V>>(new HashMap<>());
+		return new MapBuilder<>(new HashMap<>());
 	}
 
 	public static <T, V> MapBuilder<T, Set<V>, Map<T, Set<V>>> hashMapWithSet(Class<T> t, Class<V> v) {
-		return new MapBuilder<T, Set<V>, Map<T, Set<V>>>(new HashMap<>());
+		return new MapBuilder<>(new HashMap<>());
 	}
 
 	private final R map;

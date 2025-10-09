@@ -2,43 +2,48 @@ package net.w3e.wlib.json;
 
 import java.util.Collection;
 
-import net.skds.lib2.io.json.exception.JsonIllegalStateException;
 import net.w3e.wlib.log.LogUtil;
 
 public interface WJsonHelper {
-	default void nonNull(String msg, Object obj) {
-		if (obj == null) throw new JsonIllegalStateException(new NullPointerException(msg));
+	default <T> T nonNull(T obj, String message) {
+		if (obj == null) throw new IllegalStateException(new NullPointerException(message));
+		return obj;
 	}
 
-	default void lessThan(String msg, int value) {
-		this.lessThan(msg, value, 0);
+	default void lessThan(int value, String message) {
+		this.lessThan(value, 0, message);
 	}
-	default void lessThan(String msg, int value, int min) {
+	default void lessThan(int value, int min, String message) {
 		if (value <= min) {
-			throw new JsonIllegalStateException(LogUtil.LESS_THAN.createMsg(msg, value, min + 1));
+			throw new IllegalStateException(LogUtil.LESS_THAN.createMsg(message, value, min + 1));
 		}
 	}
 
-	default void lessThan(String msg, float value) {
-		this.lessThan(msg, value, 0);
+	default void lessThan(float value, String message) {
+		this.lessThan(value, 0, message);
 	}
-	default void lessThan(String msg, float value, float min) {
+	default void lessThan(float value, float min, String message) {
 		if (value < min) {
-			throw new JsonIllegalStateException(LogUtil.LESS_THAN.createMsg(msg, value, min + 1E-6f));
+			throw new IllegalStateException(LogUtil.LESS_THAN.createMsg(message, value, min + 1E-6f));
 		}
 	}
 
-	default <A> void isEmpty(String msg, Collection<A> array) {
-		this.nonNull(msg, array);
+	default <A> void isEmpty(Collection<A> array, String message) {
+		this.nonNull(array, message);
 		if (array.isEmpty()) {
-			throw new JsonIllegalStateException(LogUtil.IS_EMPTY.createMsg(msg));
+			throw new IllegalStateException(LogUtil.IS_EMPTY.createMsg(message));
 		}
 	}
 
-	default <A> void isEmpty(String msg, @SuppressWarnings("unchecked") A... array) {
-		this.nonNull(msg, array);
+	default <A> void isEmpty(A[] array, String message) {
+		this.nonNull(array, message);
 		if (array.length == 0) {
-			throw new JsonIllegalStateException(LogUtil.IS_EMPTY.createMsg(msg));
+			throw new IllegalStateException(LogUtil.IS_EMPTY.createMsg(message));
 		}
 	}
+
+	default void isEmpty(String message) {
+		throw new IllegalStateException(LogUtil.IS_EMPTY.createMsg(message));
+	}
+
 }

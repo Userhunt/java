@@ -6,7 +6,7 @@
 			"name": "SasaiTest",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",
-			"console": "integratedTerminal",
+			"console": "internalConsole",
 			"stopOnEntry": false,
 			"mainClass": "net.skds.lib2.demo.DemoFrame",
 			"vmArgs": "\"-Xmx1G\"",
@@ -17,7 +17,7 @@
 			"name": "Utils",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",
-			"console": "integratedTerminal",
+			"console": "internalConsole",
 			"stopOnEntry": false,
 			"mainClass": "net.w3e.app.Main",
 			"vmArgs": "\"-Xmx8G\"",
@@ -28,11 +28,11 @@
 			"name": "Run",
 			"request": "launch",
 			"cwd": "${workspaceFolder}/run",
-			"console": "integratedTerminal",
+			"console": "internalConsole",
 			"stopOnEntry": false,
 			"mainClass": "net.w3e.app.main.MainFrame",
 			"vmArgs": "\"-Xmx1G\"",
-			"args": "app=\"Dungeon Generator1\" screen=0 fullScreen=false align=LT x=0 y=0"
+			"args": "app=\"Dungeon Generator\" screen=1 fullScreen=false align=LT x=0 y=0"
 		}
 	]
 }

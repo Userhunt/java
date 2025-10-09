@@ -4,15 +4,15 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Collection;
 
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
-import net.skds.lib2.io.json.codec.JsonDeserializeBuilder;
-import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.DeserializeBuilder;
+import net.skds.lib2.io.codec.ReflectiveBuilderCodec;
+import net.skds.lib2.io.codec.annotation.DefaultCodec;
 import net.skds.lib2.mat.vec3.Direction;
 import net.skds.lib2.mat.vec3.Vec3;
 import net.skds.lib2.mat.vec3.Vec3I;
 
-@DefaultJsonCodec(WBoxI.WBoxIJsonAdapter.class)
+@DefaultCodec(WBoxI.WBoxIJsonAdapter.class)
 public class WBoxI {
 
 	private int minX, minY, minZ;
@@ -197,13 +197,13 @@ public class WBoxI {
 		return String.format("{min:[%s,%s,%s],max:[%s,%s,%s]}", this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
 	}
 
-	static class WBoxIJsonAdapter extends JsonReflectiveBuilderCodec<WBoxI> {
+	static class WBoxIJsonAdapter extends ReflectiveBuilderCodec<WBoxI> {
 
-		public WBoxIJsonAdapter(Type type, JsonCodecRegistry registry) {
+		public WBoxIJsonAdapter(Type type, CodecRegistry registry) {
 			super(type, WBoxIData.class, registry);
 		}
 
-		private static class WBoxIData implements JsonDeserializeBuilder<WBoxI> {
+		private static class WBoxIData implements DeserializeBuilder<WBoxI> {
 			private int minX, minY, minZ;
 			private int maxX, maxY, maxZ;
 			@Override

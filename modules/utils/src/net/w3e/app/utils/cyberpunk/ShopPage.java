@@ -26,7 +26,7 @@ public class ShopPage {
 
 	@Deprecated
 	public final ShopPage add(String key) {
-		return this.add(key, 5, rarity -> true);
+		return this.add(key, 5, _ -> true);
 	}
 
 	public final ShopPage add(String key, int price, Predicate<Rarity> filter) {
@@ -51,7 +51,7 @@ public class ShopPage {
 
 	@Deprecated
 	public final ShopPage addIconic(String key) {
-		return this.add(key, 5, rarity -> true);
+		return this.add(key, 5, _ -> true);
 	}
 
 	public final ShopPage remove(String name) {

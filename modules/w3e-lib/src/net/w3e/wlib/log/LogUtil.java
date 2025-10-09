@@ -1,11 +1,10 @@
 package net.w3e.wlib.log;
 
 import net.skds.lib2.utils.logger.SKDSLogger;
-import net.skds.lib2.utils.logger.SKDSLoggerFactory;
 
 public class LogUtil {
 
-	public static final SKDSLogger LOGGER = SKDSLoggerFactory.getLogger(LogUtil.class);
+	public static final SKDSLogger LOGGER = new SKDSLogger();
 
 	public static final LogMessage EMPTY = new LogMessage("%s");
 	public static final LogMessage ILLEGAL = new LogMessage("Illegal state - %s");

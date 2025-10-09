@@ -6,8 +6,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import net.skds.lib2.io.json.JsonUtils;
-import net.skds.lib2.io.json.codec.typed.ConfigType;
+import net.skds.lib2.io.codec.SosisonUtils;
+import net.skds.lib2.io.codec.typed.ConfigType;
 import net.w3e.wlib.json.WJsonRegistryElement;
 
 public class WJsonAdaptersMap<V extends WJsonRegistryElement> {
@@ -19,7 +19,7 @@ public class WJsonAdaptersMap<V extends WJsonRegistryElement> {
 	private boolean isEmptyInit = true;
 
 	public WJsonAdaptersMap(Class<?> clazz) {
-		JsonUtils.addTypedAdapter(clazz, this.map);
+		SosisonUtils.addTypedAdapter(clazz, this.map);
 	}
 
 	protected V createEmpty() {

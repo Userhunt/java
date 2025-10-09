@@ -17,7 +17,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 
 import net.skds.lib2.utils.logger.SKDSLogger;
-import net.skds.lib2.utils.logger.SKDSLoggerFactory;
 import net.w3e.app.old.api.window_old.FrameWin;
 import net.w3e.app.old.api.window_old.Inputs;
 import net.w3e.lib.utils.ResourceUtil;
@@ -28,7 +27,7 @@ import it.unimi.dsi.fastutil.ints.IntListIterator;
 public class MainFrame {
 
 	public static final Random RANDOM = new Random();
-	public static final SKDSLogger LOGGER = SKDSLoggerFactory.getLogger();
+	public static final SKDSLogger LOGGER = new SKDSLogger();
 
 	public static final boolean isDebug() {
 		return java.lang.management.ManagementFactory.getRuntimeMXBean().getInputArguments().contains("-Xdebug");

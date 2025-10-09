@@ -17,7 +17,6 @@ import javax.swing.JProgressBar;
 import lombok.Getter;
 import lombok.Setter;
 import net.skds.lib2.utils.Holders.FloatHolder;
-import net.skds.lib2.utils.logger.SKDSLogger;
 import net.w3e.app.gui.utils.JGuiUtils;
 
 public final class ProgressFrame extends ConsoleFrame {
@@ -121,7 +120,7 @@ public final class ProgressFrame extends ConsoleFrame {
 	public void stop() {
 		this.stop = true;
 		this.thread.interrupt();
-		SKDSLogger.detachPrintStream(this.printStream);
+		stopConsole();
 		resumePaused();
 	}
 

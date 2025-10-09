@@ -3,15 +3,15 @@ package net.w3e.wlib.json;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-import net.skds.lib2.io.json.JsonEntryType;
-import net.skds.lib2.io.json.JsonReader;
-import net.skds.lib2.io.json.JsonWriter;
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.codec.AbstractJsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.codec.AbstractCodec;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.UniversalDeserializer;
+import net.skds.lib2.io.codec.UniversalReader;
+import net.skds.lib2.io.codec.UniversalWriter;
+import net.skds.lib2.io.codec.annotation.DefaultCodec;
+import net.skds.lib2.io.sosison.SosisonEntryType;
 
-@DefaultJsonCodec(IntData.IntDataJsonAdapter.class)
+@DefaultCodec(IntData.IntDataJsonAdapter.class)
 public class IntData {
 
 	public final int min;
@@ -27,17 +27,17 @@ public class IntData {
 		return String.format("{min:%s,max:%s}", min, max);
 	}
 
-	static class IntDataJsonAdapter extends AbstractJsonCodec<IntData> {
+	static class IntDataJsonAdapter extends AbstractCodec<IntData> {
 
-		private final JsonCodec<IntDataA> reader;
+		private final UniversalDeserializer<IntDataA> reader;
 
-		public IntDataJsonAdapter(Type type, JsonCodecRegistry registry) {
+		public IntDataJsonAdapter(Type type, CodecRegistry registry) {
 			super(type, registry);
-			this.reader = this.registry.getCodecIndirect(IntDataA.class);
+			this.reader = this.registry.getDeserializerIndirect(IntDataA.class);
 		}
 
 		@Override
-		public void write(IntData value, JsonWriter writer) throws IOException {
+		public void write(IntData value, UniversalWriter writer) throws IOException {
 			if (value.min == value.max) {
 				writer.writeInt(value.min);
 			} else {
@@ -49,12 +49,12 @@ public class IntData {
 		}
 
 		@Override
-		public IntData read(JsonReader reader) throws IOException {
-			if (reader.nextEntryType() == JsonEntryType.NULL) {
+		public IntData read(UniversalReader reader) throws IOException {
+			if (reader.nextEntryType() == SosisonEntryType.NULL) {
 				reader.skipNull();
 				return new IntData(0, 0);
 			}
-			if (reader.nextEntryType() == JsonEntryType.NUMBER) {
+			if (reader.nextEntryType().isNumber()) {
 				int data = reader.readInt();
 				return new IntData(data, data);
 			} else {

@@ -8,8 +8,8 @@ import net.skds.lib2.mat.vec3.Direction;
 import net.skds.lib2.mat.vec3.Vec3I;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
-import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
+import net.w3e.wlib.dungeon.room.DungeonRoomInfo;
 
 public class DistanceLayer extends ListLayer<DungeonRoomInfo> {
 
@@ -28,7 +28,7 @@ public class DistanceLayer extends ListLayer<DungeonRoomInfo> {
 	}
 
 	@Override
-	public final DistanceLayer withDungeon(DungeonGenerator generator) {
+	public final DistanceLayer createGenerator(DungeonGenerator generator) {
 		return new DistanceLayer(generator);
 	}
 
@@ -39,8 +39,8 @@ public class DistanceLayer extends ListLayer<DungeonRoomInfo> {
 	public final float generate() {
 		if (this.filled == -1) {
 			this.generateList(room -> {
-				room.room().setDistance(-1);
-				return room.isentrance() ? GenerateListHolder.success(room.room()) : GenerateListHolder.fail();
+				room.room().getData().setDistance(-1);
+				return room.isEntrance() ? GenerateListHolder.success(room.room()) : GenerateListHolder.fail();
 			});
 			return 0.001f;
 		}
@@ -62,20 +62,17 @@ public class DistanceLayer extends ListLayer<DungeonRoomInfo> {
 	private final void fill(Object2IntMap<DungeonRoomInfo> rooms, Object2IntMap.Entry<DungeonRoomInfo> entry) {
 		DungeonRoomInfo room = entry.getKey();
 		int distance = entry.getIntValue();
-		int old = room.getDistance();
+		int old = room.getData().getDistance();
 		if (old == -1 || old > distance) {
-			room.setDistance(distance);
-			Vec3I pos = room.pos();
+			room.getData().setDistance(distance);
+			Vec3I pos = room.getPos();
 			for (Direction direction : Direction.values()) {
 				DungeonRoomCreateInfo next = this.get(pos.addI(direction.getOpposite()));
-				if (!next.notExistsOrWall() && !next.isentrance()) {
+				if (!next.notExistsOrWall() && !next.isEntrance()) {
 					rooms.put(next.room(), distance + 1);
 				}
 			}
 		}
 	}
 
-	public static final DistanceLayer example(DungeonGenerator generator) {
-		return new DistanceLayer(generator);
-	}
 }

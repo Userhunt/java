@@ -1,6 +1,6 @@
 package net.w3e.wlib.dungeon.json;
 
-import net.skds.lib2.io.json.codec.typed.ConfigType;
+import net.skds.lib2.io.codec.typed.ConfigType;
 import net.w3e.wlib.dungeon.DungeonLayer;
 
 public class DungeonJsonAdapters {

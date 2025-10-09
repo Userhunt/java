@@ -9,26 +9,26 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.BiFunction;
 
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
-import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.ReflectiveBuilderCodec;
+import net.skds.lib2.io.codec.annotation.DefaultCodec;
 import net.skds.lib2.mat.vec3.Direction;
 import net.skds.lib2.mat.vec3.Vec3I;
 import net.skds.lib2.mat.vec3.Direction.Axis;
-import net.w3e.wlib.collection.MapT.MapTString;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
-import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
-import net.w3e.wlib.dungeon.json.ILayerData;
+import net.w3e.wlib.dungeon.room.DungeonRoomData;
+import net.w3e.wlib.dungeon.room.DungeonRoomInfo;
+import net.w3e.wlib.json.WJsonBuilder;
 import net.w3e.wlib.mat.VecUtil;
 import net.w3e.wlib.mat.WBoxI;
 
-@DefaultJsonCodec(RotateLayer.RotateLayerDataJsonAdapter.class)
+@DefaultCodec(RotateLayer.RotateLayerDataJsonAdapter.class)
 public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 
-	private static final BiFunction<DungeonRoomInfo, Vec3I, DungeonException> EXCEPTION = (old, pos) -> new DungeonException(String.format("Cant rotate room. %s -> %s", old.pos(), pos));
+	private static final BiFunction<DungeonRoomInfo, Vec3I, DungeonException> EXCEPTION = (old, pos) -> new DungeonException(String.format("Cant rotate room. %s -> %s", old.getPos(), pos));
 
 	public static final String TYPE = "rotate";
 	private final Direction rotation;
@@ -41,7 +41,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 	}
 
 	@Override
-	public final ListLayer<DungeonRoomInfo> withDungeon(DungeonGenerator generator) {
+	public final RotateLayer createGenerator(DungeonGenerator generator) {
 		return new RotateLayer(generator, this.rotation);
 	}
 
@@ -54,7 +54,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 		if (this.isValidRotation()) {
 			this.forEach(room -> {
 				this.list.add(room.room());
-				this.removeRoom(room.pos());
+				this.removeRoom(room.getPos());
 			});
 			this.filled = this.list.size();
 			this.rotateDimension(this.rotation);
@@ -87,7 +87,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 
 		for (int index = 0; index < 10 && !this.list.isEmpty(); index++) {
 			DungeonRoomInfo old = this.list.removeFirst();
-			Vec3I pos = VecUtil.rotateI(old.pos(), this.rotation);
+			Vec3I pos = VecUtil.rotateI(old.getPos(), this.rotation);
 			DungeonRoomCreateInfo info = this.putOrGet(pos);
 			if (!info.isInside()) {
 				throw EXCEPTION.apply(old, pos);
@@ -95,22 +95,21 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 			DungeonRoomInfo room = info.room();
 			room.setEntrance(old.isEntrance());
 			room.setWall(old.isWall());
-			room.setDistance(old.getDistance());
+			room.getData().setDistance(old.getData().getDistance());
 
 			for (Entry<Direction, Direction> entry : this.wrapRotation.entrySet()) {
 				Direction key = entry.getKey();
 				Direction value = entry.getValue();
-				if (old.isConnect(key, true)) {
-					room.setConnection(value, true, true);
+				if (old.isHardConnect(key)) {
+					room.setHardConnection(value, true);
 					continue;
 				}
-				if (old.isConnect(key, false)) {
-					room.setConnection(value, true, false);
+				if (old.isSoftConnect(key)) {
+					room.setSoftConnection(value, true);
 					continue;
 				}
 			}
-			room.data().clear();
-			room.data().putAll(old.data());
+			room.getData().copyFrom(old.getData());
 			for (DungeonLayer layer : this.layers) {
 				layer.rotate(this.rotation, room, this.wrapRotation);
 			}
@@ -127,7 +126,7 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 	}
 
 	public static final Map<Vec3I, DungeonRoomInfo> rotate(Map<Vec3I, DungeonRoomInfo> rooms, Direction rotation) throws DungeonException {
-		DungeonGenerator generator = new DungeonGenerator(0, WBoxI.of(rooms.values().stream().map(DungeonRoomInfo::pos).toList()), new MapTString(), Collections.emptyList());
+		DungeonGenerator generator = new DungeonGenerator(0, WBoxI.of(rooms.values().stream().map(DungeonRoomInfo::getPos).toList()), new DungeonRoomData(), Collections.emptyList());
 		for (DungeonRoomInfo room : rooms.values()) {
 			DungeonRoomCreateInfo info = generator.put(room);
 			if (!info.isInside()) {
@@ -137,20 +136,20 @@ public class RotateLayer extends ListLayer<DungeonRoomInfo> {
 		return rotate(generator, rotation).getRooms();
 	}
 
-	static class RotateLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<RotateLayer> {
+	static class RotateLayerDataJsonAdapter extends ReflectiveBuilderCodec<RotateLayer> {
 
-		public RotateLayerDataJsonAdapter(Type type, JsonCodecRegistry registry) {
+		public RotateLayerDataJsonAdapter(Type type, CodecRegistry registry) {
 			super(type, RotateLayerData.class, registry);
 		}
 
 		@SuppressWarnings({"FieldMayBeFinal"})
-		public static class RotateLayerData implements ILayerData<RotateLayer> {
+		public static class RotateLayerData implements WJsonBuilder<RotateLayer> {
 
 			private Direction rotation = Direction.SOUTH;
 
 			@Override
-			public RotateLayer withDungeon(DungeonGenerator generator) {
-				return new RotateLayer(generator, this.rotation);
+			public RotateLayer build() {
+				return new RotateLayer(null, this.rotation);
 			}
 		}
 	}

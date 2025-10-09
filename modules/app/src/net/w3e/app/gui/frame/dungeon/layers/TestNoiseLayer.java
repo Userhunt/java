@@ -1,10 +1,9 @@
 package net.w3e.app.gui.frame.dungeon.layers;
 
-import net.w3e.wlib.dungeon.DungeonGenerator;
-import net.w3e.wlib.dungeon.layers.terra.NoiseData;
-import net.w3e.wlib.dungeon.layers.terra.NoiseData.Mode;
-import net.w3e.wlib.dungeon.layers.terra.NoiseData.NoiseSKDSBuilder;
-import net.w3e.wlib.dungeon.layers.terra.TemperatureLayer;
+import net.w3e.wlib.dungeon.layers.terra.noise.NoiseData;
+import net.w3e.wlib.dungeon.layers.terra.noise.NoiseData.Mode;
+import net.w3e.wlib.dungeon.layers.terra.noise.NoiseData.NoiseSKDSBuilder;
+import net.w3e.wlib.dungeon.layers.terra.noise.TemperatureLayer;
 
 public abstract class TestNoiseLayer extends TestLayers {
 
@@ -21,11 +20,11 @@ public abstract class TestNoiseLayer extends TestLayers {
 		return new NoiseData.NoiseDataBuilder().setMinMax(TestNoiseLayer.MIN, TestNoiseLayer.MAX).setScale(1d / TestNoiseLayer.SCALE).setDefValue(TestNoiseLayer.DEFAULT);
 	}
 
-	public static TemperatureLayer w3e(DungeonGenerator generator) {
-		return new TemperatureLayer(generator, data().build(), 100, true);
+	public static TemperatureLayer w3e() {
+		return new TemperatureLayer(null, data().build(), 100, true);
 	}
 
-	public static TemperatureLayer sasai(DungeonGenerator generator) {
-		return new TemperatureLayer(generator, data().setMode(Mode.SKDS).setModeData(new NoiseSKDSBuilder().getAsJson()).build(), 100, true);
+	public static TemperatureLayer sasai() {
+		return new TemperatureLayer(null, data().setMode(Mode.SKDS).setModeData(new NoiseSKDSBuilder().getAsJson()).build(), 100, true);
 	}
 }

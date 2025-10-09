@@ -5,14 +5,14 @@ import java.util.Map;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import net.skds.lib2.io.json.codec.typed.ConfigType;
+import net.skds.lib2.io.codec.typed.ConfigType;
 import net.skds.lib2.mat.vec3.Direction;
 import net.skds.lib2.mat.vec3.Vec3I;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
 import net.w3e.wlib.dungeon.json.DungeonJsonLayerAdapters;
-import net.w3e.wlib.dungeon.json.ILayerData;
-import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilterValues;
+import net.w3e.wlib.dungeon.registry.DungeonRegistryContext;
+import net.w3e.wlib.dungeon.room.DungeonRoomInfo;
 import net.w3e.wlib.json.WJsonRegistryElement;
 
 public abstract class DungeonLayer extends WJsonRegistryElement {
@@ -26,7 +26,9 @@ public abstract class DungeonLayer extends WJsonRegistryElement {
 		this.generator = generator;
 	}
 
-	public abstract DungeonLayer withDungeon(DungeonGenerator generator);
+	public void applyRegistryContext(DungeonRegistryContext registryContext) {
+	}
+	public abstract DungeonLayer createGenerator(DungeonGenerator generator);
 	public abstract void setupLayer(boolean composite) throws DungeonException;
 	public abstract float generate() throws DungeonException;
 	public void rotate(Direction rotation, DungeonRoomInfo room, Map<Direction, Direction> wrapRotation) throws DungeonException {}
@@ -54,9 +56,6 @@ public abstract class DungeonLayer extends WJsonRegistryElement {
 	protected final DungeonRoomCreateInfo removeRoom(Vec3I pos) {
 		return this.generator.removeRoom(pos);
 	}
-	protected final RoomLayerFilterValues getRoomValues(DungeonRoomInfo room) {
-		return this.generator.getRoomValues(room);
-	}
 	protected final void forEach(Consumer<DungeonRoomCreateInfo> function) {
 		this.forEach(function, false);
 	}
@@ -73,11 +72,13 @@ public abstract class DungeonLayer extends WJsonRegistryElement {
 		return this.generator.layers();
 	}
 
+	@Override
+	public String toString() {
+        return getClass().getSimpleName() + "@" + Integer.toHexString(hashCode());
+	}
+
 	@FunctionalInterface
-	public static interface IPathLayer extends ILayerData<DungeonLayer> {
+	public static interface IPathLayer {
 		void add(Vec3I pos, Direction direction) throws DungeonException;
-		default DungeonLayer withDungeon(DungeonGenerator generator) {
-			throw new AssertionError();
-		}
 	}
 }

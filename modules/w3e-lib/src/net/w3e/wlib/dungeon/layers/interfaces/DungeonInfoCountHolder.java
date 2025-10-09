@@ -4,15 +4,15 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.function.Predicate;
 
-import net.skds.lib2.io.json.JsonEntryType;
-import net.skds.lib2.io.json.JsonReader;
-import net.skds.lib2.io.json.JsonWriter;
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.codec.AbstractJsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.codec.AbstractCodec;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.UniversalReader;
+import net.skds.lib2.io.codec.UniversalWriter;
+import net.skds.lib2.io.codec.annotation.DefaultCodec;
+import net.skds.lib2.io.sosison.SosisonEntryType;
 import net.skds.lib2.utils.Holders.IntHolder;
 
-@DefaultJsonCodec(DungeonInfoCountHolder.DungeonInfoCountHolderJsonAdapter.class)
+@DefaultCodec(DungeonInfoCountHolder.DungeonInfoCountHolderJsonAdapter.class)
 public class DungeonInfoCountHolder extends IntHolder {
 
 	public static final DungeonInfoCountHolder NULL = new DungeonInfoCountHolder(-1) {
@@ -41,14 +41,14 @@ public class DungeonInfoCountHolder extends IntHolder {
 		return new DungeonInfoCountHolder(this.getValue());
 	}
 
-	public static class DungeonInfoCountHolderJsonAdapter extends AbstractJsonCodec<DungeonInfoCountHolder> {
+	public static class DungeonInfoCountHolderJsonAdapter extends AbstractCodec<DungeonInfoCountHolder> {
 
-		public DungeonInfoCountHolderJsonAdapter(Type type, JsonCodecRegistry registry) {
+		public DungeonInfoCountHolderJsonAdapter(Type type, CodecRegistry registry) {
 			super(type, registry);
 		}
 
 		@Override
-		public void write(DungeonInfoCountHolder value, JsonWriter writer) throws IOException {
+		public void write(DungeonInfoCountHolder value, UniversalWriter writer) throws IOException {
 			if (value.getValue() > 0) {
 				writer.writeInt(value.getValue());
 			} else {
@@ -57,8 +57,8 @@ public class DungeonInfoCountHolder extends IntHolder {
 		}
 
 		@Override
-		public DungeonInfoCountHolder read(JsonReader reader) throws IOException {
-			if (reader.nextEntryType() == JsonEntryType.NULL) {
+		public DungeonInfoCountHolder read(UniversalReader reader) throws IOException {
+			if (reader.nextEntryType() == SosisonEntryType.NULL) {
 				reader.skipNull();
 				return DungeonInfoCountHolder.NULL;
 			}

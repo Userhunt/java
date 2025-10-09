@@ -22,7 +22,7 @@ public class CompareJsonUtil {
 			return new DifferenceType(a, b);
 		}
 		return switch (a.type()) {
-			case ARRAY -> new DifferenceArray(a.getAsJsonArray(), b.getAsJsonArray());
+			case LIST -> new DifferenceArray(a.getAsJsonArray(), b.getAsJsonArray());
 			case OBJECT -> new DifferenceObject(a.getAsJsonObject(), b.getAsJsonObject());
 			case BOOLEAN, NULL, NUMBER, STRING -> new DifferencePrimitive(a, b);
 			default -> throw new IllegalArgumentException("unknown json " + a.getClass());

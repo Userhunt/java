@@ -14,7 +14,7 @@ import net.w3e.app.gui.frame.ColorFrame;
 import net.w3e.app.gui.frame.ConsoleFrame;
 import net.w3e.app.gui.frame.NoiseFrame;
 import net.w3e.app.gui.frame.ProgressFrame;
-import net.w3e.app.gui.frame.dungeon.DungeonGeneratorFrame;
+import net.w3e.app.gui.frame.dungeon.DGFrame;
 import net.w3e.app.main.MainFrame.Args;
 import net.w3e.app.utils.registry.DynamicRegistry;
 import net.w3e.lib.utils.ResourceUtil;
@@ -105,7 +105,7 @@ public class BaseFrameFactory implements AppJFrame.AppJFrameFactoryMultiple {
 	}
 
 	private JFrame dungeon(JFrame parent, Args args) {
-		DungeonGeneratorFrame frame = new DungeonGeneratorFrame();
+		DGFrame frame = new DGFrame();
 		frame.initScreen();
 		return frame;
 	}

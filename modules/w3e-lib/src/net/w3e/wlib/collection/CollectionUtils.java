@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 
 import net.w3e.wlib.collection.identity.IdentityLinkedHashMap;
@@ -29,21 +30,14 @@ public class CollectionUtils extends net.w3e.lib.utils.collection.CollectionUtil
 
 	public static final <K, C extends Comparable<C>, V extends C> Map<K, V> valueSort(Map<K, V> map) {
 		if (map.size() <= 1) {
-			return (Map<K, V>)map;
+			return map;
 		}
-		Comparator<K> valueComparator = new Comparator<K>() {
-			@Override
-			public int compare(K k1, K k2) {
-				return map.get(k1).compareTo(map.get(k2));
-			}
-		};
+		Comparator<K> valueComparator = Comparator.comparing(map::get);
 
 		Map<K, V> sorted = new TreeMap<>(valueComparator);
 		sorted.putAll(map);
 
-		Map<K, V> res = new LinkedHashMap<>(sorted);
-
-		return res;
+		return new LinkedHashMap<>(sorted);
 	}
 
 	@SafeVarargs
@@ -57,5 +51,12 @@ public class CollectionUtils extends net.w3e.lib.utils.collection.CollectionUtil
 
 	public static final <T> Set<T> identityLinkedSet() {
 		return Collections.newSetFromMap(new IdentityLinkedHashMap<>());
+	}
+
+	public static class MapNullPredicate implements Predicate<Map<?, ?>> {
+		@Override
+		public boolean test(Map<?, ?> t) {
+			return t.isEmpty();
+		}
 	}
 }

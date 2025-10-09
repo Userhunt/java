@@ -7,34 +7,34 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-import net.skds.lib2.io.json.JsonReader;
-import net.skds.lib2.io.json.JsonWriter;
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.codec.AbstractJsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
-import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
-import net.skds.lib2.io.json.codec.BuiltinCodecFactory.ArrayCodec;
+import net.skds.lib2.io.codec.AbstractCodec;
+import net.skds.lib2.io.codec.BuiltinCodecFactory.ArrayCodec;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.ReflectiveBuilderCodec;
+import net.skds.lib2.io.codec.UniversalCodec;
+import net.skds.lib2.io.codec.UniversalReader;
+import net.skds.lib2.io.codec.UniversalWriter;
+import net.skds.lib2.io.codec.annotation.DefaultCodec;
 import net.skds.lib2.mat.vec3.Direction;
 import net.skds.lib2.mat.vec3.Vec3I;
 import net.w3e.wlib.collection.ArraySet.ArraySetStrict;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
-import net.w3e.wlib.dungeon.DungeonPos;
-import net.w3e.wlib.dungeon.DungeonPos.DungeonPosentranceCodec;
-import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.DungeonLayer.IPathLayer;
 import net.w3e.wlib.dungeon.direction.DungeonChances;
-import net.w3e.wlib.dungeon.json.ILayerData;
+import net.w3e.wlib.dungeon.room.DungeonPos;
+import net.w3e.wlib.dungeon.room.DungeonRoomInfo;
+import net.w3e.wlib.dungeon.room.DungeonPos.DungeonPosentranceCodec;
+import net.w3e.wlib.json.WJsonBuilder;
 
-@DefaultJsonCodec(WormLayer.WormLayerDataJsonAdapter.class)
+@DefaultCodec(WormLayer.WormLayerDataJsonAdapter.class)
 public class WormLayer extends DungeonLayer implements IPathLayer {
 
 	public static final String TYPE = "path/worm";
 
-	@DefaultJsonCodec(WormLayer.DungeonPosentranceFieldCodec.class)
+	@DefaultCodec(WormLayer.DungeonPosentranceFieldCodec.class)
 	public final DungeonPos[] centers;
 	public final WormDungeonStepChances stepChances;
 	public final DungeonChances directionChances;
@@ -59,7 +59,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 	}
 
 	@Override
-	public final WormLayer withDungeon(DungeonGenerator generator) {
+	public final WormLayer createGenerator(DungeonGenerator generator) {
 		return new WormLayer(generator, this.centers, this.stepChances, this.directionChances, this.connectionChances);
 	}
 
@@ -96,6 +96,7 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 			boolean success = true;
 
 			// callback создания комнаты, содержит саму комнату, и два флага - существовала ли комната и входит ли она в допустимую площадь
+			// TODO а внутри ли я?
 			DungeonRoomCreateInfo info = this.putOrGet(pos);
 			// сылка на комнату
 			DungeonRoomInfo room = info.room();
@@ -118,11 +119,11 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 				}
 			}
 			// установить соединения с соседними комнаты
-			room.setConnections(connections, true, true);
+			room.setConnections(connections, true);
 			// проверка что координата комнаты в допустимом диапозоне и это не "стена"
 			if (info.isInside() && info.notExistsOrWall()) {
 				// сохранить соединения для комнаты из которой начиналась генерация
-				room.setConnections(connections, true, true);
+				room.setConnections(connections, true);
 			}
 			// добавить соедиение в список для всех последующих точек в линии
 			connections.add(direction.getOpposite());
@@ -136,10 +137,10 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 				if (info.isInside() && info.isWall()) {
 					room = info.room();
 					room.setWall(false);
-					room.setConnections(this.connectionChances.generate(this.random(), direction), true, false);
-					info.room().setConnections(connections, true, true);
+					room.setSoftConnections(this.connectionChances.generate(this.random(), direction), true);
+					room.setConnections(connections, true);
 				} else {
-					room.setConnection(direction, false, false);
+					room.setSoftConnection(direction, false).setHardConnection(direction, false);
 					success = false;
 					break;
 				}
@@ -147,12 +148,12 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 			if (success) {
 				connections = this.directionChances.generate(this.random(), direction);
 				room = info.room();
-				room.setConnections(connections, true, false);
+				room.setSoftConnections(connections, true);
 				for (Direction connection : connections) {
 					if (connection == Direction.UP || connection == Direction.DOWN) {
-						this.add(room.pos().addI(connection), null);
+						this.add(room.getPos().addI(connection), null);
 					} else {
-						this.add(room.pos(), connection);
+						this.add(room.getPos(), connection);
 					}
 				}
 			}
@@ -172,61 +173,52 @@ public class WormLayer extends DungeonLayer implements IPathLayer {
 		}
 	}
 
-	static class WormLayerDataJsonAdapter extends JsonReflectiveBuilderCodec<WormLayer> {
+	static class WormLayerDataJsonAdapter extends ReflectiveBuilderCodec<WormLayer> {
 
-		public WormLayerDataJsonAdapter(Type type, JsonCodecRegistry registry) {
+		public WormLayerDataJsonAdapter(Type type, CodecRegistry registry) {
 			super(type, WormLayerData.class, registry);
 		}
 
-		private static class WormLayerData implements ILayerData<WormLayer> {
+		private static class WormLayerData implements WJsonBuilder<WormLayer> {
 
 			private static final DungeonPos[] CENTERS = new DungeonPos[]{DungeonPos.EMPTY_POS};
 
-			@DefaultJsonCodec(DungeonPosentranceFieldCodec.class)
+			@DefaultCodec(DungeonPosentranceFieldCodec.class)
 			private DungeonPos[] centers = CENTERS;
 			private WormDungeonStepChances stepChances = WormDungeonStepChances.INSTANCE;
 			private DungeonChances directionChances = DungeonChances.INSTANCE;
 			private DungeonChances connectionChances = DungeonChances.INSTANCE;
 
 			@Override
-			public final WormLayer withDungeon(DungeonGenerator generator) {
-				this.nonNull("centers", this.centers);
-				this.nonNull("stepChance", this.stepChances);
-				this.nonNull("directionChances", this.directionChances);
-				this.nonNull("connectionChances", this.connectionChances);
-				this.isEmpty("centers", this.centers);
-				return new WormLayer(generator, this.centers, this.stepChances, this.directionChances, this.connectionChances);
+			public final WormLayer build() {
+				this.nonNull(this.centers, "centers");
+				this.nonNull(this.stepChances, "stepChance");
+				this.nonNull(this.directionChances, "directionChances");
+				this.nonNull(this.connectionChances, "connectionChances");
+				this.isEmpty(this.centers, "centers");
+				return new WormLayer(null, this.centers, this.stepChances, this.directionChances, this.connectionChances);
 			}
 		}
 	}
 
-	private static class DungeonPosentranceFieldCodec extends AbstractJsonCodec<DungeonPos[]> {
+	private static class DungeonPosentranceFieldCodec extends AbstractCodec<DungeonPos[]> {
 
-		private final JsonCodec<DungeonPos> codec;
+		private final UniversalCodec<DungeonPos> codec;
 
-		public DungeonPosentranceFieldCodec(Type type, JsonCodecRegistry registry) {
+		public DungeonPosentranceFieldCodec(Type type, CodecRegistry registry) {
 			super(type, registry);
 			this.codec = new DungeonPosentranceCodec(this.codecType, this.registry);
 		}
 
 		@Override
-		public void write(DungeonPos[] value, JsonWriter writer) throws IOException {
+		public void write(DungeonPos[] value, UniversalWriter writer) throws IOException {
 			ArrayCodec.write(value, writer, this.codec);
 		}
 
 		@Override
-		public DungeonPos[] read(JsonReader reader) throws IOException {
+		public DungeonPos[] read(UniversalReader reader) throws IOException {
 			return ArrayCodec.read(new DungeonPos[0], reader, this.codec);
 		}
 	}
 
-	public static final WormLayer example(DungeonGenerator generator) {
-		return new WormLayer(
-			generator,
-			new DungeonPos[]{DungeonPos.EMPTY_entrance, DungeonPos.EMPTY_entrance}, 
-			WormDungeonStepChances.INSTANCE, 
-			new DungeonChances(20, 15, 10, 5, 0, 0, 1, 5, 0, 0), 
-			new DungeonChances(10, 4, 4, 4, 0, 0, 1, 1, 0, 0)
-		);
-	}
 }

@@ -19,7 +19,7 @@ public enum FormulaCastNode implements FormulaNode, Type {
 	private final String node;
 
 	private FormulaCastNode() {
-		this.node = "(%s)".formatted(this.name().toLowerCase());
+		this.node = "(" + this.name().toLowerCase() + ")";
 	}
 
 	@Override

@@ -3,22 +3,22 @@ package net.w3e.wlib.json.adapters;
 import java.io.IOException;
 import java.lang.reflect.Type;
 
-import net.skds.lib2.io.json.JsonEntryType;
-import net.skds.lib2.io.json.JsonReader;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
-import net.skds.lib2.io.json.codec.nulls.NullJsonCodec;
-import net.skds.lib2.io.json.exception.JsonReadException;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.UniversalReader;
+import net.skds.lib2.io.codec.nulls.NullCodec;
+import net.skds.lib2.io.exception.ParseException;
+import net.skds.lib2.io.sosison.SosisonEntryType;
 
-public class WJSonEmptyAdapter extends NullJsonCodec {
+public class WJSonEmptyAdapter extends NullCodec {
 
-	public WJSonEmptyAdapter(Type type, JsonCodecRegistry registry) {
+	public WJSonEmptyAdapter(Type type, CodecRegistry registry) {
 		super(type, registry);
 	}
 
 	@Override
-	public final Object read(JsonReader reader) throws IOException {
-		if (reader.nextEntryType() != JsonEntryType.NULL) {
-			throw new JsonReadException("non null empty data");
+	public final Object read(UniversalReader reader) throws IOException {
+		if (reader.nextEntryType() != SosisonEntryType.NULL) {
+			throw new ParseException("non null empty data");
 		}
 		reader.skipNull();
 		return create();

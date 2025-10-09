@@ -6,14 +6,14 @@ import java.util.Objects;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.skds.lib2.io.json.JsonReader;
-import net.skds.lib2.io.json.JsonWriter;
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.codec.AbstractJsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.codec.AbstractCodec;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.UniversalCodec;
+import net.skds.lib2.io.codec.UniversalReader;
+import net.skds.lib2.io.codec.UniversalWriter;
+import net.skds.lib2.io.codec.annotation.DefaultCodec;
 
-@DefaultJsonCodec(DungeonKeySupplier.JCodec.class)
+@DefaultCodec(DungeonKeySupplier.JCodec.class)
 @RequiredArgsConstructor
 public final class DungeonKeySupplier {
 
@@ -31,27 +31,51 @@ public final class DungeonKeySupplier {
 		return (T)getRaw();
 	}
 
-	static class JCodec extends AbstractJsonCodec<DungeonKeySupplier> {
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return this.key == null;
+		} else if (obj == this) {
+			return true;
+		} else if (obj instanceof DungeonKeySupplier key) {
+			return Objects.equals(this.key, key.key);
+		} else if (obj.getClass() == TYPE) {
+			return Objects.equals(this.key, obj);
+		} else {
+			return false;
+		}
+	}
 
-		private final JsonCodec<Object> codec;
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(this.key);
+	}
 
-		public JCodec(Type type, JsonCodecRegistry registry) {
+	@Override
+	public String toString() {
+		return Objects.toString(this.key);
+	}
+
+	static class JCodec extends AbstractCodec<DungeonKeySupplier> {
+
+		private final UniversalCodec<Object> codec;
+
+		public JCodec(Type type, CodecRegistry registry) {
 			super(type, registry);
 			Objects.requireNonNull(TYPE);
 			this.codec = registry.getCodecIndirect(TYPE);
 		}
 
 		@Override
-		public void write(DungeonKeySupplier value, JsonWriter writer) throws IOException {
+		public void write(DungeonKeySupplier value, UniversalWriter writer) throws IOException {
 			this.codec.write(value.key, writer);
 		}
 
 		@Override
-		public DungeonKeySupplier read(JsonReader reader) throws IOException {
+		public DungeonKeySupplier read(UniversalReader reader) throws IOException {
 			Object value = this.codec.read(reader);
 			return new DungeonKeySupplier(value);
 		}
-	
 		
 	}
 }

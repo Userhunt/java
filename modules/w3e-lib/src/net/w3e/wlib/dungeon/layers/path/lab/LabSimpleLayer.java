@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import net.skds.lib2.io.json.codec.typed.ConfigType;
+import net.skds.lib2.io.codec.typed.ConfigType;
 import net.skds.lib2.mat.vec3.Direction;
 import net.skds.lib2.mat.vec3.Vec3I;
 import net.skds.lib2.utils.ArrayUtils;
@@ -13,9 +13,9 @@ import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonGenerator.DungeonRoomCreateInfo;
 import net.w3e.wlib.dungeon.DungeonLayer;
-import net.w3e.wlib.dungeon.DungeonRoomInfo;
 import net.w3e.wlib.dungeon.direction.DungeonChances;
-import net.w3e.wlib.dungeon.json.ILayerData;
+import net.w3e.wlib.dungeon.room.DungeonRoomInfo;
+import net.w3e.wlib.json.WJsonBuilder;
 
 public abstract class LabSimpleLayer extends DungeonLayer {
 
@@ -50,7 +50,7 @@ public abstract class LabSimpleLayer extends DungeonLayer {
 			TFNStateEnum found = TFNStateEnum.NOT_STATED;
 			while (stepId > 1 && this.point != null && found != TFNStateEnum.FALSE) {
 				stepId--;
-				found = addRoom(this.point.pos());
+				found = addRoom(this.point.getPos());
 			}
 			if (found != TFNStateEnum.TRUE) {
 				this.point = null;
@@ -74,14 +74,14 @@ public abstract class LabSimpleLayer extends DungeonLayer {
 		this.point = ArrayUtils.getRandom(rooms, this.random());
 		this.point.setWall(false);
 		this.point.setEntrance(true);
-		this.addRoom(this.point.pos());
+		this.addRoom(this.point.getPos());
 		this.roomCount = rooms.size();
 		return rooms;
 	}
 
 	private TFNStateEnum addRoom(Vec3I pos) {
 		for (Direction dir : Direction.randomAll(this.random())) {
-			if (dir == this.direction || this.point.isConnect(dir, true)) {
+			if (dir == this.direction || this.point.isHardConnect(dir)) {
 				//log.debug("connected " + pos + " to " + pos.addI(dir) + " prev direction " + this.direction);
 				continue;
 			}
@@ -89,8 +89,8 @@ public abstract class LabSimpleLayer extends DungeonLayer {
 			if (info.isInside() && info.isWall()) {
 				DungeonRoomInfo room = info.room();
 				room.setWall(false);
-				room.setConnection(dir.getOpposite(), true, true);
-				this.point.setConnection(dir, true, true);
+				room.setHardConnection(dir.getOpposite(), true);
+				this.point.setHardConnection(dir, true);
 				this.point = room;
 				this.direction = dir.getOpposite();
 				this.step++;
@@ -103,21 +103,21 @@ public abstract class LabSimpleLayer extends DungeonLayer {
 
 	protected void onAddRoom(DungeonRoomInfo room) {
 		Objects.requireNonNull(this.direction);
-		room.setConnections(this.connectionChances.generate(random(), this.direction), true, false);
+		room.setSoftConnections(this.connectionChances.generate(random(), this.direction), true);
 	}
 
 	protected abstract void generateNextPathPoint();
 
-	protected abstract static class LabSimpleLayerData<T extends LabSimpleLayer> implements ILayerData<T> {
+	protected abstract static class LabSimpleLayerData<T extends LabSimpleLayer> implements WJsonBuilder<T> {
 		private int stepCount;
 		private DungeonChances directionChances = DungeonChances.INSTANCE;
 		@Override
-		public final T withDungeon(DungeonGenerator generator) {
-			this.lessThan("stepCount", this.stepCount);
-			this.nonNull("directionChances", this.directionChances);
-			return this.withDungeon(generator, this.stepCount, this.directionChances);
+		public final T build() {
+			this.lessThan(this.stepCount, "stepCount");
+			this.nonNull(this.directionChances, "directionChances");
+			return this.build(this.stepCount, this.directionChances);
 		}
 
-		protected abstract T withDungeon(DungeonGenerator generator, int stepCount, DungeonChances directionChances);
+		protected abstract T build(int stepCount, DungeonChances directionChances);
 	}
 }

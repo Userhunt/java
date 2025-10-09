@@ -8,31 +8,31 @@ public interface WAlign {
 
 	/*==================================== LEFT ====================================*/
 	//top
-	public static final WAlign leftTop = (a, w, h) -> {
+	public static final WAlign leftTop = (a, _, _) -> {
 		return new WAlignData(a.x1, a.y1);
 	};
 
 	//center
-	public static final WAlign leftCenterExt = (a, w, h) -> {
+	public static final WAlign leftCenterExt = (a, _, h) -> {
 		return new WAlignData(a.x1, FastMath.round((a.y1 + a.y2) / 2) - FastMath.round(h/2));
 	};
 
-	public static final WAlign leftCenter = (a, w, h) -> {
+	public static final WAlign leftCenter = (a, _, _) -> {
 		return leftCenterExt.apply(a, 0, 0);
 	};
 
 	//bottom
-	public static final WAlign leftBottom = (a, w, h) -> {
+	public static final WAlign leftBottom = (a, _, h) -> {
 		return new WAlignData(a.x1, a.y2 - h - 1);
 	};
 
 	/*==================================== CENTER ====================================*/
 	//top
-	public static final WAlign centerTopExt = (a, w, h) -> {
+	public static final WAlign centerTopExt = (a, w, _) -> {
 		return new WAlignData(FastMath.round((a.x1 + a.x2 - w) / 2), a.y1);
 	};
 
-	public static final WAlign centerTop = (a, w, h) -> {
+	public static final WAlign centerTop = (a, _, h) -> {
 		return centerTopExt.apply(a, 0, h);
 	};
 
@@ -41,15 +41,15 @@ public interface WAlign {
 		return new WAlignData(FastMath.round((a.x1 + a.x2 - w) / 2), FastMath.round((a.y1 + a.y2 - h) / 2));
 	};
 
-	public static final WAlign centerCenterExtWidth = (a, w, h) -> {
+	public static final WAlign centerCenterExtWidth = (a, w, _) -> {
 		return centerCenterExt.apply(a, w, 0);
 	};
 
-	public static final WAlign centerCenterExtHeight = (a, w, h) -> {
+	public static final WAlign centerCenterExtHeight = (a, _, h) -> {
 		return centerCenterExt.apply(a, 0, h);
 	};
 
-	public static final WAlign centerCenter = (a, w, h) -> {
+	public static final WAlign centerCenter = (a, _, _) -> {
 		return centerCenterExt.apply(a, 0, 0);
 	};
 
@@ -58,13 +58,13 @@ public interface WAlign {
 		return new WAlignData(FastMath.round((a.x1 + a.x2 - w) / 2), a.y2 - h - 1);
 	};
 
-	public static final WAlign centerBottom = (a, w, h) -> {
+	public static final WAlign centerBottom = (a, _, h) -> {
 		return centerBottomExt.apply(a, 0, h);
 	};
 
 	/*==================================== RIGHT ====================================*/
 	//top
-	public static final WAlign rightTop = (a, w, h) -> {
+	public static final WAlign rightTop = (a, w, _) -> {
 		return new WAlignData(a.x2 - w, a.y1);
 	};
 
@@ -73,7 +73,7 @@ public interface WAlign {
 		return new WAlignData(a.x2 - w, FastMath.round((a.y1 + a.y2 - h) / 2));
 	};
 
-	public static final WAlign rightCenter = (a, w, h) -> {
+	public static final WAlign rightCenter = (a, w, _) -> {
 		return rightCenterExt.apply(a, w, 0);
 	};
 

@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import net.w3e.app.gui.AppJFrame.AppJFrameFactoryMultiple;
 import net.w3e.app.gui.AppJFrame.AppJFrameNamedFactoryImpl;
 import net.w3e.app.main.MainFrame.Args;
+import net.w3e.app.utils.cyberpunk.CyberpunkGeneratorGui;
 import net.w3e.app.utils.manga.MangaGui;
 import net.w3e.app.utils.poe.PoeGui;
 import net.w3e.app.utils.tf2.Tf2Gui;
@@ -21,6 +22,7 @@ public class UtilsFrameFactory implements AppJFrameFactoryMultiple {
 		list.add(new AppJFrameNamedFactoryImpl("tf2", this::tf2));
 		list.add(new AppJFrameNamedFactoryImpl("Poe2", this::poe2));
 		list.add(new AppJFrameNamedFactoryImpl("Manga", this::manga));
+		list.add(new AppJFrameNamedFactoryImpl("Cyberpunk", this::cyberpunk));
 
 		return list;
 	}
@@ -49,4 +51,12 @@ public class UtilsFrameFactory implements AppJFrameFactoryMultiple {
 		return null;
 	}
 
+	private JFrame cyberpunk(JFrame parent, Args args) {
+		CyberpunkGeneratorGui frame = new CyberpunkGeneratorGui();
+		frame.initScreen();
+		frame.pack();
+		frame.atRightPosition(parent);
+		frame.setVisible(true);
+		return null;
+	}
 }

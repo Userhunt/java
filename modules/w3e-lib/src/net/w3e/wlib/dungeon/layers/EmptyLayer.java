@@ -2,15 +2,17 @@ package net.w3e.wlib.dungeon.layers;
 
 import java.lang.reflect.Type;
 
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.annotation.DefaultCodec;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
 import net.w3e.wlib.json.adapters.WJSonEmptyAdapter;
 
-@DefaultJsonCodec(EmptyLayer.EmptyLayerJsonAdapter.class)
+@DefaultCodec(EmptyLayer.EmptyLayerJsonAdapter.class)
 public class EmptyLayer extends DungeonLayer {
+
+	public static final EmptyLayer INSTANCE = new EmptyLayer();
 
 	public static final String TYPE = "empty";
 
@@ -19,7 +21,7 @@ public class EmptyLayer extends DungeonLayer {
 	}
 
 	@Override
-	public final EmptyLayer withDungeon(DungeonGenerator generator) {
+	public final EmptyLayer createGenerator(DungeonGenerator generator) {
 		return this;
 	}
 
@@ -33,13 +35,13 @@ public class EmptyLayer extends DungeonLayer {
 
 	static class EmptyLayerJsonAdapter extends WJSonEmptyAdapter {
 
-		public EmptyLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
+		public EmptyLayerJsonAdapter(Type type, CodecRegistry registry) {
 			super(type, registry);
 		}
 
 		@Override
 		protected final EmptyLayer create() {
-			return JSON_MAP.getEmpty();
+			return INSTANCE;
 		}
 	}
 

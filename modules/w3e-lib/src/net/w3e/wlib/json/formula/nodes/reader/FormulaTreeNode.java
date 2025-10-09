@@ -9,7 +9,7 @@ import lombok.AccessLevel;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.skds.lib2.io.json.JsonUtils;
+import net.skds.lib2.io.codec.SosisonUtils;
 import net.w3e.wlib.collection.identity.IdentityLinkedHashSet;
 import net.w3e.wlib.json.formula.FormulaType;
 import net.w3e.wlib.json.formula.builder.FormulaArgumentBuilder;
@@ -52,7 +52,7 @@ public class FormulaTreeNode implements FormulaNode {
 	}
 
 	public void printAsJson() {
-		System.out.println(JsonUtils.toJson(this.getNodes()).replace("\t\"", "\"").replace("\t{", "{"));
+		System.out.println(SosisonUtils.toJson(this.getNodes()).replace("\t\"", "\"").replace("\t{", "{"));
 	}
 
 	@Override

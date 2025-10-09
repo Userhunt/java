@@ -3,7 +3,6 @@ package net.w3e.wlib.json.formula;
 import net.skds.lib2.benchmark.Benchmark;
 import net.skds.lib2.misc.clazz.StringClassLoader;
 import net.skds.lib2.utils.logger.SKDSLogger;
-import net.skds.lib2.utils.logger.SKDSLoggerFactory;
 import net.w3e.wlib.json.formula.builder.FormulaArgumentBuilder;
 import net.w3e.wlib.json.formula.builder.FormulaMethodLink;
 import net.w3e.wlib.json.formula.nodes.FormulaCastNode;
@@ -13,9 +12,6 @@ import net.w3e.wlib.json.formula.string.FormulaString;
 import net.w3e.wlib.json.formula.string.FormulaStringClass;
 
 public class FormulaTest {
-
-	@SuppressWarnings("unused")
-	private static final SKDSLogger log = SKDSLoggerFactory.getLogger();
 
 	public static void main(String[] args) throws InterruptedException {
 		SKDSLogger.replaceOuts();

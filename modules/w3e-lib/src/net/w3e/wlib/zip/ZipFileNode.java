@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.zip.ZipEntry;
 
-import net.skds.lib2.io.json.JsonUtils;
+import net.skds.lib2.io.codec.SosisonUtils;
 import net.skds.lib2.io.json.elements.JsonElement;
 import net.skds.lib2.utils.ImageUtils;
 
@@ -54,13 +54,12 @@ public class ZipFileNode extends ZipNode {
 		return (BufferedImage)this.object;
 	}
 
-	@Deprecated
 	public final JsonElement getAsJson() throws UnsupportedEncodingException {
 		if (this.object instanceof JsonElement as) {
 			return as;
 		}
 		if ("json".equals(this.getExtension())) {
-			this.object = JsonUtils.getFancyRegistry().getDeserializer(JsonElement.class).parse(new String(this.data));
+			this.object = SosisonUtils.getFancyRegistry().getDeserializer(JsonElement.class).parse(new String(this.data));
 		}
 		return (JsonElement)this.object;
 	}

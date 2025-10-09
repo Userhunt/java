@@ -3,85 +3,106 @@ package net.w3e.wlib.dungeon.layers.terra;
 import java.lang.reflect.Type;
 import java.util.stream.Stream;
 
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
-import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
-import net.skds.lib2.io.json.codec.array.ArraySerializeOnlyJsonCodec;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.ReflectiveBuilderCodec;
+import net.skds.lib2.io.codec.annotation.DefaultCodec;
+import net.skds.lib2.io.codec.array.ArraySerializeOnlyCodec;
 import net.w3e.wlib.dungeon.DungeonException;
 import net.w3e.wlib.dungeon.DungeonGenerator;
 import net.w3e.wlib.dungeon.DungeonLayer;
-import net.w3e.wlib.dungeon.DungeonRoomInfo;
-import net.w3e.wlib.dungeon.json.ILayerData;
+import net.w3e.wlib.dungeon.layers.ISetupRoomLayer;
+import net.w3e.wlib.dungeon.layers.ListLayer;
+import net.w3e.wlib.dungeon.registry.DungeonRegistryContext;
+import net.w3e.wlib.dungeon.room.DungeonRoomInfo;
+import net.w3e.wlib.json.WJsonBuilder;
 
-@DefaultJsonCodec(CompositeTerraLayer.CompositeTerraLayerJsonAdapter.class)
-public class CompositeTerraLayer extends TerraLayer<Object> {
+@DefaultCodec(CompositeTerraLayer.CompositeTerraLayerJsonAdapter.class)
+public class CompositeTerraLayer extends TerraLayer<Object> implements IListLayer {
 
 	public static final String TYPE = "terra/composite";
 
-	@DefaultJsonCodec(CompositeTerraLayer.TerraLayerArrayJsonAdapter.class)
-	private final TerraLayer<?>[] layers;
+	@DefaultCodec(CompositeTerraLayer.TerraLayerArrayJsonAdapter.class)
+	private final ListLayer<?>[] layers;
 
-	public CompositeTerraLayer(DungeonGenerator generator, int stepRate, boolean createRoomIfNotExists, TerraLayer<?>... layers) {
+	public CompositeTerraLayer(DungeonGenerator generator, int stepRate, boolean createRoomIfNotExists, ListLayer<?>... layers) {
 		super(JSON_MAP.COMPOSITE, generator, null, null, stepRate, createRoomIfNotExists);
 		this.layers = layers;
 	}
 
 	@Override
-	public final CompositeTerraLayer withDungeon(DungeonGenerator generator) {
-		return new CompositeTerraLayer(generator, this.stepRate, this.createRoomIfNotExists, Stream.of(this.layers).map(e -> e.withDungeon(generator)).toArray(TerraLayer[]::new));
-	}
-
-	@Override
-	public final void setupRoom(DungeonRoomInfo room) {
-		for (TerraLayer<?> layer : this.layers) {
-			layer.setupRoom(room);
+	public void applyRegistryContext(DungeonRegistryContext registryContext) {
+		for (DungeonLayer layer : this.layers) {
+			layer.applyRegistryContext(registryContext);
 		}
 	}
 
 	@Override
-	public void setupLayer(boolean composite) throws DungeonException {
-		for (TerraLayer<?> layer : this.layers) {
+	public final CompositeTerraLayer createGenerator(DungeonGenerator generator) {
+		return new CompositeTerraLayer(generator, this.stepRate, this.createRoomIfNotExists, Stream.of(this.layers).map(e -> e.createGenerator(generator)).toArray(TerraLayer[]::new));
+	}
+
+	@Override
+	public final void setupRoom(DungeonRoomInfo room) {
+		for (DungeonLayer layer : this.layers) {
+			if (layer instanceof ISetupRoomLayer setupRoomLayer) {
+				setupRoomLayer.setupRoom(room);
+			}
+		}
+	}
+
+	@Override
+	public final void setupLayer(boolean composite) throws DungeonException {
+		for (DungeonLayer layer : this.layers) {
 			layer.setupLayer(true);
 		}
 	}
 
 	@Override
-	protected final void generate(DungeonRoomInfo room) throws DungeonException {
-		for (TerraLayer<?> layer : this.layers) {
-			layer.generate(room);
-		}
+	public final void generateRoom(DungeonRoomInfo room) {
+		this.generator.generateRoom(room);
 	}
 
-	static class CompositeTerraLayerJsonAdapter extends JsonReflectiveBuilderCodec<CompositeTerraLayer> {
+	@Override
+	protected TerraLayer<Object>.TerraGenerator createRoomGenerator() {
+		return new TerraGenerator(this) {
 
-		public CompositeTerraLayerJsonAdapter(Type type, JsonCodecRegistry registry) {
+			@Override
+			protected void generateRoom(DungeonRoomInfo room) throws DungeonException {
+				for (ListLayer<?> layer : CompositeTerraLayer.this.layers) {
+					if (layer instanceof IListLayer listLayer) {
+						listLayer.generateRoom(room);
+					}
+				}
+			}
+		};
+	}
+
+	static class CompositeTerraLayerJsonAdapter extends ReflectiveBuilderCodec<CompositeTerraLayer> {
+
+		public CompositeTerraLayerJsonAdapter(Type type, CodecRegistry registry) {
 			super(type, CompositeTerraLayerData.class, registry);
 		}
 
-		private static class CompositeTerraLayerData implements ILayerData<CompositeTerraLayer> {
+		private static class CompositeTerraLayerData implements WJsonBuilder<CompositeTerraLayer> {
 
 			private DungeonLayer[] layers;
 			private int stepRate = 75;
 			private boolean createRoomIfNotExists;
 
 			@Override
-			public final CompositeTerraLayer withDungeon(DungeonGenerator generator) {
-				this.lessThan("stepRate", this.stepRate);
-				this.isEmpty("layers", this.layers);
-				return new CompositeTerraLayer(generator, this.stepRate, createRoomIfNotExists, Stream.of(this.layers).map(layer -> layer.withDungeon(generator)).toArray(TerraLayer[]::new));
+			public final CompositeTerraLayer build() {
+				this.lessThan(this.stepRate, "stepRate");
+				this.isEmpty(this.layers, "layers");
+				return new CompositeTerraLayer(null, this.stepRate, createRoomIfNotExists, Stream.of(this.layers).toArray(ListLayer[]::new));
 			}
 		}
 	}
 
-	private static class TerraLayerArrayJsonAdapter extends ArraySerializeOnlyJsonCodec {
+	private static class TerraLayerArrayJsonAdapter extends ArraySerializeOnlyCodec {
 
-		public TerraLayerArrayJsonAdapter(Type type, JsonCodecRegistry registry) {
+		public TerraLayerArrayJsonAdapter(Type type, CodecRegistry registry) {
 			super(DungeonLayer.class, registry);
 		}
-	}
-
-	public static final CompositeTerraLayer example(DungeonGenerator generator) {
-		return new CompositeTerraLayer(generator, 50, true, TemperatureLayer.example(generator), WetLayer.example(generator), DifficultyLayer.example(generator));
 	}
 
 }

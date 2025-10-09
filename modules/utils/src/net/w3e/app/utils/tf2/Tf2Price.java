@@ -5,7 +5,7 @@ import java.io.IOException;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skds.lib2.io.json.JsonUtils;
+import net.skds.lib2.io.codec.SosisonUtils;
 import net.skds.lib2.io.json.elements.JsonElement;
 import net.skds.lib2.io.json.elements.JsonObject;
 import net.skds.lib2.utils.HttpUtils;
@@ -47,7 +47,7 @@ public class Tf2Price implements Comparable<Tf2Price>, Tf2Icon {
 	private float load(String id) throws IOException {
 		DownloadProcess process = HttpUtils.downloadFromNet(id);
 		process.readAll();
-		JsonObject json = JsonUtils.parseJson(new String(process.getContent()), JsonObject.class);
+		JsonObject json = SosisonUtils.parseJson(new String(process.getContent()), JsonObject.class);
 		JsonElement js;
 		if (json.containsKey("lowest_price")) {
 			js = json.get("lowest_price");

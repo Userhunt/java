@@ -3,12 +3,12 @@ package net.w3e.app.utils.tf2;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
-import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.ReflectiveBuilderCodec;
+import net.skds.lib2.io.codec.annotation.DefaultCodec;
 import net.w3e.wlib.json.WJsonBuilder;
 
-@DefaultJsonCodec(Tf2RegistryObject.JsonAdapter.class)
+@DefaultCodec(Tf2RegistryObject.JsonAdapter.class)
 public record Tf2RegistryObject(String id, String link, String image, String[] group) implements Tf2Icon {
 
 	@Override
@@ -44,9 +44,9 @@ public record Tf2RegistryObject(String id, String link, String image, String[] g
 		return String.format("{class:%s,hash:%s,id:\"%s\",link:\"%s\",image:%s}", this.getClass().getSimpleName(), this.hashCode(), this.id, this.link, this.image != null);
 	}
 
-	static class JsonAdapter extends JsonReflectiveBuilderCodec<Tf2RegistryObject> {
+	static class JsonAdapter extends ReflectiveBuilderCodec<Tf2RegistryObject> {
 
-		public JsonAdapter(Type type, JsonCodecRegistry registry) {
+		public JsonAdapter(Type type, CodecRegistry registry) {
 			super(type, Tf2RegistryObjectData.class, registry);
 		}
 

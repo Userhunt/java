@@ -15,7 +15,10 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 import lombok.CustomLog;
+import lombok.Getter;
 import net.skds.lib2.io.CustomAbstractPrintStream;
+import net.skds.lib2.reflection.FindOptions;
+import net.skds.lib2.reflection.ReflectUtils;
 import net.skds.lib2.utils.AnsiEscape;
 import net.skds.lib2.utils.logger.SKDSLogger;
 import net.w3e.app.gui.AppJFrame;
@@ -31,8 +34,12 @@ public class ConsoleFrame extends AppJFrame {
 		}
 	};
 
+	private static final SKDSLogger GLOBAL_LOGGER = (SKDSLogger)ReflectUtils.getField(SKDSLogger.class, new FindOptions(SKDSLogger.class)).get(null);
+
 	private final AtomicInteger enabled = new AtomicInteger(0);
-	protected final ConsoleOutputStream printStream = new ConsoleOutputStream();
+	@Getter
+	private final SKDSLogger logger;
+	private final ConsoleOutputStream printStream = new ConsoleOutputStream();
 
 	protected final JConsoleTextArea textArea = new JConsoleTextArea(1100, 700);
 
@@ -46,6 +53,10 @@ public class ConsoleFrame extends AppJFrame {
 
 		this.add(this.textArea.getAddComponent(), BorderLayout.CENTER);
 		this.textArea.setBackground(new Color(30, 30, 30));
+		this.logger = new SKDSLogger();
+		//this.logger.setAttachToFile(false);
+		this.logger.setAttachToGlobal(false);
+		this.logger.attachPrintStream(this.printStream);
 	}
 
 	public void enableConsole() {
@@ -54,7 +65,7 @@ public class ConsoleFrame extends AppJFrame {
 		if (a > 1) {
 			return;
 		}
-		SKDSLogger.attachPrintStream(this.printStream);
+		GLOBAL_LOGGER.attachPrintStream(this.printStream);
 		//log.debug("attach " + a);
 	}
 
@@ -67,7 +78,11 @@ public class ConsoleFrame extends AppJFrame {
 			return;
 		}
 		//log.debug("detach " + a);
-		SKDSLogger.detachPrintStream(this.printStream);
+		GLOBAL_LOGGER.detachPrintStream(this.printStream);
+	}
+
+	protected void stopConsole() {
+		GLOBAL_LOGGER.detachPrintStream(this.printStream);
 	}
 
 	private static final Map<String, Color> FOREGROUND = new HashMap<>();

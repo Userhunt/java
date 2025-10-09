@@ -2,8 +2,8 @@ package net.w3e.wlib.json;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import net.skds.lib2.io.json.codec.typed.ConfigType;
-import net.skds.lib2.io.json.codec.typed.TypedConfig;
+import net.skds.lib2.io.codec.typed.ConfigType;
+import net.skds.lib2.io.codec.typed.TypedConfig;
 import net.w3e.wlib.json.adapters.WJsonAdaptersMap;
 
 @RequiredArgsConstructor

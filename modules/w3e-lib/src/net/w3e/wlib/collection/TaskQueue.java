@@ -41,7 +41,7 @@ public class TaskQueue {
 			while(iterator.hasNext()) {
 				TaskEntry entry = iterator.next();
 				if (entry.minTimerForRun < this.timer) {
-					if (entry.run(true)) {
+					if (!entry.run(true)) {
 						this.entries.remove(entry);
 					}
 				} else {
@@ -83,7 +83,7 @@ public class TaskQueue {
 				}
 			}
 			this.isRun--;
-			return true;
+			return false;
 		};
 		if (instant) {
 			forTask.tick();
@@ -91,6 +91,7 @@ public class TaskQueue {
 			this.add(forTask);
 		}
 	}
+
 
 	private class TaskEntry {
 		public int timer;
@@ -123,7 +124,7 @@ public class TaskQueue {
 				}
 				return this.task.tick();
 			} else {
-				return false;
+				return true;
 			}
 		}
 	}
@@ -135,7 +136,7 @@ public class TaskQueue {
 		TaskQueue queue = new TaskQueue();
 		FiniteTickable task1 = () -> {
 			System.out.println("1");
-			return true;
+			return false;
 		};
 
 		log.info("normal");
@@ -148,7 +149,7 @@ public class TaskQueue {
 			System.out.println("2.1");
 			queue.add(task1);
 			System.out.println("2.2");
-			return true;
+			return false;
 		});
 		queue.run();
 		System.out.println("2.3");
@@ -160,7 +161,7 @@ public class TaskQueue {
 		queue.add(() -> {
 			System.out.println("3." + (12-tuple.getValue()));
 			tuple.decrement();
-			return tuple.getValue() <= 0;
+			return tuple.getValue() > 0;
 		});
 		for (int i = 0; i < 11; i++) {
 			System.out.println("i " + (i + 1));
@@ -180,7 +181,7 @@ public class TaskQueue {
 		System.out.println("for true");
 		queue.forEach(e -> {
 			System.out.println(e);
-			return true;
+			return false;
 		});
 		System.out.println("for after");
 		queue.run();

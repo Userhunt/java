@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
-import net.skds.lib2.io.json.JsonUtils;
+import net.skds.lib2.io.codec.SosisonUtils;
 import net.skds.lib2.io.json.elements.JsonArray;
 import net.skds.lib2.io.json.elements.JsonElement;
 import net.w3e.app.old.api.window_old.FrameWin;
@@ -273,7 +273,7 @@ public class MainArgs<T extends FrameObject> {
 		@Override
 		protected final boolean test(MainArgs<T> args, T frame, String value) {
 			try {
-				JsonArray array = JsonUtils.parseJson(value, JsonArray.class);
+				JsonArray array = SosisonUtils.parseJson(value, JsonArray.class);
 				parse(args, frame, array);
 				return true;
 			} catch (Exception e) {

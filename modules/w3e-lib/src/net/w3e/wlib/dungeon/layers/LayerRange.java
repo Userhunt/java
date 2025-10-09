@@ -4,17 +4,17 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Random;
 
-import net.skds.lib2.io.json.JsonEntryType;
-import net.skds.lib2.io.json.JsonReader;
-import net.skds.lib2.io.json.JsonWriter;
-import net.skds.lib2.io.json.annotation.DefaultJsonCodec;
-import net.skds.lib2.io.json.annotation.TransientComponent;
-import net.skds.lib2.io.json.codec.AbstractJsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodec;
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
-import net.skds.lib2.io.json.exception.JsonReadException;
+import net.skds.lib2.io.codec.AbstractCodec;
+import net.skds.lib2.io.codec.CodecRegistry;
+import net.skds.lib2.io.codec.UniversalDeserializer;
+import net.skds.lib2.io.codec.UniversalReader;
+import net.skds.lib2.io.codec.UniversalWriter;
+import net.skds.lib2.io.codec.annotation.DefaultCodec;
+import net.skds.lib2.io.codec.annotation.TransientComponent;
+import net.skds.lib2.io.exception.ParseException;
+import net.skds.lib2.io.sosison.SosisonEntryType;
 
-@DefaultJsonCodec(LayerRange.LayerRangeJsonCodec.class)
+@DefaultCodec(LayerRange.LayerRangeJsonCodec.class)
 public record LayerRange(int min, int max, @TransientComponent int range) implements Comparable<LayerRange> {
 
 	public static final LayerRange ZERO = new LayerRange(0, 0, 0);
@@ -42,12 +42,12 @@ public record LayerRange(int min, int max, @TransientComponent int range) implem
 		return random.nextInt(range) + this.min;
 	}
 
-	public final boolean test(int value) {
+	public boolean test(int value) {
 		return value == Integer.MIN_VALUE || (value >= this.min && value <= this.max);
 	}
 
 	@Override
-	public final int compareTo(LayerRange range) {
+	public int compareTo(LayerRange range) {
 		return Integer.compare(this.min, range.min);
 	}
 
@@ -61,17 +61,17 @@ public record LayerRange(int min, int max, @TransientComponent int range) implem
 		return new LayerRange(Math.min(a, b), Math.max(a, b));
 	}
 
-	static class LayerRangeJsonCodec extends AbstractJsonCodec<LayerRange> {
+	static class LayerRangeJsonCodec extends AbstractCodec<LayerRange> {
 
-		private final JsonCodec<LayerRangeData> reader;
+		private final UniversalDeserializer<LayerRangeData> reader;
 
-		public LayerRangeJsonCodec(Type type, JsonCodecRegistry registry) {
+		public LayerRangeJsonCodec(Type type, CodecRegistry registry) {
 			super(type, registry);
-			reader = registry.getCodecIndirect(LayerRangeData.class);
+			reader = registry.getDeserializerIndirect(LayerRangeData.class);
 		}
 
 		@Override
-		public void write(LayerRange value, JsonWriter writer) throws IOException {
+		public void write(LayerRange value, UniversalWriter writer) throws IOException {
 			if (value.range == 0) {
 				writer.writeInt(value.min);
 			} else {
@@ -87,19 +87,19 @@ public record LayerRange(int min, int max, @TransientComponent int range) implem
 		}
 
 		@Override
-		public LayerRange read(JsonReader reader) throws IOException {
-			if (reader.nextEntryType() == JsonEntryType.NULL) {
+		public LayerRange read(UniversalReader reader) throws IOException {
+			if (reader.nextEntryType() == SosisonEntryType.NULL) {
 				reader.skipNull();
 				return null;
 			}
-			if (reader.nextEntryType() == JsonEntryType.NUMBER) {
+			if (reader.nextEntryType().isNumber()) {
 				int value = reader.readInt();
 				return new LayerRange(value, value, 0);
-			} else if (reader.nextEntryType() == JsonEntryType.BEGIN_OBJECT) {
+			} else if (reader.nextEntryType() == SosisonEntryType.BEGIN_OBJECT) {
 				LayerRangeData data = this.reader.read(reader);
 				return new LayerRange(data.min, data.max);
 			} else {
-				throw new JsonReadException("cant read LayerRange");
+				throw new ParseException("cant read LayerRange");
 			}
 		}
 

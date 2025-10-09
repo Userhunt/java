@@ -1,7 +1,5 @@
 package net.w3e.wlib.dungeon;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,42 +10,36 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-import net.skds.lib2.io.json.codec.JsonCodecRegistry;
-import net.skds.lib2.io.json.codec.JsonDeserializeBuilder;
-import net.skds.lib2.io.json.codec.JsonReflectiveBuilderCodec;
 import net.skds.lib2.mat.vec3.Vec3I;
 import net.skds.lib2.utils.Holders.BooleanHolder;
 import net.skds.lib2.utils.logger.SKDSLogger;
-import net.skds.lib2.utils.logger.SKDSLoggerFactory;
-import net.w3e.wlib.collection.MapT.MapTString;
-import net.w3e.wlib.dungeon.json.DungeonJsonAdapters;
-import net.w3e.wlib.dungeon.layers.DungeonLayerFactory;
 import net.w3e.wlib.dungeon.layers.ISetupRoomLayer;
-import net.w3e.wlib.dungeon.layers.filter.RoomLayerFilterValues;
+import net.w3e.wlib.dungeon.room.DungeonRoomData;
+import net.w3e.wlib.dungeon.room.DungeonRoomInfo;
 import net.w3e.wlib.mat.VecUtil;
 import net.w3e.wlib.mat.WBoxI;
 
 public class DungeonGenerator {
 
-	public static final SKDSLogger LOGGER = SKDSLoggerFactory.getLogger();
+	public static final SKDSLogger LOGGER = new SKDSLogger();
 
 	private final transient Map<Vec3I, Map<Vec3I, DungeonRoomInfo>> map = new HashMap<>();
 
 	private final Random random;
 	private final WBoxI dimension;
-	private final MapTString dataFactory;
+	private final DungeonRoomData dataFactory;
 
 	private final int layerCount;
 	private final transient List<DungeonLayer> queue = new LinkedList<>();
 	private final transient List<ISetupRoomLayer> roomSetup = new LinkedList<>();
 	private transient boolean setupLayer = true;
 
-	public DungeonGenerator(long seed, WBoxI dimension, MapTString dataFactory, List<DungeonLayerFactory> layers) {
+	public DungeonGenerator(long seed, WBoxI dimension, DungeonRoomData dataFactory, List<DungeonLayer> layers) {
 		this.random = new Random(seed);
 		this.dimension = dimension;
 		this.dataFactory = dataFactory;
 		this.layerCount = layers.size();
-		layers.stream().map(e -> e.create(this)).forEach(l -> {
+		layers.stream().map(e -> e.createGenerator(this)).forEach(l -> {
 			this.queue.add(l);
 			if (l instanceof ISetupRoomLayer s) {
 				this.roomSetup.add(s);
@@ -71,7 +63,9 @@ public class DungeonGenerator {
 		BooleanHolder exists = new BooleanHolder(true);
 		DungeonRoomInfo room = map.computeIfAbsent(chunk, _ -> new HashMap<>()).computeIfAbsent(pos, _ -> {
 			exists.setValue(false);
-			return DungeonRoomInfo.create(pos, chunk, this.dataFactory);
+			DungeonRoomInfo r = new DungeonRoomInfo(pos, chunk);
+			r.getData().copyFrom(this.dataFactory);
+			return r;
 		});
 		if (!exists.isValue()) {
 			for (ISetupRoomLayer setup : this.roomSetup) {
@@ -82,9 +76,9 @@ public class DungeonGenerator {
 	}
 
 	public final DungeonRoomCreateInfo put(DungeonRoomInfo room) {
-		DungeonRoomCreateInfo info = this.putOrGet(room.pos());
+		DungeonRoomCreateInfo info = this.putOrGet(room.getPos());
 		if (info.isInside) {
-			this.map.get(info.room.chunk()).put(room.pos(), room);
+			this.map.get(info.room.getChunk()).put(room.getPos(), room);
 			return DungeonRoomCreateInfo.success(room, info.exists);
 		} else {
 			return info;
@@ -119,10 +113,6 @@ public class DungeonGenerator {
 		return this.createFailRoom(pos, false);
 	}
 
-	public final RoomLayerFilterValues getRoomValues(DungeonRoomInfo room) {
-		return DungeonJsonAdapters.INSTANCE.roomFilterAdapters.createFilters(room);
-	}
-
 	public final void forEach(Consumer<DungeonRoomCreateInfo> function, boolean createIfNotExists) {
 		Vec3I min = this.dimension.min();
 		Vec3I max = this.dimension.max();
@@ -152,7 +142,7 @@ public class DungeonGenerator {
 	}
 
 	private final DungeonRoomCreateInfo createFailRoom(Vec3I pos, Vec3I chunk, boolean isInside) {
-		return DungeonRoomCreateInfo.fail(DungeonRoomInfo.create(pos, this.dataFactory));
+		return DungeonRoomCreateInfo.fail(new DungeonRoomInfo(pos));
 	}
 
 	public record DungeonRoomCreateInfo(DungeonRoomInfo room, boolean isInside, boolean exists) {
@@ -169,19 +159,19 @@ public class DungeonGenerator {
 		public final DungeonRoomCreateInfo setWall() {
 			return this.setWall(true);
 		}
-		public final Vec3I pos() {
-			return this.room.pos();
+		public final Vec3I getPos() {
+			return this.room.getPos();
 		}
-		public final Vec3I chunk() {
-			return this.room.chunk();
+		public final Vec3I getChunk() {
+			return this.room.getChunk();
 		}
-		public final MapTString data() {
-			return this.room.data();
+		public final DungeonRoomData getData() {
+			return this.room.getData();
 		}
 		public final boolean notExistsOrWall() {
 			return !this.exists || this.room.isWall();
 		}
-		public final boolean isentrance() {
+		public final boolean isEntrance() {
 			return this.room.isEntrance();
 		}
 		public final boolean isWall() {
@@ -213,7 +203,7 @@ public class DungeonGenerator {
 		});
 	}
 
-	public DungeonGeneratorResult generate(DungeonGenerationCallback callback) {
+	public DungeonGeneratorResult generate(DungeonGenerationCallback callback) throws DungeonException {
 		DungeonGeneratorResult result = null;
 		while (!queue.isEmpty()) {
 			float progress = 1;
@@ -264,32 +254,4 @@ public class DungeonGenerator {
 		return stream.toList();
 	}
 
-	public static class DungeonGeneratorJsonAdapter extends JsonReflectiveBuilderCodec<DungeonGenerator> {
-		public DungeonGeneratorJsonAdapter(Type type, JsonCodecRegistry registry) {
-			super(type, EDungeon.class, registry);
-		}
-
-		private static class EDungeon implements JsonDeserializeBuilder<DungeonGenerator> {
-			private long seed = 0;
-			private WBoxI dimension = new WBoxI(0, 0, 0, 0, 0, 0).expand(4, 0, 4);
-			private MapTString data = new MapTString();
-			private DungeonLayer[] layers = new DungeonLayer[0];
-			private final transient List<DungeonLayerFactory> layerFactories = new ArrayList<>();
-
-			@Override
-			public final DungeonGenerator build() {
-				if (this.layerFactories.size() != this.layers.length) {
-					this.layerFactories.clear();
-					for (DungeonLayer layer : this.layers) {
-						if (layer == null) {
-							throw new NullPointerException();
-						}
-						this.layerFactories.add(generator -> layer.withDungeon(generator));
-					}
-				}
-				MapTString map = this.data != null ? new MapTString(this.data) : new MapTString();
-				return new DungeonGenerator(this.seed, this.dimension, map, this.layerFactories);
-			}
-		}
-	}
 }

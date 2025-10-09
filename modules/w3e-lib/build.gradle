@@ -3,12 +3,7 @@ plugins {
 }
 
 dependencies {
-	compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
-	annotationProcessor group: 'org.projectlombok', name: 'lombok', version: '1.18.32'
-
-	implementation group: 'it.unimi.dsi', name: 'fastutil', version: '8.5.13'
-
-	implementation project(":skds-lib")
+	testImplementation(implementation(project(":skds-lib")))
 }
 
 mainClassName = 'null'
@@ -20,12 +15,17 @@ shadowJar {
 
 	exclude('net/skds/lib2/awtutils/**')
 	exclude('net/skds/lib2/benchmark/**')
+	exclude('net/skds/lib2/demo/**')
 	exclude('net/skds/lib2/event/**')
-	exclude('net/skds/lib2/io/json/test/**')
+	exclude('net/skds/lib2/misc/fields/**')
 	exclude('net/skds/lib2/misc/font/**')
 	exclude('net/skds/lib2/misc/graph/**')
+	exclude('net/skds/lib2/misc/ogg/**')
+	exclude('net/skds/lib2/misc/qr/**')
 	exclude('net/skds/lib2/natives/**')
 	exclude('net/skds/lib2/network/**')
+	exclude('net/skds/lib2/physics2d/**')
+	exclude('net/skds/lib2/security/**')
 	exclude('net/skds/lib2/storage/**')
 	exclude('net/skds/lib2/unsafe/**')
 	exclude('net/skds/lib2/utils/classloader/**')
@@ -39,3 +39,4 @@ shadowJar {
 	relocate 'net.w3e.lib', 'net.w3e.include.lib'
 	//relocate 'net.w3e.wlib', 'net.w3e.lib'
 }
+

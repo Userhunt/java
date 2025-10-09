@@ -19,7 +19,7 @@ public class ClearLayer extends DungeonLayer {
 	}
 
 	@Override
-	public final ClearLayer withDungeon(DungeonGenerator generator) {
+	public final ClearLayer createGenerator(DungeonGenerator generator) {
 		return new ClearLayer(generator);
 	}
 
@@ -30,14 +30,10 @@ public class ClearLayer extends DungeonLayer {
 	public final float generate() {
 		this.forEach(room -> {
 			if (room.isWall()) {
-				this.removeRoom(room.pos());
+				this.removeRoom(room.getPos());
 			}
 		});
 		return 1f;
-	}
-
-	public static final ClearLayer example(DungeonGenerator generator) {
-		return new ClearLayer(generator);
 	}
 
 }

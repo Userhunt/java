@@ -1,6 +1,6 @@
 package net.w3e.wlib.dungeon.layers.interfaces;
 
-public interface IDungeonLimitedCount {
+public interface IDungeonLimitedCount extends Cloneable {
 	DungeonInfoCountHolder count();
 
 	default boolean addCount() {
@@ -22,4 +22,7 @@ public interface IDungeonLimitedCount {
 	default boolean isUnlimitedCount() {
 		return this.count().getValue() == -1;
 	}
+
+	IDungeonLimitedCount clone();
+	boolean notValid();
 }
