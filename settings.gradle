@@ -3,8 +3,8 @@ rootProject.name = 'w3e-root'
 include(
 	'w3e-lib',
 	'skds-lib',
-	':app',
-	':utils'
+	':app0',
+	':app'
 )
 
 rootProject.children.each { project ->

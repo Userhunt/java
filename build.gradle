@@ -1,41 +1,41 @@
 allprojects {
-	apply plugin: 'java-library'
-	apply plugin: 'application'
+    apply plugin: 'java-library'
+    apply plugin: 'application'
 
-	repositories {
-		/*flatDir {
-			dirs 'libs'
-		}*/
-		mavenCentral()
-	}
+    repositories {
+        /*flatDir {
+            dirs 'libs'
+        }*/
+        mavenCentral()
+    }
 
-	java {
-		withSourcesJar()
-		toolchain {
-			languageVersion = JavaLanguageVersion.of(22)
-		}
-	}
+    java {
+        withSourcesJar()
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(25)
+        }
+    }
 }
 
 subprojects {
-	sourceSets {
-		main {
-			java.srcDir 'src'
-			resources.srcDir 'resources'
-		}
-		test {
-			java.srcDir 'test_src'
-			resources.srcDir 'test_resources'
-		}
-	}
-	dependencies {
-		testImplementation(compileOnly('org.projectlombok:lombok:1.18.32'))
-		testAnnotationProcessor(annotationProcessor('org.projectlombok:lombok:1.18.32'))
+    sourceSets {
+        main {
+            java.srcDir 'src'
+            resources.srcDir 'resources'
+        }
+        test {
+            java.srcDir 'test_src'
+            resources.srcDir 'test_resources'
+        }
+    }
+    dependencies {
+        testImplementation(compileOnly('org.projectlombok:lombok:1.18.40'))
+        testAnnotationProcessor(annotationProcessor('org.projectlombok:lombok:1.18.40'))
 
-		testImplementation(implementation('it.unimi.dsi:fastutil:8.5.15'))
+        testImplementation(implementation('it.unimi.dsi:fastutil:8.5.15'))
 
-		//testImplementation(implementation(fileTree(dir: 'libs', include: '*.jar')))
-	}
+        //testImplementation(implementation(fileTree(dir: 'libs', include: '*.jar')))
+    }
 }
 
 /*tasks.register('uber', Jar) {
